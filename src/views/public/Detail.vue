@@ -1,0 +1,406 @@
+<!--内容详情页-->
+<template>
+  <div class="detail">
+    <NavBar></NavBar>
+    <Tabbar :componentName="componentName"></Tabbar>
+    <div class="main">
+      <div class="title">
+        <h1>{{ detail.title }}</h1>
+        <div class="info">
+      <span class="info-item">
+        <span><img src="@/assets/icon/folder-info.png" alt=""></span>
+        <span>{{ detail.category }}</span>
+      </span>
+          <span class="info-item">
+        <span><img src="@/assets/icon/time-info.png" alt=""></span>
+        <span>{{ detail.create_time }}</span>
+      </span>
+          <span class="info-item">
+        <span><img src="@/assets/icon/view-info.png" alt=""></span>
+        <span>{{ detail.view }}</span>
+      </span>
+          <span class="info-item">
+        <span><img src="@/assets/icon/like-info.png" alt=""></span>
+        <span>{{ detail.like }}</span>
+      </span>
+          <span class="info-item">
+        <span><img src="@/assets/icon/comment-info.png" alt=""></span>
+        <span>{{ detail.comment }}</span>
+      </span>
+        </div>
+      </div>
+      <div class="body">{{ detail.body }}</div>
+    </div>
+    <div class="recommend" v-show="componentName==='article'">
+      <van-divider content-position="left">💖 猜你喜欢</van-divider>
+      <div class="recommend-list">
+        <div class="recommend-item" v-for="(item,index) in recommendList" :key="index">
+          <van-image :src="item.cover" radius="0.4rem" width="100%" height="3.2rem" lazy-load>
+            <template v-slot:loading>
+              <van-loading type="spinner" size="20"/>
+            </template>
+          </van-image>
+          <span>{{ item.title }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="context" v-show="componentName==='note'">
+      <div class="last">
+        <span><van-image width="20" height="20" :src="require('@/assets/icon/last.png')"/></span>
+        <span>概念和术语</span>
+      </div>
+      <div class="next">
+        <span>kubernetes集群的部署流程</span>
+        <span><van-image width="20" height="20" :src="require('@/assets/icon/next.png')"/></span>
+      </div>
+    </div>
+    <div class="comment" id="comment">
+      <van-divider content-position="left">📝 评论交流</van-divider>
+      <Comments :commentsList="commentsList"></Comments>
+    </div>
+    <div class="bottom-margin"></div>
+  </div>
+</template>
+
+<script>
+import NavBar from '@/components/deatil/NavBar';
+import Tabbar from '@/components/deatil/Tabbar';
+import Comments from '@/components/common/Comments'
+import {Divider, Image as VanImage, Loading} from 'vant'
+import {onMounted, ref} from "vue";
+import {useRouter} from "vue-router";
+
+export default {
+  components: {
+    [Divider.name]: Divider,
+    [VanImage.name]: VanImage,
+    [Loading.name]: Loading,
+    NavBar,
+    Tabbar,
+    Comments,
+  },
+  name: "Detail",
+  setup() {
+    const router = useRouter();
+    // 显示组件模块
+    const componentName = ref('')
+    onMounted(() => {
+      componentName.value = router.currentRoute.value.query.component
+    })
+    const detail = {
+      title: '这就是文章的标题呢',
+      body: '先帝创业未半而中道崩殂，今天下三分，益州疲弊，此诚危急存亡之秋也。然侍卫之臣不懈于内，忠志之士忘身于外者，盖追先帝之殊遇，欲报之于陛下也。诚宜开张圣听，以光先帝遗德，恢弘志士之气，不宜妄自菲薄，引喻失义，以塞忠谏之路也。\n' +
+          '\n' +
+          '宫中府中，俱为一体，陟罚臧否，不宜异同。若有作奸犯科及为忠善者，宜付有司论其刑赏，以昭陛下平明之理，不宜偏私，使内外异法也。\n' +
+          '\n' +
+          '侍中、侍郎郭攸之、费祎、董允等，此皆良实，志虑忠纯，是以先帝简拔以遗陛下。愚以为宫中之事，事无大小，悉以咨之，然后施行，必能裨补阙漏，有所广益。\n' +
+          '\n' +
+          '将军向宠，性行淑均，晓畅军事，试用于昔日，先帝称之曰能，是以众议举宠为督。愚以为营中之事，悉以咨之，必能使行阵和睦，优劣得所。\n' +
+          '\n' +
+          '亲贤臣，远小人，此先汉所以兴隆也；亲小人，远贤臣，此后汉所以倾颓也。先帝在时，每与臣论此事，未尝不叹息痛恨于桓、灵也。侍中、尚书、长史、参军，此悉贞良死节之臣，愿陛下亲之信之，则汉室之隆，可计日而待也。\n' +
+          '\n' +
+          '臣本布衣，躬耕于南阳，苟全性命于乱世，不求闻达于诸侯。先帝不以臣卑鄙，猥自枉屈，三顾臣于草庐之中，咨臣以当世之事，由是感激，遂许先帝以驱驰。后值倾覆，受任于败军之际，奉命于危难之间，尔来二十有一年矣。\n' +
+          '\n' +
+          '先帝知臣谨慎，故临崩寄臣以大事也。受命以来，夙夜忧叹，恐托付不效，以伤先帝之明，故五月渡泸，深入不毛。今南方已定，兵甲已足，当奖率三军，北定中原，庶竭驽钝，攘除奸凶，兴复汉室，还于旧都。此臣所以报先帝而忠陛下之职分也。至于斟酌损益，进尽忠言，则攸之、祎、允之任也。\n' +
+          '\n' +
+          '愿陛下托臣以讨贼兴复之效，不效，则治臣之罪，以告先帝之灵。若无兴德之言，则责攸之、祎、允等之慢，以彰其咎；陛下亦宜自谋，以咨诹善道，察纳雅言，深追先帝遗诏，臣不胜受恩感激。\n' +
+          '\n' +
+          '今当远离，临表涕零，不知所言。' +
+          '\n' +
+          '宫中府中，俱为一体，陟罚臧否，不宜异同。若有作奸犯科及为忠善者，宜付有司论其刑赏，以昭陛下平明之理，不宜偏私，使内外异法也。\n' +
+          '\n' +
+          '侍中、侍郎郭攸之、费祎、董允等，此皆良实，志虑忠纯，是以先帝简拔以遗陛下。愚以为宫中之事，事无大小，悉以咨之，然后施行，必能裨补阙漏，有所广益。\n' +
+          '\n' +
+          '将军向宠，性行淑均，晓畅军事，试用于昔日，先帝称之曰能，是以众议举宠为督。愚以为营中之事，悉以咨之，必能使行阵和睦，优劣得所。\n' +
+          '\n' +
+          '亲贤臣，远小人，此先汉所以兴隆也；亲小人，远贤臣，此后汉所以倾颓也。先帝在时，每与臣论此事，未尝不叹息痛恨于桓、灵也。侍中、尚书、长史、参军，此悉贞良死节之臣，愿陛下亲之信之，则汉室之隆，可计日而待也。\n' +
+          '\n' +
+          '臣本布衣，躬耕于南阳，苟全性命于乱世，不求闻达于诸侯。先帝不以臣卑鄙，猥自枉屈，三顾臣于草庐之中，咨臣以当世之事，由是感激，遂许先帝以驱驰。后值倾覆，受任于败军之际，奉命于危难之间，尔来二十有一年矣。\n' +
+          '\n' +
+          '先帝知臣谨慎，故临崩寄臣以大事也。受命以来，夙夜忧叹，恐托付不效，以伤先帝之明，故五月渡泸，深入不毛。今南方已定，兵甲已足，当奖率三军，北定中原，庶竭驽钝，攘除奸凶，兴复汉室，还于旧都。此臣所以报先帝而忠陛下之职分也。至于斟酌损益，进尽忠言，则攸之、祎、允之任也。\n' +
+          '\n' +
+          '愿陛下托臣以讨贼兴复之效，不效，则治臣之罪，以告先帝之灵。若无兴德之言，则责攸之、祎、允等之慢，以彰其咎；陛下亦宜自谋，以咨诹善道，察纳雅言，深追先帝遗诏，臣不胜受恩感激。\n' +
+          '\n' +
+          '今当远离，临表涕零，不知所言。',
+      create_time: '2021-02-02',
+      view: '2000',
+      like: '20',
+      comment: '2',
+      category: 'prometheus'
+    }
+    const recommendList = [
+      {
+        title: '这是第一篇推荐文章标题',
+        cover: 'https://cdn.cuiliangblog.cn/media/images/cover.jpg'
+      },
+      {
+        title: '这是第二篇推荐文章',
+        cover: 'https://cdn.cuiliangblog.cn/media/images/cover.jpg'
+      },
+      {
+        title: '这是第三篇推荐文章标题是第三篇推荐文章标题',
+        cover: 'https://cdn.cuiliangblog.cn/media/images/cover.jpg'
+      },
+      {
+        title: '这是第四篇推荐文章标题',
+        cover: 'https://cdn.cuiliangblog.cn/media/images/cover.jpg'
+      },
+    ]
+    const commentsList = [
+      {
+        id: '1',
+        username: '张三',
+        photo: 'https://cdn.cuiliangblog.cn/media/photo/2020_10_22_13_29_07_420444.jpg',
+        comment: '你笑起来真好看，像春天的花一样',
+        time: '三天前',
+        like: 10,
+        is_like: true,
+        child: [
+          {
+            id: '2',
+            username: '张小三',
+            target: '张三',
+            photo: 'https://cdn.cuiliangblog.cn/media/photo/2021_02_20_11_18_31_393596.jpg',
+            comment: '你说的真对',
+            time: '一天前',
+            like: 8,
+            is_like: false,
+          },
+          {
+            id: '3',
+            username: '张大三',
+            target: '张小三',
+            photo: 'https://cdn.cuiliangblog.cn/media/photo/2020_12_26_21_47_08_682774.jpg',
+            comment: '你们说的都对',
+            time: '8分钟前',
+            like: 2,
+            is_like: false,
+          },
+        ]
+      },
+      {
+        id: '4',
+        username: '李四',
+        photo: 'https://cdn.cuiliangblog.cn/media/photo/default.jpg',
+        comment: '我笑起来也很好看的哦',
+        time: '四天前',
+        like: 8,
+        is_like: false,
+      },
+      {
+        id: '5',
+        username: '王五',
+        photo: 'https://cdn.cuiliangblog.cn/media/photo/2020_12_26_15_35_59_908281.jpg',
+        comment: '别争了，我最好看',
+        time: '一个月前',
+        like: 18,
+        is_like: true,
+      }
+    ]
+    return {
+      componentName,
+      detail,
+      recommendList,
+      commentsList
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+@import "../../assets/style/variable";
+
+.detail {
+  .main {
+    background-color: $color-background-white;
+    padding: 0.267rem 0.133rem;
+
+    .title {
+      h1 {
+        text-align: center;
+        font-weight: normal;
+        margin: 0;
+        padding: 0.4rem 0;
+      }
+
+      .info {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 0.267rem;
+
+        .info-item {
+          border-radius: 0.267rem;
+          margin: 0 0.08rem;
+
+          span:nth-child(1) {
+            width: 0.533rem;
+            display: inline-block;
+            border-radius: 0.133rem 0 0 0.133rem;
+
+            img {
+              margin: 0 0.08rem;
+              width: 0.4rem;
+              height: 0.4rem;
+              vertical-align: -0.107rem;
+            }
+          }
+
+          span:nth-child(2) {
+            margin: 0 0.08rem;
+            vertical-align: -0.027rem;
+          }
+        }
+
+        .info-item:nth-child(1) {
+          border: 1px solid #3498db;
+
+          span:nth-child(1) {
+            background-color: #3498db;
+          }
+
+          span:nth-child(2) {
+            color: #3498db;
+          }
+        }
+
+        .info-item:nth-child(2) {
+          border: 1px solid #2ecc71;
+
+          span:nth-child(1) {
+            background-color: #2ecc71;
+          }
+
+          span:nth-child(2) {
+            color: #2ecc71;
+          }
+        }
+
+        .info-item:nth-child(3) {
+          border: 1px solid #f1c40f;
+
+          span:nth-child(1) {
+            background-color: #f1c40f;
+          }
+
+          span:nth-child(2) {
+            color: #f1c40f;
+          }
+        }
+
+        .info-item:nth-child(4) {
+          border: 1px solid #e67e22;
+
+          span:nth-child(1) {
+            background-color: #e67e22;
+          }
+
+          span:nth-child(2) {
+            color: #e67e22;
+          }
+        }
+
+        .info-item:nth-child(5) {
+          border: 1px solid #9b59b6;
+
+          span:nth-child(1) {
+            background-color: #9b59b6;
+          }
+
+          span:nth-child(2) {
+            color: #9b59b6;
+          }
+        }
+      }
+    }
+
+    .body {
+      margin: 0 0.267rem;
+      line-height: 0.667rem;
+      font-size: 0.427rem;
+    }
+  }
+
+  .recommend {
+    margin: 0.133rem 0;
+    background-color: $color-background-white;
+    padding: 0.267rem 0.133rem;
+
+    .recommend-list {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+
+      .recommend-item {
+        position: relative;
+        margin: 0.133rem;
+        width: 4.533rem;
+
+        span {
+          position: absolute;
+          left: 50%;
+          bottom: 0;
+          transform: translate(-50%, -25%);
+          background-color: rgba(0, 0, 0, 0.3);
+          color: white;
+          width: 4rem;
+          height: 0.347rem;
+          text-align: center;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+
+  .context {
+    display: flex;
+    background-color: $color-background-white;
+    font-size: 16px;
+    color: $color-text-primary;
+
+    div {
+      flex: 1;
+      margin: 10px;
+      background-color: $color-background-base;
+      border-radius: 5px;
+    }
+
+    .last {
+      padding: 5px 5px 5px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .next {
+      padding: 5px 0 5px 5px;
+      text-align: right;
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .comment {
+    background-color: $color-background-white;
+    padding-bottom: 1.333rem;
+  }
+}
+
+
+.bottom-margin {
+  margin-bottom: 1.333rem;
+}
+
+.van-divider--content-left::before {
+  max-width: 0;
+}
+
+.van-divider {
+  font-size: 0.533rem;
+}
+
+.van-divider {
+  margin: 0;
+  padding: 0.267rem 0;
+}
+</style>

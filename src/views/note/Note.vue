@@ -1,0 +1,64 @@
+<template>
+  <div>
+    <NavBar></NavBar>
+    <van-grid :column-num="2" square :gutter="5" clickable>
+      <van-grid-item v-for="(item,index) in noteList" :key="index" @click="$router.push('/catalog')">
+        <van-image :src="item.cover">
+          <template v-slot:loading>
+            <van-loading type="spinner" size="20"/>
+          </template>
+        </van-image>
+        <p>{{ item.name }}</p>
+      </van-grid-item>
+    </van-grid>
+    <Tabbar></Tabbar>
+  </div>
+</template>
+
+<script>
+import NavBar from "@/components/common/NavBar";
+import Tabbar from '@/components/common/Tabbar'
+import {Grid, GridItem, Image as VanImage, Loading} from 'vant';
+
+export default {
+  components: {
+    [Grid.name]: Grid,
+    [GridItem.name]: GridItem,
+    [VanImage.name]: VanImage,
+    [Loading.name]: Loading,
+    NavBar,
+    Tabbar,
+  },
+  name: "Note",
+  setup() {
+    const noteList = [
+      {name: 'Linux', cover: 'https://cdn.cuiliangblog.cn/media/cover/2021_03_27_15_50_51_082246.jpg'},
+      {name: 'Python', cover: 'https://cdn.cuiliangblog.cn/media/cover/2021_03_27_15_50_51_082246.jpg'},
+      {name: 'Django', cover: 'https://cdn.cuiliangblog.cn/media/cover/2021_03_27_15_50_51_082246.jpg'},
+      {name: 'kubernetes', cover: 'https://cdn.cuiliangblog.cn/media/cover/2021_03_27_15_50_51_082246.jpg'},
+      {name: 'prometheus', cover: 'https://cdn.cuiliangblog.cn/media/cover/2021_03_27_15_50_51_082246.jpg'},
+      {name: 'ELK', cover: 'https://cdn.cuiliangblog.cn/media/cover/2021_03_27_15_50_51_082246.jpg'},
+    ]
+    return {
+      noteList
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.van-grid {
+  p {
+    font-size: 15px;
+    margin: 15px 0 0 0;
+  }
+
+  p:before {
+    content: '《';
+  }
+
+  p:after {
+    content: '》';
+  }
+}
+</style>

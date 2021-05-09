@@ -1,0 +1,290 @@
+<template>
+  <div>
+    <section>
+      <div class="wave wave1"></div>
+      <div class="wave wave2"></div>
+      <div class="wave wave3"></div>
+      <div class="wave wave4"></div>
+      <div class="photo">
+        <div class="username">
+          <p>点击头像登录/注册</p>
+        </div>
+        <van-image :src="require('@/assets/images/logo.png')" width="1.867rem"
+                   round
+                   @click="$router.push('/login_register')"
+        >
+          <template v-slot:loading>
+            <van-loading type="spinner" size="20"/>
+          </template>
+        </van-image>
+      </div>
+      <div class="history">
+        <span><van-icon name="clock" size="0.8rem" color="#2ecc71" @click="toView"/><p>浏览记录</p></span>
+        <span><van-icon name="star" size="0.8rem" color="#f1c40f"
+                        @click="$router.push('/my-collect')"/><p>我的收藏</p></span>
+        <span><van-icon name="chat" size="0.8rem" color="#9b59b6"
+                        @click="$router.push('/my-comments')"/><p>我的评论</p></span>
+        <span><van-icon name="bell" size="0.8rem" color="#e74c3c"
+                        @click="$router.push('/my-message')"/><p>消息通知</p></span>
+        <van-badge :content="3" :show-zero="false"/>
+      </div>
+    </section>
+    <div class="cell">
+      <div class="cell-item">
+        <van-cell-group title="账号与安全">
+          <van-cell title="我的信息" size="large" is-link to="/my-info"/>
+          <van-cell title="修改密码" size="large" is-link to="/change-password"/>
+          <van-cell title="更换邮箱" size="large" is-link to="/change-email"/>
+          <van-cell title="绑定第三方账号" size="large" is-link to="/binding"/>
+          <van-cell title="数据统计" size="large" is-link to="/statistics"/>
+        </van-cell-group>
+      </div>
+      <div class="cell-item">
+        <van-cell-group title="支持与反馈">
+          <van-cell title="赞赏支持" size="large" is-link to="/pay"/>
+          <van-cell title="留言反馈" size="large" is-link to="/message"/>
+          <van-cell title="申请友链" size="large" is-link to="/apply-link"/>
+          <van-cell title="联系博主" size="large" is-link to="/contact"/>
+        </van-cell-group>
+      </div>
+      <div class="cell-item">
+        <van-cell-group title="系统与设置">
+          <van-cell title="博文更新邮件通知" size="large">
+            <template #right-icon>
+              <van-switch v-model="flow" @change="changeFlow" size="0.533rem"/>
+            </template>
+          </van-cell>
+          <van-cell title="字体大小" size="large" is-link :value="fontType" to="/fontsize"/>
+          <van-cell title="深色模式" size="large">
+            <template #right-icon>
+              <van-switch v-model="dark" @change="changeDark" size="0.533rem"/>
+            </template>
+          </van-cell>
+          <van-cell title="退出登录" size="large" is-link @click="logout"/>
+        </van-cell-group>
+      </div>
+    </div>
+    <LoginPopup ref="refLoginPopup"></LoginPopup>
+    <Tabbar></Tabbar>
+  </div>
+</template>
+
+<script>
+import Tabbar from "@/components/common/Tabbar";
+import LoginPopup from "@/components/common/LoginPopup";
+import {Image as VanImage, Loading, Icon, Cell, CellGroup, Switch, Dialog, Toast, Badge} from 'vant';
+import {computed, ref} from "vue";
+import store from "@/store";
+
+export default {
+  components: {
+    Tabbar,
+    LoginPopup,
+    [VanImage.name]: VanImage,
+    [Loading.name]: Loading,
+    [Icon.name]: Icon,
+    [Cell.name]: Cell,
+    [CellGroup.name]: CellGroup,
+    [Switch.name]: Switch,
+    [Badge.name]: Badge,
+    Dialog,
+  },
+  name: "Personal",
+  setup() {
+    // 提示登录组件对象
+    const refLoginPopup = ref()
+    // 跳转到浏览历史页
+    const toView = () => {
+      refLoginPopup.value.showPopup()
+    }
+    // 引入系统与设置模块
+    let {flow, changeFlow, fontType, dark, changeDark, logout} = setting()
+    return {
+      dark,
+      toView,
+      refLoginPopup,
+      fontType,
+      changeDark,
+      logout,
+      flow,
+      changeFlow
+    }
+  },
+};
+
+function setting() {
+  // 是否开启订阅
+  const flow = ref(false)
+  // 切换订阅
+  const changeFlow = (value) => {
+    if (value) {
+      Toast('已关闭文章订阅功能')
+    } else {
+      Toast('已开启文章订阅功能')
+    }
+  }
+  // 字体大小
+  const fontType = computed(() => store.state.font.fontType)
+  // 是否开启暗黑模式
+  const dark = computed(() => store.state.dark)
+  // 切换夜间模式
+  const changeDark = (value) => {
+    store.commit('setDark')
+    if (value) {
+      Toast('已开启深色模式')
+    } else {
+      Toast('已关闭深色模式')
+    }
+  }
+  // 注销
+  const logout = () => {
+    Dialog.confirm({
+      title: '警告',
+      message: '真的要退出登录吗？',
+      confirmButtonText: '确认',
+      cancelButtonText: '再想想',
+    })
+        .then(() => {
+          Toast('真的退出了')
+        })
+        .catch(() => {
+          Toast('算了吧')
+        });
+  }
+  return {fontType, dark, changeDark, logout, flow, changeFlow}
+}
+</script>
+<style lang="scss" scoped>
+@import "../../assets/style/variable";
+//水波纹特效和背景图
+
+section {
+  position: relative;
+  width: 100%;
+  height: 2.64rem;
+  background-image: url("../../assets/images/personal-img.jpg");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  padding: 0 0 2.667rem 0;
+
+  .wave {
+    width: 100%;
+    height: 2.667rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: url("../../assets/images/wave.png");
+    background-size: 26.667rem 2.667rem;
+  }
+
+  .wave.wave1 {
+    animation: animate1 20s linear infinite;
+    z-index: 4;
+    opacity: 0.1;
+    animation-delay: 0s;
+    bottom: -15px;
+  }
+
+  .wave.wave2 {
+    animation: animate2 15s linear infinite;
+    z-index: 3;
+    opacity: 0.2;
+    animation-delay: -5s;
+    bottom: -10px;
+  }
+
+  .wave.wave3 {
+    animation: animate1 10s linear infinite;
+    z-index: 2;
+    opacity: 0.3;
+    animation-delay: -7s;
+    bottom: -5px;
+  }
+
+  .wave.wave4 {
+    animation: animate2 5s linear infinite;
+    z-index: 1;
+    opacity: 0.4;
+    animation-delay: -5s;
+    bottom: 0;
+  }
+
+  .history {
+    display: flex;
+    background-color: white;
+    padding: 0.8rem 0 0.267rem 0;
+    border-radius: 0.4rem;
+    position: absolute;
+    width: 8.533rem;
+    transform: translateX(-50%);
+    left: 50%;
+    bottom: -22.5%;
+    z-index: 4;
+    box-shadow: #8bb9f3 0rem 0.027rem 0.133rem 0.053rem;
+
+    span {
+      flex: 1;
+      text-align: center;
+
+      p {
+        margin-top: 0.187rem;
+      }
+    }
+  }
+
+  .photo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 20%;
+    z-index: 5;
+    text-align: center;
+
+    .username {
+      p {
+        font-size: 0.427rem;
+        color: white;
+        margin-bottom: 0.533rem;
+      }
+    }
+
+    .van-image {
+      box-shadow: grey 0rem 0.053rem 0.133rem 0.053rem
+    }
+  }
+
+}
+
+@keyframes animate1 {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: 26.667rem;
+  }
+}
+
+@keyframes animate2 {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: -26.667rem;
+  }
+}
+
+.cell {
+  margin-top: 1.467rem;
+
+  .cell-item {
+    margin: 0.267rem;
+    background-color: white;
+    box-shadow: 0 0.027rem 0.107rem rgb(0 0 0 / 10%);
+  }
+}
+
+.van-badge {
+  position: absolute;
+  right: 3%;
+}
+</style>

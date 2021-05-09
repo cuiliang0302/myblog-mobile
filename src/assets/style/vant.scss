@@ -1,0 +1,76 @@
+@import "variable";
+//底部tabbar最大宽度限制
+.van-tabbar--fixed {
+  max-width: 560px !important;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+}
+
+//顶部导航栏最大宽度限制
+.van-nav-bar--fixed {
+  max-width: 560px !important;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  z-index: 2 !important;
+}
+
+//tabs粘性布局
+.van-tabs__wrap {
+  position: sticky;
+  top: 1.067rem;
+  z-index: 2;
+  position: -webkit-sticky;
+  border-bottom: 1px solid $color-border-base;
+}
+
+//搜索框样式
+.van-search__content {
+  border-radius: 0.533rem !important;
+}
+
+//导航栏最大宽度限制
+.van-nav-bar__title {
+  max-width: 85% !important;
+}
+
+//搜索框宽度设置
+.van-search {
+  padding: 0 !important;
+  width: 6.667rem;
+}
+
+//导航栏左侧图标颜色和大小
+.van-nav-bar .van-icon {
+  color: $color-text-primary !important;
+  font-size: 25px !important;
+}
+
+//评论输入框右侧图标尺寸
+.van-field__right-icon {
+  .van-icon__image {
+    transform: scale(3) translate(-0.053rem);
+  }
+}
+
+//弹窗遮罩超出部分正常显示
+.van-popup {
+  overflow: visible;
+  border-radius: 0.133rem;
+}
+
+// 页面动画切换后，导航栏高度顶部问题适配
+.van-nav-bar__placeholder {
+  height: 1.2rem !important;
+}
+
+// 页面动画切换后，导航栏高度底部问题适配
+.van-tabbar__placeholder {
+  height: 1.2rem !important;
+}
+
+// 弹出层关闭按钮层级
+.van-popup__close-icon {
+  z-index: 2 !important;
+}
