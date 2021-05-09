@@ -1,7 +1,7 @@
 <template>
   <van-tabs v-model:active="activeName" color="#44afe0" @click="tabClick" animated swipeable>
     <van-tab v-for="(item,index) in tabList" :key="index" :title="item.title" :name="item.name">
-      <List></List>
+      <List :data="dataList"></List>
     </van-tab>
   </van-tabs>
 </template>
@@ -20,7 +20,15 @@ export default {
   },
   name: "Tab",
   props: {
+    // 标签栏列表
     tabList: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
+    // 内容列表
+    dataList:{
       type: Array,
       default() {
         return [];

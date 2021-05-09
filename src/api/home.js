@@ -3,3 +3,7 @@ import http from './http'
 export function getCarousel(){
   return http.get('carousel/')
 }
+// 获取文章列表
+export function getArticle(){
+  return http.get('article/')
+}

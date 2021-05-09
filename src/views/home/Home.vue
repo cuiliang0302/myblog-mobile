@@ -2,7 +2,7 @@
   <div>
     <NavBar></NavBar>
     <Swipe :carouselList="carouselList"></Swipe>
-    <Tab :tabList="tabList"></Tab>
+    <Tab :tabList="tabList" :dataList="article.articleList"></Tab>
     <Tabbar></Tabbar>
   </div>
 </template>
@@ -12,8 +12,8 @@ import NavBar from "@/components/common/NavBar";
 import Swipe from "@/components/home/Swipe";
 import Tab from "@/components/common/Tab";
 import Tabbar from '@/components/common/Tabbar'
-import {getCarousel} from '@/api/home'
-import {onDeactivated, onMounted, ref} from "vue";
+import {getCarousel, getArticle} from '@/api/home'
+import {onDeactivated, onMounted, reactive, ref} from "vue";
 
 export default {
   name: 'Home',
@@ -26,32 +26,38 @@ export default {
   setup() {
     // 轮播图数据
     let carouselList = ref([])
-    // async function carousel () {
-    //   let res = await getCarousel()
-    //   this.barData.push(res.normal)
-    //   this.barData.push(res.alert)
-    //   this.barData.push(res.down)
-    // }
+
     // 获取轮播图数据
+    async function carouselData() {
+      carouselList.value = await getCarousel()
+    }
+
+    // 文章列表数据
+    let article = reactive({
+      count: '',
+      articleList: []
+    })
+
+    // 获取文章列表数据
+    async function articleData() {
+      const article_data = await getArticle()
+      console.log(article_data)
+      article.articleList = article_data.results
+    }
+
     onMounted(() => {
-      getCarousel().then((response) => {
-        console.log(response)
-        carouselList.value = response
-      }).catch(error => {
-        //发生错误时执行的代码
-        console.log('异常响应')
-        console.log(error)
-      })
+      carouselData()
+      articleData()
     })
     // Tab 标签分类名
     const tabList = [
       {
-        title: '强烈推荐',
-        name: 'recommend'
-      },
-      {
         title: '最新发布',
         name: 'new'
+      },
+      {
+        title: '强烈推荐',
+        name: 'recommend'
       },
       {
         title: '最受欢迎',
@@ -64,14 +70,16 @@ export default {
     ]
     return {
       tabList,
-      carouselList
+      carouselList,
+      article
     }
   }
 }
 </script>
 <style lang="scss">
 @import "../../assets/style/variable";
-.van-swipe{
-  margin: 0!important;
+
+.van-swipe {
+  margin: 0 !important;
 }
 </style>

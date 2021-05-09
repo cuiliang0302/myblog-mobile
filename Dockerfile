@@ -1,5 +1,6 @@
 FROM node:14.16.0 AS build
 COPY . /opt/myblog_mobile
+RUN rm -rf /opt/myblog_mobile/src/api/request.js && mv /opt/myblog_mobile/src/api/request_prod.js /opt/myblog_mobile/src/api/request.js
 WORKDIR /opt/myblog_mobile
 RUN npm install && npm run build
 
