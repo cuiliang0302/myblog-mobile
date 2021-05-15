@@ -1,6 +1,6 @@
 <template>
-  <van-tabs v-model:active="activeName" color="#44afe0" animated swipeable>
-    <van-tab v-for="(item,index) in tabList" :key="index" :title="item.title" :name="item.name">
+  <van-tabs :active="activeTab" color="#44afe0" animated swipeable>
+    <van-tab v-for="(item,index) in tabList" :key="index" :title="item.name" :name="item.id">
       <van-pull-refresh v-model="listState.refreshing" @refresh="onRefresh">
         <van-list
             v-model:loading="listState.loading"
@@ -72,7 +72,7 @@ export default {
     }
   },
   setup(props, {emit}) {
-    const activeName = ref('');
+    const activeTab = ref('');
     const router = useRouter()
     // 时间显示几天前
     let {timeAgo} = timeFormat()
@@ -96,7 +96,7 @@ export default {
       router.push({path: '/detail', query: {component: 'article'}})
     }
     return {
-      activeName,
+      activeTab,
       refresh,
       onRefresh,
       onLoad,

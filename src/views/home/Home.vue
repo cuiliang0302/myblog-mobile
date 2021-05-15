@@ -56,20 +56,20 @@ export default {
     // Tab 标签分类名
     const tabList = [
       {
-        title: '最新发布',
-        name: '0',
+        id:0,
+        name: '最新发布',
       },
       {
-        title: '强烈推荐',
-        name: '1',
+        id:1,
+        name: '强烈推荐',
       },
       {
-        title: '最受欢迎',
-        name: '2',
+        id:2,
+        name: '最受欢迎',
       },
       {
-        title: '最多评论',
-        name: '3',
+        id:3,
+        name: '最多评论',
       }
     ]
     // 标签页排序关键词
