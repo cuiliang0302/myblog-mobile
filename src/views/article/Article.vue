@@ -55,7 +55,7 @@ export default {
     const onLoad = () => {
       listState.page++
       if (listState.list.length < listState.count) {
-        getArticle(listState.page, listState.order).then((response) => {
+        getArticle(listState.page, listState.order, listState.category).then((response) => {
           console.log(response)
           listState.list.push(...response.results)
           listState.count = response.count
@@ -67,7 +67,8 @@ export default {
     }
     // 子组件的刷新事件
     const onRefresh = () => {
-      getArticle(listState.page, listState.order).then((response) => {
+      listState.page = 1
+      getArticle(listState.page, listState.order, listState.category).then((response) => {
         console.log(response)
         listState.list = response.results
         listState.count = response.count

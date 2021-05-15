@@ -116,7 +116,7 @@ const routes = [
     }
   },
   {
-    path: '/detail',
+    path: '/detail/:id',
     name: 'Detail',
     component: () => import('@/views/public/Detail'),
     meta: {

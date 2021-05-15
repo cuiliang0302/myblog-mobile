@@ -19,6 +19,8 @@
 import NavBar from "@/components/common/NavBar";
 import Tabbar from '@/components/common/Tabbar'
 import {Grid, GridItem, Image as VanImage, Loading} from 'vant';
+import {onMounted, ref} from "vue";
+import {getNote} from "@/api/note";
 
 export default {
   components: {
@@ -31,14 +33,16 @@ export default {
   },
   name: "Note",
   setup() {
-    const noteList = [
-      {name: 'Linux', cover: 'https://cdn.cuiliangblog.cn/media/cover/2021_03_27_15_50_51_082246.jpg'},
-      {name: 'Python', cover: 'https://cdn.cuiliangblog.cn/media/cover/2021_03_27_15_50_51_082246.jpg'},
-      {name: 'Django', cover: 'https://cdn.cuiliangblog.cn/media/cover/2021_03_27_15_50_51_082246.jpg'},
-      {name: 'kubernetes', cover: 'https://cdn.cuiliangblog.cn/media/cover/2021_03_27_15_50_51_082246.jpg'},
-      {name: 'prometheus', cover: 'https://cdn.cuiliangblog.cn/media/cover/2021_03_27_15_50_51_082246.jpg'},
-      {name: 'ELK', cover: 'https://cdn.cuiliangblog.cn/media/cover/2021_03_27_15_50_51_082246.jpg'},
-    ]
+    const noteList = ref([])
+    // 获取笔记列表数据
+    async function noteData() {
+      const article_data = await getNote()
+      console.log(article_data)
+      noteList.value = article_data
+    }
+    onMounted(() => {
+      noteData()
+    })
     return {
       noteList
     }

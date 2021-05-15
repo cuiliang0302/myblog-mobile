@@ -29,11 +29,6 @@ export default {
     // 轮播图数据
     let carouselList = ref([])
 
-    // 获取轮播图数据
-    async function carouselData() {
-      carouselList.value = await getCarousel()
-    }
-
     // 文章列表数据
     const listState = reactive({
       list: [],
@@ -45,30 +40,22 @@ export default {
       refreshing: false,
     });
 
-    // 首屏获取文章列表数据
-    async function articleData(page = 1, order = '-created_time') {
-      const article_data = await getArticle(page, order)
-      console.log(article_data)
-      listState.list = article_data.results
-      listState.count = article_data.count
-    }
-
     // Tab 标签分类名
     const tabList = [
       {
-        id:0,
+        id: 0,
         name: '最新发布',
       },
       {
-        id:1,
+        id: 1,
         name: '强烈推荐',
       },
       {
-        id:2,
+        id: 2,
         name: '最受欢迎',
       },
       {
-        id:3,
+        id: 3,
         name: '最多评论',
       }
     ]
@@ -112,6 +99,20 @@ export default {
         Toast.success('刷新成功');
       })
     }
+
+    // 获取轮播图数据
+    async function carouselData() {
+      carouselList.value = await getCarousel()
+    }
+
+    // 获取文章列表数据
+    async function articleData(page = 1, order = '-created_time') {
+      const article_data = await getArticle(page, order)
+      console.log(article_data)
+      listState.list = article_data.results
+      listState.count = article_data.count
+    }
+
     onMounted(() => {
       carouselData()
       articleData()

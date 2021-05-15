@@ -9,7 +9,7 @@
             @load="onLoad"
             :immediate-check=false
         >
-          <div class="list-item" v-for="(item,index) in listState.list" :key="index" @click="toDetail">
+          <div class="list-item" v-for="(item,index) in listState.list" :key="index" @click="toDetail(item.id)">
             <div class="title">{{ item.title }}</div>
             <div class="list-main">
         <span class="cover">
@@ -92,8 +92,8 @@ export default {
       emit('onLoad')
     };
     // 点击查看文章详情
-    const toDetail = () => {
-      router.push({path: '/detail', query: {component: 'article'}})
+    const toDetail = (id) => {
+      router.push({path: `/detail/${id}`, query: {component: 'article'}})
     }
     return {
       activeTab,

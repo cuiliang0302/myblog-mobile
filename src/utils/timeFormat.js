@@ -58,8 +58,18 @@ function timeFormat() {
     }
     return result
   }
+  const timeDate = (valueTime) =>{
+    if(valueTime){
+      const valueDate = new Date(valueTime)
+      const year = valueDate.getFullYear()
+      const month = valueDate.getMonth()+1
+      const date = valueDate.getDate()
+      return (year+"-"+month+"-"+date);
+    }
+  }
   return {
-    timeAgo
+    timeAgo,
+    timeDate
   }
 }
 
