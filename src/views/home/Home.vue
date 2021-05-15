@@ -2,7 +2,8 @@
   <div>
     <NavBar></NavBar>
     <Swipe :carouselList="carouselList"></Swipe>
-    <Tab :tabList="tabList" :dataList="article.articleList"></Tab>
+    <TabList :tabList="tabList" :listState="listState" @click="tabClick" @onLoad="onLoad"
+             @onRefresh="onRefresh"></TabList>
     <Tabbar></Tabbar>
   </div>
 </template>
@@ -10,17 +11,18 @@
 <script>
 import NavBar from "@/components/common/NavBar";
 import Swipe from "@/components/home/Swipe";
-import Tab from "@/components/common/Tab";
+import TabList from "@/components/common/TabList";
 import Tabbar from '@/components/common/Tabbar'
 import {getCarousel, getArticle} from '@/api/home'
 import {onDeactivated, onMounted, reactive, ref} from "vue";
+import {Toast} from "vant";
 
 export default {
   name: 'Home',
   components: {
     NavBar,
     Swipe,
-    Tab,
+    TabList,
     Tabbar,
   },
   setup() {
@@ -33,45 +35,95 @@ export default {
     }
 
     // 文章列表数据
-    let article = reactive({
-      count: '',
-      articleList: []
-    })
+    const listState = reactive({
+      list: [],
+      page: 1,
+      count: 1,
+      order: '-created_time',
+      loading: false,
+      finished: false,
+      refreshing: false,
+    });
 
-    // 获取文章列表数据
-    async function articleData() {
-      const article_data = await getArticle()
+    // 首屏获取文章列表数据
+    async function articleData(page = 1, order = '-created_time') {
+      const article_data = await getArticle(page, order)
       console.log(article_data)
-      article.articleList = article_data.results
+      listState.list = article_data.results
+      listState.count = article_data.count
     }
 
-    onMounted(() => {
-      carouselData()
-      articleData()
-    })
     // Tab 标签分类名
     const tabList = [
       {
         title: '最新发布',
-        name: 'new'
+        name: '0',
       },
       {
         title: '强烈推荐',
-        name: 'recommend'
+        name: '1',
       },
       {
         title: '最受欢迎',
-        name: 'view'
+        name: '2',
       },
       {
         title: '最多评论',
-        name: 'comment'
+        name: '3',
       }
     ]
+    // 标签页排序关键词
+    let types = ['-created_time', '-is_recommend,-created_time', '-view,-created_time', '-comment,-created_time']
+    // 标签页点击切换
+    const tabClick = (index) => {
+      listState.finished = false
+      listState.list = []
+      listState.order = types[index]
+      listState.page = 1
+      getArticle(listState.page, listState.order).then((response) => {
+        console.log(response)
+        listState.page++
+        listState.list = response.results
+        listState.count = response.count
+        listState.loading = false;
+      })
+    }
+    // 子组件的加载下一页事件
+    const onLoad = () => {
+      listState.page++
+      if (listState.list.length < listState.count) {
+        getArticle(listState.page, listState.order).then((response) => {
+          console.log(response)
+          listState.list.push(...response.results)
+          listState.count = response.count
+          listState.loading = false;
+        })
+      } else {
+        listState.finished = true;
+      }
+    }
+    // 子组件的刷新事件
+    const onRefresh = () => {
+      getArticle(listState.page, listState.order).then((response) => {
+        console.log(response)
+        listState.list = response.results
+        listState.count = response.count
+        listState.refreshing = false;
+        Toast.success('刷新成功');
+      })
+    }
+    onMounted(() => {
+      carouselData()
+      articleData()
+    })
+
     return {
       tabList,
       carouselList,
-      article
+      listState,
+      tabClick,
+      onLoad,
+      onRefresh
     }
   }
 }

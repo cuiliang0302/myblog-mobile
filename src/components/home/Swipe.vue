@@ -12,14 +12,15 @@
 </template>
 
 <script>
-import {Swipe, SwipeItem, Image as VanImage, Loading} from 'vant';
+import {Swipe, SwipeItem, Image as VanImage, Loading, Toast} from 'vant';
 
 export default {
   components: {
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
     [VanImage.name]: VanImage,
-    [Loading.name]: Loading
+    [Loading.name]: Loading,
+    Toast
   },
   name: "Swipe",
   props: {
@@ -34,6 +35,10 @@ export default {
   setup() {
     const toView = (url) => {
       window.location.href = url
+      Toast.loading({
+        message: '第三方站点跳转中...',
+        forbidClick: true,
+      });
     };
     return {toView};
   },

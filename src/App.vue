@@ -1,16 +1,16 @@
 <template>
   <div id="app">
     <router-view class="router-view" v-slot="{ Component }">
-      <transition-group :enter-active-class="enterClass"
+      <transition :enter-active-class="enterClass"
                   :leave-active-class="leaveClass"
                   :duration="{ enter: 800, leave: 500 }">
-          <!--        需要缓存的视图-->
-          <keep-alive v-if="$route.meta.keepAlive" :key="1">
-            <component :is="Component"/>
-          </keep-alive>
-          <!--        不需要缓存的视图-->
-          <component v-else :is="Component" :key="2"/>
-      </transition-group>
+        <!--          &lt;!&ndash;        需要缓存的视图&ndash;&gt;-->
+        <!--          <keep-alive v-if="$route.meta.keepAlive" :key="1">-->
+        <!--            <component :is="Component"/>-->
+        <!--          </keep-alive>-->
+        <!--        不需要缓存的视图-->
+        <component :is="Component"/>
+      </transition>
     </router-view>
   </div>
   <!--  <router-view></router-view>-->
@@ -45,7 +45,7 @@ export default {
           // 平滑切换
           if (transitionClass === 'back') {
             enterClass.value = 'animate__animated animate__fadeInRight'
-            leaveClass.value = 'animate__animated animate__fadeOutRight'
+            leaveClass.value = 'animate__animated animate__fadeOutLeft'
           }
           // 跳转
           else if (transitionClass === 'jump') {
@@ -59,8 +59,8 @@ export default {
           }
           // 快速切换
           else if (transitionClass === 'fast') {
-            enterClass.value = 'animate__animated animate__fadeInRightBig'
-            leaveClass.value = 'animate__animated animate__fadeOutRightBig'
+            enterClass.value = 'animate__animated animate__slideInRight'
+            leaveClass.value = 'animate__animated animate__slideOutLeft'
           } else {
             enterClass.value = ''
             leaveClass.value = ''
