@@ -29,7 +29,9 @@
       </span>
         </div>
       </div>
-      <div class="body">{{ detail.body }}</div>
+      <div class="body">
+        <v-md-preview :text="detail.body"></v-md-preview>
+      </div>
     </div>
     <div class="recommend" v-show="componentName==='article'">
       <van-divider content-position="left">💖 猜你喜欢</van-divider>
@@ -72,6 +74,22 @@ import {useRouter} from "vue-router";
 import {getArticleDetail} from "@/api/public";
 import timeFormat from "@/utils/timeFormat";
 
+import VMdPreview from '@kangc/v-md-editor/lib/preview';
+import '@kangc/v-md-editor/lib/style/preview.css';
+import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
+import '@kangc/v-md-editor/lib/theme/style/github.css';
+import python from 'highlight.js/lib/languages/python';
+import bash from 'highlight.js/lib/languages/bash';
+
+VMdPreview.use(githubTheme, {
+  codeHighlightExtensionMap: {
+    vue: 'xml',
+  },
+  extend(md, hljs) {
+    hljs.registerLanguage('python', python);
+    hljs.registerLanguage('bash', bash);
+  },
+});
 export default {
   components: {
     [Divider.name]: Divider,
@@ -80,6 +98,7 @@ export default {
     NavBar,
     Tabbar,
     Comments,
+    VMdPreview
   },
   name: "Detail",
   setup() {
@@ -95,7 +114,23 @@ export default {
     async function detailData(DetailID) {
       const detail_data = await getArticleDetail(DetailID)
       for (let i in detail_data) {
-        detail[i] = detail_data[i]
+        if (i === 'body') {
+          detail.body = detail_data.body
+          const pattern = /!\[(.*?)\]\((.*?)\)/gm;
+          let matcher;
+          let imgArr = [];
+          while ((matcher = pattern.exec(detail.body)) !== null) {
+            imgArr.push(matcher[2]);
+          }
+          for (let i = 0; i < imgArr.length; i++) {
+            detail.body = detail.body.replace(
+                imgArr[i],
+                "https://images.weserv.nl/?url=" + imgArr[i]
+            );
+          }
+        }else {
+          detail[i] = detail_data[i]
+        }
       }
     }
 
@@ -294,8 +329,6 @@ export default {
 
     .body {
       margin: 0 0.267rem;
-      line-height: 0.667rem;
-      font-size: 0.427rem;
     }
   }
 
@@ -381,5 +414,9 @@ export default {
 .van-divider {
   margin: 0;
   padding: 0.267rem 0;
+}
+
+.v-md-editor-preview {
+  padding: 0;
 }
 </style>

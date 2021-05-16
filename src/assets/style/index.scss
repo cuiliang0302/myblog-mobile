@@ -11,3 +11,8 @@ body{
   box-sizing: border-box;
   background-color: $color-background-base;
 }
+//markdown样式
+.github-markdown-body blockquote{
+  margin-left: 0px!important;
+  margin-right: 0px!important;
+}

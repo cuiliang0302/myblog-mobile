@@ -1,60 +1,62 @@
 <template>
   <div class="main">
-    <van-tabs v-model:active="active" @click="onClick">
-      <van-tab v-for="(item,index) in tabList" :key="index" :title="item.name" :name="item.id">内容</van-tab>
-    </van-tabs>
+    <div class="body">
+      <v-md-preview :text="text"></v-md-preview>
+    </div>
   </div>
 </template>
-
 <script>
-import {Tab, Tabs, Cell} from 'vant';
-import {reactive, ref} from "vue";
-
+import {onMounted, ref} from "vue";
+import VMdPreview from '@kangc/v-md-editor/lib/preview';
+import '@kangc/v-md-editor/lib/style/preview.css';
+import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
+import '@kangc/v-md-editor/lib/theme/style/github.css';
+import python from 'highlight.js/lib/languages/python';
+VMdPreview.use(githubTheme, {
+  codeHighlightExtensionMap: {
+    vue: 'xml',
+  },
+  extend(md, hljs) {
+    hljs.registerLanguage('python', python);
+  },
+});
+import {getArticleDetail} from "@/api/public";
 export default {
   components: {
-    [Tab.name]: Tab,
-    [Tabs.name]: Tabs,
-    [Cell.name]: Cell,
+    VMdPreview
   },
   name: "Test",
   setup() {
-    const active = ref(2);
-    const tabList = [
-      {
-        id: 0,
-        name: '最新发布',
-      },
-      {
-        id: 1,
-        name: '强烈推荐',
-      },
-      {
-        id: 2,
-        name: '最受欢迎',
-      },
-      {
-        id: 3,
-        name: '最多评论',
+    let text = ref('')
+    async function detailData(DetailID) {
+      const detail_data = await getArticleDetail(DetailID)
+      text.value = detail_data.body
+      const pattern = /!\[(.*?)\]\((.*?)\)/gm;
+      let matcher;
+      let imgArr = [];
+      while ((matcher = pattern.exec(text.value)) !== null) {
+        imgArr.push(matcher[2]);
       }
-    ]
-    const onClick = (name, title) => console.log(title);
-    return {active, tabList, onClick};
-  },
+      for (let i = 0; i < imgArr.length; i++) {
+        text.value = text.value.replace(
+            imgArr[i],
+            "https://images.weserv.nl/?url=" + imgArr[i]
+        );
+      }
+    }
+    onMounted(() => {
+      detailData(17)
+    })
+    return {
+      text,
+    }
+  }
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import "src/assets/style/variable";
-
-.main {
-  height: 1000px;
-
-  h1 {
-    font-size: 100px;
-  }
-
-  .van-cell {
-    height: 200px;
-  }
+body{
+  background-color: $color-background-white;
 }
 </style>

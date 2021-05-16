@@ -8,9 +8,11 @@
   },
   "dependencies": {
     "@antv/f2": "^3.8.6",
+    "@kangc/v-md-editor": "^2.2.4",
     "animate.css": "^4.1.1",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "highlight.js": "^10.7.2",
     "lib-flexible": "^0.3.2",
     "lodash": "^4.17.21",
     "vant": "^3.0.12",

@@ -3,7 +3,7 @@
     <router-view class="router-view" v-slot="{ Component }">
       <transition :enter-active-class="enterClass"
                   :leave-active-class="leaveClass"
-                  :duration="{ enter: 500, leave: 300 }">
+                  :duration="{ enter: 400, leave: 400 }">
         <!--          &lt;!&ndash;        需要缓存的视图&ndash;&gt;-->
         <!--          <keep-alive v-if="$route.meta.keepAlive" :key="1">-->
         <!--            <component :is="Component"/>-->

@@ -1,74 +1,41 @@
-<!--重置密码-->
 <template>
   <div class="main">
-    <h1>TEST1</h1>
-    <h1>TEST1</h1>
-    <h1>TEST1</h1>
-    <h1>TEST1</h1>
-    <h1>TEST1</h1>
-    <router-link to="/test">去test</router-link>
-    <van-button type="primary" @click="get">取值</van-button>
-    <van-button type="success" @click="set">存值</van-button>
-    <h1>TEST1</h1>
-    <h1>TEST1</h1>
-    <h1>TEST1</h1>
-    <h1>TEST1</h1>
-    <h1>TEST1</h1>
-    <h1>TEST1</h1>
-    <h1>TEST1</h1>
+    <v-md-editor v-model="text" height="100vh"></v-md-editor>
   </div>
 </template>
 
 <script>
-import {Step, Steps, Form, Button, Field} from 'vant';
-import {onActivated, onDeactivated, reactive, ref} from "vue";
-import TimeLine from "@/components/common/TimeLine";
-import viewScrollTop from "@/utils/viewScrollTop";
-import {useRouter} from "vue-router";
-import sessionStorage from "@/utils/sessionStorage";
+import {onMounted, ref} from "vue";
+import VMdEditor from '@kangc/v-md-editor';
+import '@kangc/v-md-editor/lib/style/base-editor.css';
+import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
+import '@kangc/v-md-editor/lib/theme/style/github.css';
 
+VMdEditor.use(githubTheme);
+import {getArticleDetail} from "@/api/public";
 export default {
   components: {
-    TimeLine,
-    [Button.name]: Button
+    VMdEditor
   },
   name: "Test1",
   setup() {
-    let {getScrollTop, setScrollTop} = viewScrollTop()
-    let {getValue, setValue} = sessionStorage()
-    const router = useRouter()
-    let view = router.currentRoute.value.name
-    const activated = onActivated(() => {
-      getScrollTop(view)
-    })
-    const get = () => {
-      let scrollTop = Math.max(window.pageYOffset, document.documentElement.scrollTop)
-      console.log("这是get方法的值：",scrollTop)
-      getValue(view)
+    let text = ref('')
+
+    async function detailData(DetailID) {
+      const detail_data = await getArticleDetail(DetailID)
+      text.value = detail_data.body
     }
-    const set = () => {
-      let scrollTop = Math.max(window.pageYOffset, document.documentElement.scrollTop)
-      console.log("这是set方法")
-      setValue(view,scrollTop)
-    }
-    const deactivated = onDeactivated(() => {
-      setScrollTop(view)
+
+    onMounted(() => {
+      detailData(18)
     })
     return {
-      activated, deactivated, get,set
+      text
     }
-  },
+  }
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import "src/assets/style/variable";
-
-.main {
-  height: 1000px;
-
-  h1 {
-    font-size: 100px;
-  }
-}
 </style>
