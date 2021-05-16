@@ -36,7 +36,7 @@
     <div class="recommend" v-show="componentName==='article'">
       <van-divider content-position="left">💖 猜你喜欢</van-divider>
       <div class="recommend-list">
-        <div class="recommend-item" v-for="(item,index) in recommendList" :key="index">
+        <div class="recommend-item" v-for="(item,index) in recommendList" :key="index" @click="toDetail(item.id)">
           <van-image :src="item.cover" radius="0.4rem" width="100%" height="3.2rem" lazy-load>
             <template v-slot:loading>
               <van-loading type="spinner" size="20"/>
@@ -69,9 +69,9 @@ import NavBar from '@/components/deatil/NavBar';
 import Tabbar from '@/components/deatil/Tabbar';
 import Comments from '@/components/common/Comments'
 import {Divider, Image as VanImage, Loading, Toast} from 'vant'
-import {onMounted, reactive, ref} from "vue";
+import {onBeforeUpdate, onMounted, reactive, ref} from "vue";
 import {useRouter} from "vue-router";
-import {getArticleDetail} from "@/api/public";
+import {getArticleDetail, getGuessLike} from "@/api/article";
 import timeFormat from "@/utils/timeFormat";
 
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
@@ -84,6 +84,7 @@ import dockerfile from 'highlight.js/lib/languages/dockerfile';
 import json from 'highlight.js/lib/languages/json';
 import yaml from 'highlight.js/lib/languages/yaml';
 import sql from 'highlight.js/lib/languages/sql';
+
 VMdPreview.use(githubTheme, {
   codeHighlightExtensionMap: {
     vue: 'xml',
@@ -114,8 +115,18 @@ export default {
     const componentName = ref('')
     // 文章详情
     let detail = reactive({})
+    // 猜你喜欢列表
+    const recommendList = ref([])
     // 文章发布日期只保留天
     let {timeDate} = timeFormat()
+
+    // 猜你喜欢跳转
+    const toDetail = (DetailID) => {
+      router.push({path: `/detail/${DetailID}`, query: {component: 'article'}})
+      detailData(DetailID)
+      guessLikeData(DetailID)
+      window.scrollTo({top: 0})
+    }
 
     // 获取文章详情
     async function detailData(DetailID) {
@@ -135,10 +146,16 @@ export default {
                 "https://images.weserv.nl/?url=" + imgArr[i]
             );
           }
-        }else {
+        } else {
           detail[i] = detail_data[i]
         }
       }
+    }
+
+    // 获取猜你喜欢
+    async function guessLikeData(DetailID) {
+      const guessLike_data = await getGuessLike(DetailID)
+      recommendList.value = guessLike_data
     }
 
     onMounted(() => {
@@ -146,26 +163,9 @@ export default {
       let DetailID = router.currentRoute.value.params.id
       if (componentName.value === 'article') {
         detailData(DetailID)
+        guessLikeData(DetailID)
       }
     })
-    const recommendList = [
-      {
-        title: '这是第一篇推荐文章标题',
-        cover: 'https://cdn.cuiliangblog.cn/media/images/cover.jpg'
-      },
-      {
-        title: '这是第二篇推荐文章',
-        cover: 'https://cdn.cuiliangblog.cn/media/images/cover.jpg'
-      },
-      {
-        title: '这是第三篇推荐文章标题是第三篇推荐文章标题',
-        cover: 'https://cdn.cuiliangblog.cn/media/images/cover.jpg'
-      },
-      {
-        title: '这是第四篇推荐文章标题',
-        cover: 'https://cdn.cuiliangblog.cn/media/images/cover.jpg'
-      },
-    ]
     const commentsList = [
       {
         id: '1',
@@ -221,6 +221,7 @@ export default {
       componentName,
       detail,
       timeDate,
+      toDetail,
       recommendList,
       commentsList
     }

@@ -12,7 +12,7 @@ import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
 import '@kangc/v-md-editor/lib/theme/style/github.css';
 
 VMdEditor.use(githubTheme);
-import {getArticleDetail} from "@/api/public";
+import {getArticleDetail} from "@/api/article";
 export default {
   components: {
     VMdEditor

@@ -4,11 +4,12 @@
       <transition :enter-active-class="enterClass"
                   :leave-active-class="leaveClass"
                   :duration="{ enter: 400, leave: 400 }">
-        <!--          &lt;!&ndash;        需要缓存的视图&ndash;&gt;-->
-        <!--          <keep-alive v-if="$route.meta.keepAlive" :key="1">-->
-        <!--            <component :is="Component"/>-->
-        <!--          </keep-alive>-->
-        <!--        不需要缓存的视图-->
+<!--        &lt;!&ndash;需要缓存的视图&ndash;&gt;-->
+<!--        <keep-alive v-if="$route.meta.keepAlive" :key="1">-->
+<!--          <component :is="Component"/>-->
+<!--        </keep-alive>-->
+<!--        &lt;!&ndash;不需要缓存的视图&ndash;&gt;-->
+<!--        <component v-else :is="Component" :key="2"/>-->
         <component :is="Component"/>
       </transition>
     </router-view>
