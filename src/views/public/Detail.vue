@@ -80,7 +80,10 @@ import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
 import '@kangc/v-md-editor/lib/theme/style/github.css';
 import python from 'highlight.js/lib/languages/python';
 import bash from 'highlight.js/lib/languages/bash';
-
+import dockerfile from 'highlight.js/lib/languages/dockerfile';
+import json from 'highlight.js/lib/languages/json';
+import yaml from 'highlight.js/lib/languages/yaml';
+import sql from 'highlight.js/lib/languages/sql';
 VMdPreview.use(githubTheme, {
   codeHighlightExtensionMap: {
     vue: 'xml',
@@ -88,6 +91,10 @@ VMdPreview.use(githubTheme, {
   extend(md, hljs) {
     hljs.registerLanguage('python', python);
     hljs.registerLanguage('bash', bash);
+    hljs.registerLanguage('dockerfile', dockerfile);
+    hljs.registerLanguage('json', json);
+    hljs.registerLanguage('yaml', yaml);
+    hljs.registerLanguage('sql', sql);
   },
 });
 export default {
