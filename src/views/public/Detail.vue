@@ -2,36 +2,38 @@
 <template>
   <div class="detail">
     <NavBar></NavBar>
-    <div class="main">
-      <div class="title">
-        <h1>{{ detail.title }}</h1>
-        <div class="info">
+    <van-skeleton title round :row="10" :loading="loading">
+      <div class="main">
+        <div class="title">
+          <h1>{{ detail.title }}</h1>
+          <div class="info">
       <span class="info-item">
         <span><img src="@/assets/icon/folder-info.png" alt=""></span>
         <span>{{ detail.category }}</span>
       </span>
-          <span class="info-item">
+            <span class="info-item">
         <span><img src="@/assets/icon/time-info.png" alt=""></span>
         <span>{{ timeDate(detail.created_time) }}</span>
       </span>
-          <span class="info-item">
+            <span class="info-item">
         <span><img src="@/assets/icon/view-info.png" alt=""></span>
         <span>{{ detail.view }}</span>
       </span>
-          <span class="info-item">
+            <span class="info-item">
         <span><img src="@/assets/icon/like-info.png" alt=""></span>
         <span>{{ detail.like }}</span>
       </span>
-          <span class="info-item">
+            <span class="info-item">
         <span><img src="@/assets/icon/comment-info.png" alt=""></span>
         <span>{{ detail.comment }}</span>
       </span>
+          </div>
+        </div>
+        <div class="body" ref="editor">
+          <v-md-preview :text="detail.body"></v-md-preview>
         </div>
       </div>
-      <div class="body" ref="editor">
-        <v-md-preview :text="detail.body"></v-md-preview>
-      </div>
-    </div>
+    </van-skeleton>
     <div class="recommend" v-show="componentName==='article'">
       <van-divider content-position="left">💖 猜你喜欢</van-divider>
       <div class="recommend-list">
@@ -68,7 +70,7 @@
 import NavBar from '@/components/deatil/NavBar';
 import Tabbar from '@/components/deatil/Tabbar';
 import Comments from '@/components/common/Comments'
-import {Divider, Image as VanImage, Loading, Toast} from 'vant'
+import {Divider, Image as VanImage, Loading, Skeleton, Toast} from 'vant'
 import {nextTick, onMounted, reactive, ref} from "vue";
 import {useRouter} from "vue-router";
 import {getArticleDetail, getGuessLike} from "@/api/article";
@@ -102,6 +104,7 @@ export default {
     [Divider.name]: Divider,
     [VanImage.name]: VanImage,
     [Loading.name]: Loading,
+    [Skeleton.name]: Skeleton,
     NavBar,
     Tabbar,
     Comments,
@@ -122,12 +125,15 @@ export default {
     const recommendList = ref([])
     // 文章发布日期只保留天
     let {timeDate} = timeFormat()
+    // 骨架屏默认显示
+    const loading = ref(true);
     // 猜你喜欢跳转
     const toDetail = (DetailID) => {
       router.push({path: `/detail/${DetailID}`, query: {component: 'article'}})
       detailData(DetailID)
       guessLikeData(DetailID)
       window.scrollTo({top: 0})
+
     }
     // markdown标题跳转
     const rollTo = (anchor) => {
@@ -139,6 +145,7 @@ export default {
         heading.scrollIntoView({behavior: "smooth", block: "center"})
       }
     }
+
     // 获取文章详情
     async function detailData(DetailID) {
       const detail_data = await getArticleDetail(DetailID)
@@ -163,6 +170,7 @@ export default {
         }
       }
     }
+
     // 获取文章标题
     async function getTitle() {
       await nextTick()
@@ -181,6 +189,7 @@ export default {
         indent: hTags.indexOf(el.tagName),
       }));
     }
+
     // 获取猜你喜欢
     async function guessLikeData(DetailID) {
       const guessLike_data = await getGuessLike(DetailID)
@@ -188,11 +197,16 @@ export default {
     }
 
     onMounted(async () => {
+      Toast.loading({
+        message: '加载中...',
+        forbidClick: true,
+      });
       componentName.value = router.currentRoute.value.query.component
       let DetailID = router.currentRoute.value.params.id
       if (componentName.value === 'article') {
         await detailData(DetailID)
         await guessLikeData(DetailID)
+        loading.value = false;
         await getTitle()
       }
     })
@@ -256,7 +270,8 @@ export default {
       editor,
       recommendList,
       commentsList,
-      rollTo
+      rollTo,
+      loading
     }
   }
 }

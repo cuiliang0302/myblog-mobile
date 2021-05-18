@@ -48,7 +48,7 @@
       <van-tabs v-model:active="activeDir" color="#409EFF">
         <van-tab title="大纲">
           <div class="content">
-            <p v-for="(anchor,index) in titleList" :key="index"
+            <p v-for="(anchor,index) in titleList" :key="anchor.indent"
                :style="{ padding: `0px 0 0px ${anchor.indent * 15}px` }"
                @click="rollTo(anchor)"
             >
@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import {Tabbar, TabbarItem, ShareSheet, Toast, Popup, Tab, Tabs, Empty} from 'vant';
+import {Tabbar, TabbarItem, ShareSheet, Toast, Popup, Tab, Tabs, Empty, Skeleton} from 'vant';
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 
@@ -260,7 +260,7 @@ function fnComment() {
   padding: 0.267rem 0.533rem;
 
   .content {
-    height: 13.867rem;
+    height: 62vh;
     overflow: auto;
 
     p {
