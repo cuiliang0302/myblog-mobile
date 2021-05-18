@@ -2,7 +2,6 @@
 <template>
   <div class="detail">
     <NavBar></NavBar>
-    <Tabbar :componentName="componentName"></Tabbar>
     <div class="main">
       <div class="title">
         <h1>{{ detail.title }}</h1>
@@ -29,7 +28,7 @@
       </span>
         </div>
       </div>
-      <div class="body">
+      <div class="body" ref="editor">
         <v-md-preview :text="detail.body"></v-md-preview>
       </div>
     </div>
@@ -61,6 +60,7 @@
       <Comments :commentsList="commentsList"></Comments>
     </div>
     <div class="bottom-margin"></div>
+    <Tabbar :componentName="componentName" :titleList="titleList" @rollTo="rollTo"></Tabbar>
   </div>
 </template>
 
@@ -69,11 +69,10 @@ import NavBar from '@/components/deatil/NavBar';
 import Tabbar from '@/components/deatil/Tabbar';
 import Comments from '@/components/common/Comments'
 import {Divider, Image as VanImage, Loading, Toast} from 'vant'
-import {onBeforeUpdate, onMounted, reactive, ref} from "vue";
+import {nextTick, onMounted, reactive, ref} from "vue";
 import {useRouter} from "vue-router";
 import {getArticleDetail, getGuessLike} from "@/api/article";
 import timeFormat from "@/utils/timeFormat";
-
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
 import '@kangc/v-md-editor/lib/style/preview.css';
 import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
@@ -115,11 +114,14 @@ export default {
     const componentName = ref('')
     // 文章详情
     let detail = reactive({})
+    // 文章标题列表
+    let titleList = ref([])
+    // markdown对象
+    let editor = ref(null)
     // 猜你喜欢列表
     const recommendList = ref([])
     // 文章发布日期只保留天
     let {timeDate} = timeFormat()
-
     // 猜你喜欢跳转
     const toDetail = (DetailID) => {
       router.push({path: `/detail/${DetailID}`, query: {component: 'article'}})
@@ -127,12 +129,22 @@ export default {
       guessLikeData(DetailID)
       window.scrollTo({top: 0})
     }
+    // markdown标题跳转
+    const rollTo = (height) => {
+      if (height) {
+        window.scrollTo({
+          top: parseInt(height) - 55,
+          behavior: "smooth"
+        });
+      }
+    }
 
     // 获取文章详情
     async function detailData(DetailID) {
       const detail_data = await getArticleDetail(DetailID)
       for (let i in detail_data) {
         if (i === 'body') {
+          // 图片防盗链处理
           detail.body = detail_data.body
           const pattern = /!\[(.*?)\]\((.*?)\)/gm;
           let matcher;
@@ -152,18 +164,38 @@ export default {
       }
     }
 
+    // 获取文章标题
+    async function getTitle() {
+      await nextTick()
+      const anchors = editor.value.querySelectorAll(
+          '.v-md-editor-preview h1,h2,h3'
+      )
+      const titles = Array.from(anchors).filter((title) => !!title.innerText.trim());
+      if (!titles.length) {
+        titleList.value = [];
+        return;
+      }
+      const hTags = Array.from(new Set(titles.map((title) => title.tagName))).sort();
+      titleList.value = titles.map((el) => ({
+        title: el.innerText,
+        indent: hTags.indexOf(el.tagName),
+        height: el.getClientRects()[0].y
+      }));
+    }
+
     // 获取猜你喜欢
     async function guessLikeData(DetailID) {
       const guessLike_data = await getGuessLike(DetailID)
       recommendList.value = guessLike_data
     }
 
-    onMounted(() => {
+    onMounted(async () => {
       componentName.value = router.currentRoute.value.query.component
       let DetailID = router.currentRoute.value.params.id
       if (componentName.value === 'article') {
-        detailData(DetailID)
-        guessLikeData(DetailID)
+        await detailData(DetailID)
+        await guessLikeData(DetailID)
+        await getTitle()
       }
     })
     const commentsList = [
@@ -222,8 +254,11 @@ export default {
       detail,
       timeDate,
       toDetail,
+      titleList,
+      editor,
       recommendList,
-      commentsList
+      commentsList,
+      rollTo
     }
   }
 }

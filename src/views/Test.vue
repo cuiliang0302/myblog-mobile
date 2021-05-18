@@ -1,14 +1,13 @@
 <template>
   <div class="main">
-    <van-button type="primary" @click="getH">主要按钮</van-button>
     <div class="body" ref="editor">
-      <!--      <div-->
-      <!--          v-for="anchor in titles"-->
-      <!--          :style="{ padding: `10px 0 10px ${anchor.indent * 20}px` }"-->
-      <!--          @click="handleAnchorClick(anchor)"-->
-      <!--      >-->
-      <!--        <a style="cursor: pointer">{{ anchor.title }}</a>-->
-      <!--      </div>-->
+      <div
+          v-for="anchor in titleList"
+          :style="{ padding: `10px 0 10px ${anchor.indent * 20}px` }"
+          @click="handleAnchorClick(anchor.height)"
+      >
+        <a style="cursor: pointer">{{ anchor.title }}</a>
+      </div>
       <v-md-preview :text="text"/>
     </div>
   </div>
@@ -40,12 +39,22 @@ export default {
   name: "Test",
   setup() {
     let text = ref('')
-    let titles = ref([])
+    let titleList = ref([])
     let editor = ref(null)
+    const handleAnchorClick = (height) => {
+      if (height) {
+        console.log(height)
+        window.scrollTo({
+          top: height + 16 * 32,
+          behavior: "smooth"
+        });
+      }
+    }
 
     async function detailData(DetailID) {
       const detail_data = await getArticleDetail(DetailID)
       text.value = detail_data.body
+      // 图片防盗链处理
       const pattern = /!\[(.*?)\]\((.*?)\)/gm;
       let matcher;
       let imgArr = [];
@@ -59,49 +68,35 @@ export default {
         );
       }
     }
-
-    // nextTick(()=>{
-    //   console.log('Now DOM is updated')
-    //   const anchors = document.querySelectorAll(
-    //         '.v-md-editor-preview h1,h2,h3,h4,h5,h6'
-    //     )
-    //     console.log(anchors)
-    // })
-    // const changeMessage = async newMessage => {
-    //   await nextTick()
-    //   console.log('Now DOM is updated')
-    //   const anchors = document.querySelectorAll(
-    //       '.v-md-editor-preview h1,h2,h3,h4,h5,h6'
-    //   )
-    //   console.log(anchors)
-    // }
-    // changeMessage()
-    // async function newMessage(){
-    //   await nextTick()
-    //   console.log("渲染完了")
-    //   console.log(editor.value)
-    //   const anchors = document.querySelectorAll(
-    //       '.v-md-editor-preview h1,h2,h3,h4,h5,h6'
-    //   )
-    //   console.log(anchors)
-    //   const titles = Array.from(anchors).filter((title) => !!title.innerText.trim());
-    //   console.log(titles)
-    // }
-    const getH = () => {
-      console.log(editor.value)
+    // 获取文章标题
+    async function getTitle() {
+      await nextTick()
       const anchors = editor.value.querySelectorAll(
-          '.v-md-editor-preview h1,h2,h3,h4,h5,h6'
+          '.v-md-editor-preview h1,h2,h3'
       )
-      console.log(anchors)
+      const titles = Array.from(anchors).filter((title) => !!title.innerText.trim());
+      if (!titles.length) {
+        titleList.value = [];
+        return;
+      }
+      const hTags = Array.from(new Set(titles.map((title) => title.tagName))).sort();
+      titleList.value = titles.map((el) => ({
+        title: el.innerText,
+        lineIndex: el.getAttribute('data-v-md-line'),
+        indent: hTags.indexOf(el.tagName),
+        height: el.getClientRects()[0].y
+      }));
     }
-    onMounted(() => {
-      detailData(17)
+
+    onMounted(async () => {
+      await detailData(17)
+      await getTitle()
     })
     return {
       text,
-      titles,
+      titleList,
       editor,
-      getH
+      handleAnchorClick
     }
   },
 }

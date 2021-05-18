@@ -39,27 +39,25 @@
   />
   <van-popup v-model:show="showDir"
              position="bottom"
-             :style="{ height: '50%' }"
+             :style="{ height: '75%' }"
              closeable
-             close-icon="close">
+             close-icon="close"
+             :safe-area-inset-bottom=true
+  >
     <div class="directory">
       <van-tabs v-model:active="activeDir" color="#409EFF">
         <van-tab title="大纲">
           <div class="content">
-            <p>安装python</p>
-            <p>安装virtualenv虚拟环境</p>
-            <p>安装Django和uwsgi</p>
-            <p>启动项目</p>
-            <p>安装配置nginx</p>
-            <p>安装python</p>
-            <p>安装virtualenv虚拟环境</p>
-            <p>安装Django和uwsgi</p>
-            <p>启动项目</p>
-            <p>安装配置nginx</p>
+            <p v-for="anchor in titleList"
+               :style="{ padding: `10px 0 10px ${anchor.indent * 20}px` }"
+               @click="rollTo(anchor.height)"
+            >
+              {{ anchor.title }}
+            </p>
           </div>
         </van-tab>
         <van-tab v-if="componentName==='note'" title="目录">
-          <van-empty description="暂无数据" />
+          <van-empty description="暂无数据"/>
         </van-tab>
       </van-tabs>
     </div>
@@ -82,6 +80,13 @@ export default {
     [Empty.name]: Empty,
   },
   props: {
+    // markdown标题
+    titleList: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
     // 评论回复列表
     componentName: {
       type: String,
@@ -91,12 +96,14 @@ export default {
     },
   },
   name: "Tabbar",
-  setup() {
+  emits: ['rollTo'],
+  setup(props, {emit}) {
     // 当前选中的tabbar
     const active = ref('');
-    // 文章大纲列表
     // 调用图标切换模块
     let {directory, comment, like, collection, share} = fnIcon()
+    // 调用大纲模块
+    let {directoryClick, showDir, activeDir} = fnDirectory()
     // 调用分享模块
     let {options, onSelect, showShare} = fnShare()
     // 调用点赞模块
@@ -105,8 +112,12 @@ export default {
     let {collectionClick} = fnCollection()
     // 调用评论模块
     let {commentClick} = fnComment()
-    // 调用大纲模块
-    let {directoryClick, showDir, activeDir} = fnDirectory()
+    // title跳转事件
+    const rollTo = (height) => {
+      console.log("子组件高度", height)
+      emit('rollTo', height)
+      showDir.value = false
+    }
     return {
       active,
       directory,
@@ -122,7 +133,8 @@ export default {
       commentClick,
       directoryClick,
       showDir,
-      activeDir
+      activeDir,
+      rollTo
     };
   },
 }
@@ -157,6 +169,20 @@ function fnIcon() {
   return {
     directory, comment, like, collection, share
   }
+}
+
+// 大纲功能模块
+function fnDirectory() {
+  const activeDir = ref(0)
+  const showDir = ref(false);
+  const directoryClick = () => {
+    showDir.value = true;
+  };
+  return {
+    activeDir,
+    showDir,
+    directoryClick,
+  };
 }
 
 //分享功能模块
@@ -227,19 +253,7 @@ function fnComment() {
   };
 }
 
-// 大纲功能模块
-function fnDirectory() {
-  const activeDir = ref(0)
-  const showDir = ref(false);
-  const directoryClick = () => {
-    showDir.value = true;
-  };
-  return {
-    activeDir,
-    showDir,
-    directoryClick,
-  };
-}
+
 </script>
 
 <style lang="scss" scoped>
@@ -247,6 +261,9 @@ function fnDirectory() {
   padding: 0.267rem 0.533rem;
 
   .content {
+    height: 13.867rem;
+    overflow: auto;
+
     p {
       font-size: 0.373rem;
     }
