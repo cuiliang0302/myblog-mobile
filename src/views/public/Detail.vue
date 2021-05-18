@@ -130,15 +130,15 @@ export default {
       window.scrollTo({top: 0})
     }
     // markdown标题跳转
-    const rollTo = (height) => {
-      if (height) {
-        window.scrollTo({
-          top: parseInt(height) - 55,
-          behavior: "smooth"
-        });
+    const rollTo = (anchor) => {
+      const {lineIndex} = anchor;
+      const heading = editor.value.querySelector(
+          `.v-md-editor-preview [data-v-md-line="${lineIndex}"]`
+      );
+      if (heading) {
+        heading.scrollIntoView({behavior: "smooth", block: "center"})
       }
     }
-
     // 获取文章详情
     async function detailData(DetailID) {
       const detail_data = await getArticleDetail(DetailID)
@@ -163,7 +163,6 @@ export default {
         }
       }
     }
-
     // 获取文章标题
     async function getTitle() {
       await nextTick()
@@ -178,11 +177,10 @@ export default {
       const hTags = Array.from(new Set(titles.map((title) => title.tagName))).sort();
       titleList.value = titles.map((el) => ({
         title: el.innerText,
+        lineIndex: el.getAttribute('data-v-md-line'),
         indent: hTags.indexOf(el.tagName),
-        height: el.getClientRects()[0].y
       }));
     }
-
     // 获取猜你喜欢
     async function guessLikeData(DetailID) {
       const guessLike_data = await getGuessLike(DetailID)

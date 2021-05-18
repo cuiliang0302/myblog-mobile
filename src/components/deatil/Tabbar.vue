@@ -48,9 +48,9 @@
       <van-tabs v-model:active="activeDir" color="#409EFF">
         <van-tab title="大纲">
           <div class="content">
-            <p v-for="anchor in titleList"
-               :style="{ padding: `10px 0 10px ${anchor.indent * 20}px` }"
-               @click="rollTo(anchor.height)"
+            <p v-for="(anchor,index) in titleList" :key="index"
+               :style="{ padding: `0px 0 0px ${anchor.indent * 15}px` }"
+               @click="rollTo(anchor)"
             >
               {{ anchor.title }}
             </p>
@@ -114,7 +114,6 @@ export default {
     let {commentClick} = fnComment()
     // title跳转事件
     const rollTo = (height) => {
-      console.log("子组件高度", height)
       emit('rollTo', height)
       showDir.value = false
     }
@@ -266,6 +265,7 @@ function fnComment() {
 
     p {
       font-size: 0.373rem;
+      line-height: 0.533rem;
     }
   }
 }
