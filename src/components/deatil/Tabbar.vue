@@ -45,19 +45,31 @@
              :safe-area-inset-bottom=true
   >
     <div class="directory">
-      <van-tabs v-model:active="activeDir" color="#409EFF">
+      <van-tabs v-model:active="activeDir" color="#409EFF" @change="tabChange">
         <van-tab title="大纲">
           <div class="content">
-            <p v-for="(anchor,index) in titleList" :key="anchor.indent"
-               :style="{ padding: `0px 0 0px ${anchor.indent * 15}px` }"
-               @click="rollTo(anchor)"
-            >
-              {{ anchor.title }}
-            </p>
+            <div v-if="titleList.length != 0">
+              <p v-for="(anchor,index) in titleList" :key="anchor.indent"
+                 :style="{ padding: `0px 0 0px ${anchor.indent * 15}px` }"
+                 @click="rollTo(anchor)"
+              >
+                {{ anchor.title }}
+              </p>
+            </div>
+            <div v-else>
+              <van-empty description="本篇文章暂无大纲"/>
+            </div>
           </div>
         </van-tab>
         <van-tab v-if="componentName==='note'" title="目录">
-          <van-empty description="暂无数据"/>
+          <div class="catalog">
+            <span v-for="(item,index) in catalogList" :key="item.id">
+              第{{index+1}}章：{{ item.name }}
+                <p v-if="item && item.child" v-for="(title,index) in item.child" :key="title.id">
+                  {{ index + 1 }}. {{ title.name }}
+                </p>
+            </span>
+          </div>
         </van-tab>
       </van-tabs>
     </div>
@@ -87,6 +99,13 @@ export default {
         return []
       }
     },
+    // 笔记目录
+    catalogList: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
     // 评论回复列表
     componentName: {
       type: String,
@@ -96,7 +115,7 @@ export default {
     },
   },
   name: "Tabbar",
-  emits: ['rollTo'],
+  emits: ['rollTo', 'getDir'],
   setup(props, {emit}) {
     // 当前选中的tabbar
     const active = ref('');
@@ -117,6 +136,14 @@ export default {
       emit('rollTo', height)
       showDir.value = false
     }
+    // 大纲获取目录
+    const tabChange = (index) => {
+      console.log(index)
+      if (index === 1) {
+        console.log('要获取目录了')
+        emit('getDir')
+      }
+    }
     return {
       active,
       directory,
@@ -133,7 +160,8 @@ export default {
       directoryClick,
       showDir,
       activeDir,
-      rollTo
+      rollTo,
+      tabChange
     };
   },
 }
@@ -174,6 +202,7 @@ function fnIcon() {
 function fnDirectory() {
   const activeDir = ref(0)
   const showDir = ref(false);
+  // 大纲菜单打开
   const directoryClick = () => {
     showDir.value = true;
   };
@@ -266,6 +295,16 @@ function fnComment() {
     p {
       font-size: 0.373rem;
       line-height: 0.533rem;
+    }
+  }
+
+  .catalog {
+    height: 62vh;
+    overflow: auto;
+    font-size: 0.373rem;
+    margin-top: 0.4rem;
+    p {
+      text-indent: 1em;
     }
   }
 }

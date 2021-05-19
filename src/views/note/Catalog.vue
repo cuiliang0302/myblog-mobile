@@ -14,7 +14,7 @@
             <van-cell v-for="(title,index) in chapter.child" :key="index" :title="title.name"
                       @click="$router.push({path:`/detail/${title.section_id}`,query:{component:'note'}})">
               <template #icon>
-                <span class="number">{{ index + 1 }}</span>
+                <span class="number">{{ index + 1 }}.</span>
               </template>
             </van-cell>
           </van-collapse-item>

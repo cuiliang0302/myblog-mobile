@@ -51,11 +51,11 @@
     <div class="context" v-show="componentName==='note'">
       <div class="last">
         <span><van-image width="20" height="20" :src="require('@/assets/icon/last.png')"/></span>
-        <span>概念和术语</span>
+        <span v-if="context.last && context.last.title">{{ context.last.title }}</span>
       </div>
       <div class="next">
-        <span>kubernetes集群的部署流程</span>
         <span><van-image width="20" height="20" :src="require('@/assets/icon/next.png')"/></span>
+        <span v-if="context.next && context.next.title">{{ context.next.title }}</span>
       </div>
     </div>
     <div class="comment" id="comment">
@@ -63,7 +63,8 @@
       <Comments :commentsList="commentsList"></Comments>
     </div>
     <div class="bottom-margin"></div>
-    <Tabbar :componentName="componentName" :titleList="titleList" @rollTo="rollTo"></Tabbar>
+    <Tabbar :componentName="componentName" :titleList="titleList" :catalogList="catalogList" @rollTo="rollTo"
+            @getDir="getDir"></Tabbar>
   </div>
 </template>
 
@@ -86,7 +87,7 @@ import dockerfile from 'highlight.js/lib/languages/dockerfile';
 import json from 'highlight.js/lib/languages/json';
 import yaml from 'highlight.js/lib/languages/yaml';
 import sql from 'highlight.js/lib/languages/sql';
-import {getSectionDetail} from "@/api/note";
+import {getCatalogue, getContext, getSectionDetail} from "@/api/note";
 
 VMdPreview.use(githubTheme, {
   codeHighlightExtensionMap: {
@@ -117,7 +118,7 @@ export default {
     const router = useRouter();
     // 显示组件模块
     const componentName = ref('')
-    // 文章详情
+    // 内容详情
     let detail = reactive({})
     // 文章标题列表
     let titleList = ref([])
@@ -125,6 +126,10 @@ export default {
     let editor = ref(null)
     // 猜你喜欢列表
     const recommendList = ref([])
+    // 笔记上下篇
+    const context = reactive({})
+    // 笔记目录
+    const catalogList = ref([])
     // 文章发布日期只保留天
     let {timeDate} = timeFormat()
     // 骨架屏默认显示
@@ -145,6 +150,16 @@ export default {
       if (heading) {
         heading.scrollIntoView({behavior: "smooth", block: "center"})
       }
+    }
+    // 获取笔记目录
+    const getDir = () => {
+      catalogueData(detail.note_id)
+    }
+
+    // 获取笔记目录数据
+    async function catalogueData(note_id) {
+      catalogList.value = await getCatalogue(note_id)
+      console.log(catalogList.value)
     }
 
     // 获取文章详情
@@ -172,6 +187,11 @@ export default {
       }
     }
 
+    // 获取猜你喜欢
+    async function guessLikeData(DetailID) {
+      recommendList.value = await getGuessLike(DetailID)
+    }
+
     // 获取笔记详情
     async function sectionData(DetailID) {
       const detail_data = await getSectionDetail(DetailID)
@@ -197,6 +217,14 @@ export default {
       }
     }
 
+    // 获取笔记上下篇
+    async function contextData(DetailID) {
+      const context_data = await getContext(DetailID)
+      for (let i in context_data) {
+        context[i] = context_data[i]
+      }
+    }
+
     // 获取markdown标题
     async function getTitle() {
       await nextTick()
@@ -216,12 +244,6 @@ export default {
       }));
     }
 
-    // 获取猜你喜欢
-    async function guessLikeData(DetailID) {
-      const guessLike_data = await getGuessLike(DetailID)
-      recommendList.value = guessLike_data
-    }
-
     onMounted(async () => {
       Toast.loading({
         message: '加载中...',
@@ -234,6 +256,7 @@ export default {
         await guessLikeData(DetailID)
       } else {
         await sectionData(DetailID)
+        await contextData(DetailID)
       }
       loading.value = false;
       await getTitle()
@@ -299,7 +322,10 @@ export default {
       recommendList,
       commentsList,
       rollTo,
-      loading
+      loading,
+      context,
+      getDir,
+      catalogList
     }
   }
 }
@@ -470,9 +496,9 @@ export default {
 
     .next {
       padding: 5px 0 5px 5px;
-      text-align: right;
       display: flex;
       align-items: center;
+      flex-direction: row-reverse;
     }
   }
 

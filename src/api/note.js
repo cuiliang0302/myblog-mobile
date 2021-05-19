@@ -14,3 +14,8 @@ export function getSectionDetail(id) {
 export function getCatalogue(id) {
   return http.get('catalogue/' + id)
 }
+
+// 获取笔记上下篇
+export function getContext(id) {
+  return http.get('context/' + id)
+}
