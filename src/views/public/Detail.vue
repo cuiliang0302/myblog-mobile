@@ -9,7 +9,8 @@
           <div class="info">
       <span class="info-item">
         <span><img src="@/assets/icon/folder-info.png" alt=""></span>
-        <span>{{ detail.category }}</span>
+        <span v-if="componentName==='article'">{{ detail.category }}</span>
+        <span v-else>{{ detail.note }}</span>
       </span>
             <span class="info-item">
         <span><img src="@/assets/icon/time-info.png" alt=""></span>
@@ -85,6 +86,7 @@ import dockerfile from 'highlight.js/lib/languages/dockerfile';
 import json from 'highlight.js/lib/languages/json';
 import yaml from 'highlight.js/lib/languages/yaml';
 import sql from 'highlight.js/lib/languages/sql';
+import {getSectionDetail} from "@/api/note";
 
 VMdPreview.use(githubTheme, {
   codeHighlightExtensionMap: {
@@ -133,7 +135,6 @@ export default {
       detailData(DetailID)
       guessLikeData(DetailID)
       window.scrollTo({top: 0})
-
     }
     // markdown标题跳转
     const rollTo = (anchor) => {
@@ -147,7 +148,7 @@ export default {
     }
 
     // 获取文章详情
-    async function detailData(DetailID) {
+    async function articleData(DetailID) {
       const detail_data = await getArticleDetail(DetailID)
       for (let i in detail_data) {
         if (i === 'body') {
@@ -171,7 +172,32 @@ export default {
       }
     }
 
-    // 获取文章标题
+    // 获取笔记详情
+    async function sectionData(DetailID) {
+      const detail_data = await getSectionDetail(DetailID)
+      for (let i in detail_data) {
+        if (i === 'body') {
+          // 图片防盗链处理
+          detail.body = detail_data.body
+          const pattern = /!\[(.*?)\]\((.*?)\)/gm;
+          let matcher;
+          let imgArr = [];
+          while ((matcher = pattern.exec(detail.body)) !== null) {
+            imgArr.push(matcher[2]);
+          }
+          for (let i = 0; i < imgArr.length; i++) {
+            detail.body = detail.body.replace(
+                imgArr[i],
+                "https://images.weserv.nl/?url=" + imgArr[i]
+            );
+          }
+        } else {
+          detail[i] = detail_data[i]
+        }
+      }
+    }
+
+    // 获取markdown标题
     async function getTitle() {
       await nextTick()
       const anchors = editor.value.querySelectorAll(
@@ -204,11 +230,13 @@ export default {
       componentName.value = router.currentRoute.value.query.component
       let DetailID = router.currentRoute.value.params.id
       if (componentName.value === 'article') {
-        await detailData(DetailID)
+        await articleData(DetailID)
         await guessLikeData(DetailID)
-        loading.value = false;
-        await getTitle()
+      } else {
+        await sectionData(DetailID)
       }
+      loading.value = false;
+      await getTitle()
     })
     const commentsList = [
       {

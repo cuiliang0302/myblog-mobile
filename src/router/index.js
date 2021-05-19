@@ -36,12 +36,12 @@ const routes = [
     }
   },
   {
-    path: '/catalog',
+    path: '/catalog/:id',
     name: 'Catalog',
     component: () => import('@/views/note/Catalog'),
     meta: {
       title: '笔记目录',
-      keepAlive: true,
+      keepAlive: false,
       transitionClass: 'gradually'
     }
   },
