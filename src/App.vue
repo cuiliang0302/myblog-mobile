@@ -2,8 +2,7 @@
   <div id="app">
     <router-view class="router-view" v-slot="{ Component }">
       <transition :enter-active-class="enterClass"
-                        :leave-active-class="leaveClass"
-                        :duration="{ enter: 200, leave: 200 }">
+                        :leave-active-class="leaveClass">
 <!--        &lt;!&ndash;需要缓存的视图&ndash;&gt;-->
 <!--        <keep-alive v-if="$route.meta.keepAlive" :key="1">-->
 <!--          <component :is="Component"/>-->
