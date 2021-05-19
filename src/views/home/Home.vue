@@ -3,8 +3,8 @@
     <NavBar></NavBar>
     <Swipe :carouselList="carouselList"></Swipe>
     <TabList :tabList="tabList" :listState="listState" @click="tabClick" @onLoad="onLoad"
-             @onRefresh="onRefresh"></TabList>
-    <Tabbar></Tabbar>
+             @onRefresh="onRefresh" :load="load"></TabList>
+    <Tabbar :activeBar="0"></Tabbar>
   </div>
 </template>
 
@@ -26,6 +26,8 @@ export default {
     Tabbar,
   },
   setup() {
+    // 加载动画
+    const load = ref(true)
     // 轮播图数据
     let carouselList = ref([])
 
@@ -108,9 +110,11 @@ export default {
     // 获取文章列表数据
     async function articleData(page = 1, order = '-created_time') {
       const article_data = await getArticle(page, order)
+      load.value = false
       console.log(article_data)
       listState.list = article_data.results
       listState.count = article_data.count
+
     }
 
     onMounted(() => {
@@ -124,7 +128,8 @@ export default {
       listState,
       tabClick,
       onLoad,
-      onRefresh
+      onRefresh,
+      load
     }
   }
 }

@@ -2,8 +2,8 @@
   <div>
     <NavBar></NavBar>
     <TabList :tabList="tabList" :listState="listState" @click="tabClick" @onLoad="onLoad"
-             @onRefresh="onRefresh"></TabList>
-    <Tabbar></Tabbar>
+             @onRefresh="onRefresh" :load="load"></TabList>
+    <Tabbar :activeBar="1"></Tabbar>
   </div>
 </template>
 
@@ -24,6 +24,8 @@ export default {
   },
   name: "Article",
   setup() {
+    // 加载动画
+    const load = ref(true)
     // Tab 标签分类名
     const tabList = ref([])
     // 文章列表数据
@@ -88,6 +90,7 @@ export default {
     async function articleData(page = 1, order = '-created_time', category = 1) {
       const article_data = await getArticle(page, order, category)
       console.log(article_data)
+      load.value = false
       listState.list = article_data.results
       listState.count = article_data.count
     }
@@ -101,7 +104,8 @@ export default {
       listState,
       tabClick,
       onLoad,
-      onRefresh
+      onRefresh,
+      load
     }
   }
 }

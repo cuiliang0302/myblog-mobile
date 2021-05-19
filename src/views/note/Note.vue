@@ -11,7 +11,7 @@
         <p>{{ item.name }}</p>
       </van-grid-item>
     </van-grid>
-    <Tabbar></Tabbar>
+    <Tabbar :activeBar="2"></Tabbar>
   </div>
 </template>
 

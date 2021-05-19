@@ -1,5 +1,5 @@
 <template>
-  <van-tabbar v-model="active" placeholder route safe-area-inset-bottom>
+  <van-tabbar v-model="activeBar" placeholder safe-area-inset-bottom>
     <van-tabbar-item to="/home">
       <span>首页</span>
       <template #icon="props">
@@ -37,6 +37,15 @@ export default {
     [TabbarItem.name]: TabbarItem,
   },
   name: "Tabbar",
+  props: {
+    // 加载中动画
+    activeBar: {
+      type: Number,
+      default() {
+        return 0;
+      }
+    }
+  },
   setup() {
     const active = ref(0);
     const home = {

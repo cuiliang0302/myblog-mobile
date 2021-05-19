@@ -65,7 +65,7 @@
       </div>
     </div>
     <LoginPopup ref="refLoginPopup"></LoginPopup>
-    <Tabbar></Tabbar>
+    <Tabbar :activeBar="3"></Tabbar>
   </div>
 </template>
 

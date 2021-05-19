@@ -1,11 +1,14 @@
 <template>
   <van-tabs :active="activeTab" color="#44afe0" animated swipeable>
     <van-tab v-for="(item,index) in tabList" :key="index" :title="item.name" :name="item.id">
+      <van-loading v-show="load" size="0.8rem" text-color="#409EFF" vertical>
+        玩命加载中...
+      </van-loading>
       <van-pull-refresh v-model="listState.refreshing" @refresh="onRefresh">
         <van-list
             v-model:loading="listState.loading"
             :finished="listState.finished"
-            finished-text="没有更多了"
+            finished-text="我是有底线的"
             @load="onLoad"
             :immediate-check=false
         >
@@ -13,11 +16,11 @@
             <div class="title">{{ item.title }}</div>
             <div class="list-main">
         <span class="cover">
-          <van-image :src="item.cover" alt="" radius="0.4rem" lazy-load height="3.013rem" width="4.533rem">
-            <template v-slot:loading>
-              <van-loading type="spinner" size="20"/>
-            </template>
-          </van-image>
+            <van-image :src="item.cover" alt="" radius="0.4rem" lazy-load height="3.013rem" width="4.533rem">
+              <template v-slot:loading>
+                <van-loading type="spinner" size="20"/>
+              </template>
+            </van-image>
         </span>
               <span class="abstract">{{ item.abstract }}</span>
             </div>
@@ -56,6 +59,13 @@ export default {
   },
   name: "Tab",
   props: {
+    // 加载中动画
+    load: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     // 标签栏列表
     tabList: {
       type: Array,
