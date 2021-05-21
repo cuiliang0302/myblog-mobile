@@ -26,15 +26,25 @@ export default {
     ActionSheet
   },
   name: "NavBar",
-  setup() {
-    const route = useRoute();
+  props: {
+    // 当前显示的组件
+    componentName: {
+      type: String,
+      default() {
+        return 'article'
+      }
+    },
+  },
+  setup(props) {
     const router = useRouter();
     const showAction = ref();
     // 返回上一级
     const onClickLeft = () => {
-      // console.log(router)
-      // console.log(route)
-      router.go(-1)
+      if (props.componentName === 'note') {
+        router.push('/note')
+      } else {
+        router.push('/article')
+      }
     }
     // 点击右侧更多按钮
     const onClickRight = () => {

@@ -49,7 +49,7 @@
         <van-tab title="大纲">
           <div class="content">
             <div v-if="titleList.length != 0">
-              <p v-for="(anchor,index) in titleList" :key="anchor.indent"
+              <p v-for="(anchor,index) in titleList" :key="anchor.lineIndex"
                  :style="{ padding: `0px 0 0px ${anchor.indent * 15}px` }"
                  @click="rollTo(anchor)"
               >
@@ -62,10 +62,16 @@
           </div>
         </van-tab>
         <van-tab v-if="componentName==='note'" title="目录">
-          <div class="catalog">
+          <div v-if="catalogList.length === 0">
+            <van-loading size="0.8rem" text-color="#409EFF" vertical>
+              玩命加载中...
+            </van-loading>
+          </div>
+          <div v-else class="catalog">
             <span v-for="(item,index) in catalogList" :key="item.id">
-              第{{index+1}}章：{{ item.name }}
-                <p v-if="item && item.child" v-for="(title,index) in item.child" :key="title.id">
+              第{{ index + 1 }}章：{{ item.name }}
+                <p v-if="item && item.child" v-for="(title,index) in item.child" :key="title.id"
+                   @click="toDetail(title.section_id)">
                   {{ index + 1 }}. {{ title.name }}
                 </p>
             </span>
@@ -77,7 +83,7 @@
 </template>
 
 <script>
-import {Tabbar, TabbarItem, ShareSheet, Toast, Popup, Tab, Tabs, Empty, Skeleton} from 'vant';
+import {Tabbar, TabbarItem, ShareSheet, Toast, Popup, Tab, Tabs, Empty, Loading} from 'vant';
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 
@@ -90,6 +96,7 @@ export default {
     [Tab.name]: Tab,
     [Tabs.name]: Tabs,
     [Empty.name]: Empty,
+    [Loading.name]: Loading
   },
   props: {
     // markdown标题
@@ -106,7 +113,7 @@ export default {
         return []
       }
     },
-    // 评论回复列表
+    // 当前显示的组件
     componentName: {
       type: String,
       default() {
@@ -115,7 +122,7 @@ export default {
     },
   },
   name: "Tabbar",
-  emits: ['rollTo', 'getDir'],
+  emits: ['rollTo', 'dirTab', 'toNoteDetail'],
   setup(props, {emit}) {
     // 当前选中的tabbar
     const active = ref('');
@@ -133,16 +140,19 @@ export default {
     let {commentClick} = fnComment()
     // title跳转事件
     const rollTo = (height) => {
+      console.log("点击title了")
       emit('rollTo', height)
       showDir.value = false
     }
-    // 大纲获取目录
+    // 大纲目录Tab切换
     const tabChange = (index) => {
-      console.log(index)
-      if (index === 1) {
-        console.log('要获取目录了')
-        emit('getDir')
-      }
+      emit('dirTab', index)
+    }
+    // 点击获取其他笔记内容
+    const toDetail = (detailID) => {
+      console.log(detailID)
+      emit('toNoteDetail', detailID)
+      showDir.value = false
     }
     return {
       active,
@@ -161,7 +171,8 @@ export default {
       showDir,
       activeDir,
       rollTo,
-      tabChange
+      tabChange,
+      toDetail
     };
   },
 }
@@ -303,6 +314,7 @@ function fnComment() {
     overflow: auto;
     font-size: 0.373rem;
     margin-top: 0.4rem;
+
     p {
       text-indent: 1em;
     }

@@ -2,14 +2,14 @@
   <div id="app">
     <router-view class="router-view" v-slot="{ Component }">
       <transition :enter-active-class="enterClass"
-                        :leave-active-class="leaveClass">
-<!--        &lt;!&ndash;需要缓存的视图&ndash;&gt;-->
-<!--        <keep-alive v-if="$route.meta.keepAlive" :key="1">-->
-<!--          <component :is="Component"/>-->
-<!--        </keep-alive>-->
-<!--        &lt;!&ndash;不需要缓存的视图&ndash;&gt;-->
-<!--        <component v-else :is="Component" :key="2"/>-->
-                <component :is="Component"/>
+                  :leave-active-class="leaveClass">
+        <!--        &lt;!&ndash;需要缓存的视图&ndash;&gt;-->
+        <!--        <keep-alive v-if="$route.meta.keepAlive" :key="1">-->
+        <!--          <component :is="Component"/>-->
+        <!--        </keep-alive>-->
+        <!--        &lt;!&ndash;不需要缓存的视图&ndash;&gt;-->
+        <!--        <component v-else :is="Component" :key="2"/>-->
+        <component :is="Component"/>
       </transition>
     </router-view>
   </div>
@@ -81,6 +81,7 @@ export default {
   bottom: 0;
   margin: 0 auto;
   -webkit-overflow-scrolling: touch;
-  animation-timing-function:linear;
+  animation-timing-function: linear;
+  animate-duration: 300;
 }
 </style>
