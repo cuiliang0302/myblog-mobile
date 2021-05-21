@@ -5,10 +5,10 @@
         <van-field
             v-model="state.username"
             name="用户名"
-            placeholder="请输入用户名或邮箱号"
+            placeholder="用户名/邮箱号/手机号"
             label-width="20"
             validate-first
-            :rules="[{ required: true, message: '请填写用户名' }]"
+            :rules="[{ required: true, message: '请填写用户名/邮箱号/手机号' }]"
         >
           <template #label>
             <img :src="require('@/assets/icon/user.png')" alt="">
@@ -20,7 +20,7 @@
             name="密码"
             label-width="20"
             validate-first
-            placeholder="请输入密码"
+            placeholder="密码"
             :rules="[{ required: true, message: '请填写密码' }]"
         >
           <template #label>
@@ -32,23 +32,25 @@
             name="验证码"
             label-width="20"
             validate-first
-            placeholder="请输入验证码"
+            placeholder="验证码"
             :rules="[{ required: true, message: '请填写验证码' }]"
         >
           <template #label>
             <img :src="require('@/assets/icon/code.png')" alt="">
           </template>
         </van-field>
-        <div class="remember">
-          <van-checkbox v-model="checked" shape="square">记住我</van-checkbox>
+        <div class="other">
+          <div class="remember">
+            <van-checkbox v-model="checked" shape="square">保持登录</van-checkbox>
+          </div>
+          <div class="forget" @click="$router.push('/set-password')">
+            忘记密码
+          </div>
         </div>
         <div style="margin: 0.427rem;">
           <van-button round block type="primary" native-type="submit">
             登&nbsp;录
           </van-button>
-        </div>
-        <div class="forget" @click="$router.push('/set-password')">
-          忘记密码?
         </div>
       </van-form>
     </div>
@@ -119,20 +121,29 @@ export default {
     box-shadow: 0 0.08rem 0.133rem rgb(0 0 0 / 35%);
     margin-top: 1.067rem;
 
-    .remember {
-      margin-top: 0.533rem;
-    }
 
     button {
       margin-top: 1.333rem;
       font-size: 0.533rem;
     }
 
-    .forget {
-      margin-top: 0.267rem;
-      text-align: center;
-      color: gray;
+    .other {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #323233;
+      padding: 0 0.8rem;
+
+      .remember {
+        flex: 1;
+      }
+
+      .forget {
+        flex: 1;
+        text-align: right;
+      }
     }
+
 
     .van-field__label {
       img {

@@ -11,10 +11,7 @@
         <span :class="componentName==='Login'? ['is_activate']:[]" @click="switchLogin">登&nbsp;录</span>
         <span :class="componentName==='Register'? ['is_activate']:[]" @click="switchRegister">注&nbsp;册</span>
       </div>
-      <transition
-                  enter-active-class="animate__animated animate__flipInY"
-                  leave-active-class="animate__animated animate__flipOutY"
-                  mode="out-in">
+      <transition enter-active-class="animate__animated animate__flipInY">
         <keep-alive>
           <component :is="componentName"></component>
         </keep-alive>
@@ -27,7 +24,6 @@
 import Login from "@/components/LoginRegister/Login";
 import Register from "@/components/LoginRegister/Register";
 import {onMounted, ref} from "vue";
-import animate from "../../../node_modules/animate.css/animate.css";
 import {useRouter} from "vue-router";
 
 export default {
@@ -41,8 +37,8 @@ export default {
     // 默认显示登录组件
     const componentName = ref('Login')
     // 其他页面调用，默认跳转
-    onMounted(()=>{
-      if(router.currentRoute.value.query.component){
+    onMounted(() => {
+      if (router.currentRoute.value.query.component) {
         componentName.value = router.currentRoute.value.query.component
       }
     })
@@ -153,7 +149,9 @@ section {
   .title {
     color: white;
     width: 8rem;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     .is_activate {
       border-bottom: 0.08rem solid white;
