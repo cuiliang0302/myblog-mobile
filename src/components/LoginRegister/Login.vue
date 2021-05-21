@@ -28,15 +28,14 @@
           </template>
         </van-field>
         <van-field
-            v-model="state.username"
             name="验证码"
             label-width="20"
-            validate-first
-            placeholder="验证码"
-            :rules="[{ required: true, message: '请填写验证码' }]"
         >
           <template #label>
             <img :src="require('@/assets/icon/code.png')" alt="">
+          </template>
+          <template #input>
+            <VerifyImgBtn class="verify-btn"></VerifyImgBtn>
           </template>
         </van-field>
         <div class="other">
@@ -76,6 +75,7 @@
 
 <script>
 import {Form, Button, Field, Divider, Icon, Checkbox} from 'vant';
+import VerifyImgBtn from "@/components/verify/VerifyImgBtn";
 import {reactive, ref} from "vue";
 
 export default {
@@ -85,7 +85,8 @@ export default {
     [Field.name]: Field,
     [Divider.name]: Divider,
     [Icon.name]: Icon,
-    [Checkbox.name]: Checkbox
+    [Checkbox.name]: Checkbox,
+    VerifyImgBtn
   },
   name: "Login",
   setup() {
@@ -142,6 +143,10 @@ export default {
         flex: 1;
         text-align: right;
       }
+    }
+
+    .verify-btn {
+      width: 5.6rem;
     }
 
 

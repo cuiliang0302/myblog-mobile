@@ -65,6 +65,7 @@ export default {
   background-color: white;
   height: 100vh;
   position: relative;
+  overflow: hidden;
 }
 
 section {
@@ -139,13 +140,13 @@ section {
 
 .content {
   position: absolute;
-  width: 85%;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 10%;
+  //width: 85%;
+  //left: 50%;
+  //transform: translateX(-50%);
+  //top: 10%;
   z-index: 4;
   opacity: 0.95;
-
+  padding: 80px 40px;
   .title {
     color: white;
     width: 8rem;

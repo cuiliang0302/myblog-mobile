@@ -1,3 +1,4 @@
+<!--图片验证按钮-->
 <template>
   <div class="main">
     <div>
@@ -42,7 +43,7 @@ export default {
     [Icon.name]: Icon,
     Toast
   },
-  name: "Test",
+  name: "VerifyImgBtn",
   setup() {
     // 验证弹窗状态
     const show = ref(false)
@@ -92,7 +93,7 @@ export default {
   }
 
   b {
-    vertical-align: 8px;
+    vertical-align: 6px;
     margin-left: 10px;
     font-weight: normal;
   }
