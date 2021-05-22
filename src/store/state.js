@@ -5,7 +5,11 @@ const state = {
     fontType: '标准'
   },
   // 是否开启暗黑模式
-  dark: false
+  dark: false,
+  // 登录用户信息(localStorage)
+  userLocal: {},
+  // 登录用户信息(sessionStorage)
+  userSession: {}
 }
 export default state
 

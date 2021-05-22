@@ -5,8 +5,14 @@ const mutations = {
   setFontType(state, type) {
     state.font.fontType = type
   },
-  setDark(state){
+  setDark(state) {
     state.dark = !state.dark
+  },
+  setUserLocal(state, value) {
+    state.userLocal = value
+  },
+  setUserSession(state, value) {
+    state.userSession = value
   }
 }
 export default mutations

@@ -2,14 +2,9 @@
 <template>
   <div class="main">
     <div>
-      <van-button v-if="!isPassing" :type="btnType" @click="showPopup" block plain>
-        <img :src="require('@/assets/icon/click.png')"/>
-        <b>点击按钮进行验证</b>
-      </van-button>
-      <van-button v-else plain type="success" block>
-        <img :src="require('@/assets/icon/success.png')"/>
-        <b>验证成功</b>
-      </van-button>
+      <van-button type="primary" @click="showPopup" block plain size="small"
+                  :text="codeBtn.btnText"
+                  :disabled="codeBtn.disabled"/>
     </div>
     <van-popup v-model:show="show">
       <div class="verify">
@@ -32,7 +27,7 @@
 <script>
 // 图片滑块组件(拼图)
 import dragVerifyImgChip from "@/components/verify/dragVerifyImgChip";
-import {onMounted, ref} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import {Button, Popup, Toast, Icon} from 'vant';
 
 export default {
@@ -44,22 +39,28 @@ export default {
     Toast
   },
 
-  name: "VerifyImgBtn",
-  props: {
-    // 是否通过验证
-    isPassing: {
-      type: Boolean,
-      default: false
-    },
-    // 按钮样式
-    btnType: {
-      type: String,
-      default: 'default'
-    }
-  },
+  name: "VerifyCodeBtn",
   setup(props, {emit}) {
+    // 是否通过验证
+    const isPassing = ref(false)
     // 滑块验证对象
     const dragVerify = ref(null)
+    // 获取验证码按钮对象
+    let codeBtn = reactive({disabled: false, btnText: '获取验证码'});
+    // 点击获取验证码
+    const getCode = () => {
+      let second = 60
+      const intervalObj = setInterval(() => {
+        codeBtn.disabled = true
+        second--
+        codeBtn.btnText = '获取验证码(' + second + 's)'
+        if (second === 0) {
+          codeBtn.disabled = false
+          codeBtn.btnText = '获取验证码'
+          clearInterval(intervalObj)
+        }
+      }, 1000)
+    }
     // 验证弹窗状态
     const show = ref(false)
     const imgList = ref([require('@/assets/verify/verify-1.jpg'),
@@ -73,13 +74,12 @@ export default {
       imgId.value = parseInt(Math.random() * imgList.value.length, 10);
     }
     const reimg = () => {
-      console.log('刷新图片')
       getImgId()
     }
     const pass = () => {
-      Toast.success('验证成功！');
+      Toast.success('滑动验证成功！');
+      getCode()
       emit('pass')
-      // props.isPassing.value = true
       setTimeout(() => {
         show.value = false
         dragVerify.value.reset()
@@ -93,14 +93,13 @@ export default {
       reimg()
     })
     return {
-      show, showPopup, imgList, imgId, reimg, pass, dragVerify
+      show, showPopup, imgList, imgId, reimg, pass, codeBtn, dragVerify,isPassing
     }
-  },
+  }
 }
 </script>
 
 <style lang="scss">
-@import "src/assets/style/variable";
 
 .verify {
   padding: 20px

@@ -137,7 +137,7 @@ export default {
     },
     handlerBg: {
       type: String,
-      default: "#fff"
+      default: "#27ae60"
     },
     textSize: {
       type: String,
@@ -171,7 +171,7 @@ export default {
     },
     successTip: {
       type: String,
-      default: "验证通过，超过80%用户"
+      default: "验证通过，您的速度快如闪电"
     },
     failTip: {
       type: String,

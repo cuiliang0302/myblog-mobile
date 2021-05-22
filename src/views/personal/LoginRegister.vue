@@ -12,9 +12,7 @@
         <span :class="componentName==='Register'? ['is_activate']:[]" @click="switchRegister">注&nbsp;册</span>
       </div>
       <transition enter-active-class="animate__animated animate__flipInY">
-        <keep-alive>
           <component :is="componentName"></component>
-        </keep-alive>
       </transition>
     </div>
   </div>

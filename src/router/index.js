@@ -280,7 +280,7 @@ const routes = [
     name: 'Test1',
     component: () => import('@/views/Test1'),
     meta: {
-      title: '测试页',
+      title: '测试页1',
       keepAlive: true,
       transitionClass: 'jump'
     }

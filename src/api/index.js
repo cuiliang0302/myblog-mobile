@@ -1,6 +1,6 @@
 import {request} from './request'
 
-const http = {
+const index = {
   get(url, params) {
     const config = {
       method: 'get',
@@ -34,4 +34,4 @@ const http = {
     return request(config)
   }
 }
-export default http
+export default index

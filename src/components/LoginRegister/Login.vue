@@ -3,8 +3,8 @@
     <div class="form">
       <van-form @submit="onSubmit">
         <van-field
-            v-model="state.username"
-            name="用户名"
+            v-model="loginForm.username"
+            name="username"
             placeholder="用户名/邮箱号/手机号"
             label-width="20"
             validate-first
@@ -15,9 +15,9 @@
           </template>
         </van-field>
         <van-field
-            v-model="state.password"
+            v-model="loginForm.password"
             type="password"
-            name="密码"
+            name="password"
             label-width="20"
             validate-first
             placeholder="密码"
@@ -28,19 +28,18 @@
           </template>
         </van-field>
         <van-field
-            name="验证码"
             label-width="20"
         >
           <template #label>
             <img :src="require('@/assets/icon/code.png')" alt="">
           </template>
           <template #input>
-            <VerifyImgBtn class="verify-btn"></VerifyImgBtn>
+            <VerifyImgBtn :isPassing="isPassing" :btnType="btnType" @pass="pass" class="verify-btn"></VerifyImgBtn>
           </template>
         </van-field>
         <div class="other">
           <div class="remember">
-            <van-checkbox v-model="checked" shape="square">保持登录</van-checkbox>
+            <van-checkbox v-model="remember" shape="square">保持登录</van-checkbox>
           </div>
           <div class="forget" @click="$router.push('/set-password')">
             忘记密码
@@ -56,15 +55,15 @@
     <div class="other">
       <van-divider>第三方账号登录</van-divider>
       <div class="other-logo">
-        <span>
+        <span @click="qqLogin">
         <img src="https://img.yzcdn.cn/vant/share-sheet-qq.png">
         <p>QQ</p>
       </span>
-        <span>
+        <span @click="vxLogin">
         <img src="https://img.yzcdn.cn/vant/share-sheet-wechat.png">
         <p>微信</p>
       </span>
-        <span>
+        <span @click="wbLogin">
         <img src="https://img.yzcdn.cn/vant/share-sheet-weibo.png">
         <p>微博</p>
       </span>
@@ -74,9 +73,12 @@
 </template>
 
 <script>
-import {Form, Button, Field, Divider, Icon, Checkbox} from 'vant';
+import {Form, Button, Field, Divider, Icon, Checkbox, Toast} from 'vant';
 import VerifyImgBtn from "@/components/verify/VerifyImgBtn";
 import {reactive, ref} from "vue";
+import {postLogin} from '@/api/personal'
+import store from "@/store";
+import {useRouter} from "vue-router";
 
 export default {
   components: {
@@ -86,23 +88,74 @@ export default {
     [Divider.name]: Divider,
     [Icon.name]: Icon,
     [Checkbox.name]: Checkbox,
+    Toast,
     VerifyImgBtn
   },
   name: "Login",
   setup() {
-    const checked = ref(false);
-    const state = reactive({
+    const router = useRouter()
+    // 保持登录复选框
+    const remember = ref(false);
+    // 用户登录表单
+    const loginForm = reactive({
       username: '',
       password: '',
     });
-    const onSubmit = (values) => {
-      console.log('submit', values);
+    // 验证码通过验证状态
+    const isPassing = ref(false)
+    // 验证码按钮样式
+    const btnType = ref('default')
+    // 验证码通过验证
+    const pass = () => {
+      isPassing.value = true
+    }
+    // 表单登录按钮
+    const onSubmit = () => {
+      if (!isPassing.value) {
+        console.log("滑动了吗")
+        btnType.value = 'danger'
+        return
+      }
+      postLogin(loginForm).then((response) => {
+        console.log(response)
+        Toast.success('登录成功！');
+        if (remember.value) {
+          console.log('记住了')
+          store.commit('setUserLocal', response)
+        } else {
+          console.log('记不住')
+          store.commit('setUserSession', response)
+        }
+        router.push('/home')
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail('账号或密码错误！');
+        loginForm.username = ''
+        loginForm.password = ''
+        isPassing.value = false
+      });
     };
-
+    // qq登录
+    const qqLogin = () => {
+      Toast('QQ登录正在开发中！')
+    }
+    const vxLogin = () => {
+      Toast('微信登录正在开发中！')
+    }
+    const wbLogin = () => {
+      Toast('微博登录正在开发中！')
+    }
     return {
-      state,
+      loginForm,
       onSubmit,
-      checked
+      remember,
+      isPassing,
+      pass,
+      btnType,
+      qqLogin,
+      vxLogin,
+      wbLogin
     };
   },
 }

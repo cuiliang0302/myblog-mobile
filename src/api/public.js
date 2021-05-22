@@ -1,3 +1,3 @@
-import http from './http'
+import index from './index'
 
 

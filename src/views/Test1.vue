@@ -1,27 +1,25 @@
 <template>
   <div class="main">
-    <van-cell is-link @click="showPopup">展示弹出层</van-cell>
-    <van-popup v-model:show="show">
-      <drag-verify-img-chip
-          ref="dragVerify"
-          :imgsrc="img"
-          :isPassing.sync="isPassing"
-          :showRefresh="true"
-          text="请按住滑块拖动"
-          successText="验证通过"
-          handlerIcon="el-icon-d-arrow-right"
-          successIcon="el-icon-circle-check"
-          @refresh="reimg"
-          @passcallback="pass"
-      >
-      </drag-verify-img-chip>
-    </van-popup>
+    <van-button round type="primary" @click="resetImg">重置</van-button>
+    <drag-verify-img-chip
+        ref="dragVerify"
+        :imgsrc="img"
+        :isPassing.sync="isPassing"
+        :showRefresh="true"
+        text="请按住滑块拖动"
+        successText="验证通过"
+        handlerIcon="el-icon-d-arrow-right"
+        successIcon="el-icon-circle-check"
+        @refresh="reimg"
+        @passcallback="pass"
+    >
+    </drag-verify-img-chip>
   </div>
 </template>
 
 <script>
 import {onMounted, ref} from "vue";
-import {Popup, Cell} from 'vant';
+import {Popup, Cell, Button} from 'vant';
 // 图片滑块组件(拼图)
 import dragVerifyImgChip from "@/components/verify/dragVerifyImgChip";
 
@@ -29,11 +27,13 @@ export default {
   components: {
     dragVerifyImgChip,
     [Popup.name]: Popup,
-    [Cell.name]: Cell
+    [Cell.name]: Cell,
+    [Button.name]: Button
   },
   name: "Test1",
   setup() {
-    const show = ref(false);
+    // 滑块验证对象
+    const dragVerify = ref(null)
     const isPassing = ref(false)
     const img = ref('https://img.yzcdn.cn/vant/apple-1.jpg')
     const id = ref(1)
@@ -46,11 +46,14 @@ export default {
       console.log('通过验证')
       isPassing.value = true
     }
-    const showPopup = () => {
-      show.value = true;
-    };
+    const resetImg = () => {
+      console.log("要重置了")
+      isPassing.value = false
+      reimg()
+      dragVerify.value.reset()
+    }
     return {
-      show, showPopup, isPassing, img, reimg, pass
+      isPassing, img, reimg, pass, resetImg, dragVerify
     };
   },
 }
