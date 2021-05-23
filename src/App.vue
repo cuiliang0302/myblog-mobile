@@ -40,30 +40,29 @@ export default {
     })
     // 监控路由的变化
     watch(
-        () => route.meta.transitionClass,
-        (transitionClass) => {
-          // 平滑切换
-          if (transitionClass === 'back') {
+        () => route.meta,
+        (newRoute, oldRoute) => {
+          // console.log(newRoute, oldRoute)
+          if (newRoute.index > oldRoute.index) {
+            // console.log("前进")
             enterClass.value = 'animate__animated animate__fadeInRight'
             leaveClass.value = 'animate__animated animate__fadeOutLeft'
-          }
-          // 跳转
-          else if (transitionClass === 'jump') {
-            enterClass.value = 'animate__animated animate__rollIn'
-            leaveClass.value = 'animate__animated animate__rollOut'
-          }
-          // 渐入
-          else if (transitionClass === 'gradually') {
-            enterClass.value = 'animate__animated animate__fadeIn'
-            leaveClass.value = 'animate__animated animate__fadeOut'
-          }
-          // 快速切换
-          else if (transitionClass === 'fast') {
-            enterClass.value = 'animate__animated animate__slideInRight'
-            leaveClass.value = 'animate__animated animate__slideOutLeft'
+          } else if (newRoute.index < oldRoute.index) {
+            // console.log("后退")
+            enterClass.value = 'animate__animated animate__fadeInLeft'
+            leaveClass.value = 'animate__animated animate__fadeOutRight'
           } else {
-            enterClass.value = ''
-            leaveClass.value = ''
+            // console.log('平级切换')
+            if (newRoute.transitionClass === 'gradually') {
+              // console.log('渐入')
+              enterClass.value = 'animate__animated animate__fadeIn'
+              leaveClass.value = 'animate__animated animate__fadeOut'
+            }
+            if (newRoute.transitionClass === 'jump') {
+              // console.log('跳跃')
+              enterClass.value = 'animate__animated animate__rollIn'
+              leaveClass.value = 'animate__animated animate__rollOut'
+            }
           }
         }
     );
@@ -82,6 +81,6 @@ export default {
   margin: 0 auto;
   -webkit-overflow-scrolling: touch;
   animation-timing-function: linear;
-  animate-duration: 300;
+  animate-duration: 0.2s !important;
 }
 </style>

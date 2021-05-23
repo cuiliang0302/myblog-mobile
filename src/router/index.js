@@ -12,7 +12,8 @@ const routes = [
     meta: {
       title: '崔亮的博客',
       keepAlive: true,
-      transitionClass: 'back'
+      transitionClass: 'gradually',//渐入
+      index: 1
     }
   },
   {
@@ -22,7 +23,8 @@ const routes = [
     meta: {
       title: '文章列表',
       keepAlive: true,
-      transitionClass: 'back'
+      transitionClass: 'gradually',//渐入
+      index: 1
     }
   },
   {
@@ -32,17 +34,8 @@ const routes = [
     meta: {
       title: '笔记列表',
       keepAlive: true,
-      transitionClass: 'back'
-    }
-  },
-  {
-    path: '/catalog/:id',
-    name: 'Catalog',
-    component: () => import('@/views/note/Catalog'),
-    meta: {
-      title: '笔记目录',
-      keepAlive: false,
-      transitionClass: 'gradually'
+      transitionClass: 'gradually',//渐入
+      index: 1
     }
   },
   {
@@ -52,67 +45,19 @@ const routes = [
     meta: {
       title: '个人中心',
       keepAlive: true,
-      transitionClass: 'back'
+      transitionClass: 'gradually',//渐入
+      index: 1
     }
   },
   {
-    path: '/tag',
-    name: 'Tag',
-    component: () => import('@/views/public/Tag'),
+    path: '/catalog/:id',
+    name: 'Catalog',
+    component: () => import('@/views/note/Catalog'),
     meta: {
-      title: '标签',
-      keepAlive: true,
-      transitionClass: 'jump'
-    }
-  },
-  {
-    path: '/classify',
-    name: 'Classify',
-    component: () => import('@/views/public/Classify'),
-    meta: {
-      title: '归档',
-      keepAlive: true,
-      transitionClass: 'jump'
-    }
-  },
-  {
-    path: '/message',
-    name: 'Message',
-    component: () => import('@/views/public/Message'),
-    meta: {
-      title: '留言板',
-      keepAlive: true,
-      transitionClass: 'jump'
-    }
-  },
-  {
-    path: '/about',
-    name: 'About',
-    component: () => import('@/views/public/About.vue'),
-    meta: {
-      title: '关于',
-      keepAlive: true,
-      transitionClass: 'jump'
-    }
-  },
-  {
-    path: '/link',
-    name: 'Link',
-    component: () => import('@/views/public/Link'),
-    meta: {
-      title: '友情链接',
-      keepAlive: true,
-      transitionClass: 'jump'
-    }
-  },
-  {
-    path: '/search',
-    name: 'Search',
-    component: () => import('@/views/public/Search'),
-    meta: {
-      title: '搜索',
-      keepAlive: true,
-      transitionClass: 'gradually'
+      title: '笔记目录',
+      keepAlive: false,
+      transitionClass: 'back',//前进后退
+      index: 2
     }
   },
   {
@@ -122,7 +67,74 @@ const routes = [
     meta: {
       title: '文章正文',
       keepAlive: false,
-      transitionClass: 'gradually'
+      transitionClass: 'back',//前进后退
+      index: 2
+    }
+  },
+  {
+    path: '/tag',
+    name: 'Tag',
+    component: () => import('@/views/public/Tag'),
+    meta: {
+      title: '标签',
+      keepAlive: true,
+      transitionClass: 'jump',//跳跃
+      index: 1
+    }
+  },
+  {
+    path: '/classify',
+    name: 'Classify',
+    component: () => import('@/views/public/Classify'),
+    meta: {
+      title: '归档',
+      keepAlive: true,
+      transitionClass: 'jump',//跳跃
+      index: 1
+    }
+  },
+  {
+    path: '/message',
+    name: 'Message',
+    component: () => import('@/views/public/Message'),
+    meta: {
+      title: '留言板',
+      keepAlive: true,
+      transitionClass: 'jump',//跳跃
+      index: 1
+    }
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: () => import('@/views/public/About.vue'),
+    meta: {
+      title: '关于',
+      keepAlive: true,
+      transitionClass: 'jump',//跳跃
+      index: 1
+    }
+  },
+  {
+    path: '/link',
+    name: 'Link',
+    component: () => import('@/views/public/Link'),
+    meta: {
+      title: '友情链接',
+      keepAlive: true,
+      transitionClass: 'jump',//跳跃
+      index: 1
+    }
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: () => import('@/views/public/Search'),
+    meta: {
+      title: '搜索',
+      keepAlive: true,
+      transitionClass: 'gradually',//上下切换
+      index: 1
     }
   },
   {
@@ -132,7 +144,8 @@ const routes = [
     meta: {
       title: '我的收藏',
       keepAlive: true,
-      transitionClass: 'gradually'
+      transitionClass: 'gradually',//跳跃
+      index: 1
     }
   },
   {
@@ -142,7 +155,8 @@ const routes = [
     meta: {
       title: '我的评论',
       keepAlive: true,
-      transitionClass: 'gradually'
+      transitionClass: 'gradually',//跳跃
+      index: 1
     }
   },
   {
@@ -152,7 +166,8 @@ const routes = [
     meta: {
       title: '消息通知',
       keepAlive: true,
-      transitionClass: 'gradually'
+      transitionClass: 'gradually',//跳跃
+      index: 1
     }
   },
   {
@@ -162,7 +177,8 @@ const routes = [
     meta: {
       title: '我的信息',
       keepAlive: true,
-      transitionClass: 'fast'
+      transitionClass: 'back',//前进后退
+      index: 2
     },
   },
   {
@@ -172,7 +188,8 @@ const routes = [
     meta: {
       title: '修改密码',
       keepAlive: true,
-      transitionClass: 'fast'
+      transitionClass: 'back',//前进后退
+      index: 2
     },
   },
   {
@@ -182,7 +199,8 @@ const routes = [
     meta: {
       title: '修改邮箱',
       keepAlive: true,
-      transitionClass: 'fast'
+      transitionClass: 'back',//前进后退
+      index: 2
     },
   },
   {
@@ -192,7 +210,8 @@ const routes = [
     meta: {
       title: '绑定第三方账号',
       keepAlive: true,
-      transitionClass: 'fast'
+      transitionClass: 'back',//前进后退
+      index: 2
     },
   },
   {
@@ -202,7 +221,8 @@ const routes = [
     meta: {
       title: '数据统计',
       keepAlive: true,
-      transitionClass: 'fast'
+      transitionClass: 'back',//前进后退
+      index: 2
     },
   },
   {
@@ -212,7 +232,8 @@ const routes = [
     meta: {
       title: '赞赏支持',
       keepAlive: true,
-      transitionClass: 'fast'
+      transitionClass: 'back',//前进后退
+      index: 2
     },
   },
   {
@@ -222,7 +243,8 @@ const routes = [
     meta: {
       title: '申请友链',
       keepAlive: true,
-      transitionClass: 'fast'
+      transitionClass: 'back',//前进后退
+      index: 2
     },
   },
   {
@@ -232,7 +254,8 @@ const routes = [
     meta: {
       title: '联系博主',
       keepAlive: true,
-      transitionClass: 'fast'
+      transitionClass: 'back',//前进后退
+      index: 2
     },
   },
   {
@@ -242,7 +265,8 @@ const routes = [
     meta: {
       title: '字体设置',
       keepAlive: true,
-      transitionClass: 'fast'
+      transitionClass: 'back',//前进后退
+      index: 2
     },
   },
   {
@@ -262,7 +286,8 @@ const routes = [
     meta: {
       title: '重置密码',
       keepAlive: true,
-      transitionClass: 'gradually'
+      transitionClass: 'back',//前进后退
+      index: 2
     }
   },
   {
@@ -272,7 +297,8 @@ const routes = [
     meta: {
       title: '测试页',
       keepAlive: true,
-      transitionClass: 'jump'
+      transitionClass: 'back',//前进后退
+      index: 2
     }
   },
   {
@@ -282,7 +308,8 @@ const routes = [
     meta: {
       title: '测试页1',
       keepAlive: true,
-      transitionClass: 'jump'
+      transitionClass: 'back',//前进后退
+      index: 2
     }
   }
 ]
