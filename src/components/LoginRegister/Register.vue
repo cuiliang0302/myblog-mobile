@@ -1,14 +1,14 @@
 <template>
   <div class="main">
     <div class="form">
-      <van-form @submit="onSubmit">
+      <van-form @submit="onSubmit" @failed="onFailed">
         <van-field
             v-model="registerForm.username"
             name="用户名"
             placeholder="请输入用户名"
             label-width="20"
             validate-first
-            :rules="[{ required: true, message: '请填写用户名' }]"
+            :rules="[{ validator: checkUsername, message: '请填写正确的用户名' }]"
         >
           <template #label>
             <img :src="require('@/assets/icon/user.png')" alt="">
@@ -20,7 +20,7 @@
             placeholder="请输入邮箱号/手机号"
             label-width="20"
             validate-first
-            :rules="[{ required: true, message: '请填写邮箱号/手机号' }]"
+            :rules="[{ validator: checkContact, message: '请填写正确的邮箱号/手机号' }]"
         >
           <template #label>
             <img :src="require('@/assets/icon/email.png')" alt="">
@@ -68,6 +68,7 @@ import {reactive, ref} from "vue";
 import {Form, Button, Field, Icon, Toast} from 'vant';
 import {useRouter} from "vue-router";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn";
+import {getRegister} from '@/api/personal'
 
 export default {
   components: {
@@ -89,6 +90,42 @@ export default {
     });
     // 密码正则校验
     const pattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
+    // 异步校验用户名
+    const checkUsername = (val) =>
+        new Promise((resolve) => {
+          if (val) {
+            getRegister(val, NaN).then((response) => {
+              console.log(response)
+              if (response.result === 1) {
+                resolve(true)
+              } else {
+                resolve(false)
+              }
+            })
+          } else {
+            resolve(false)
+          }
+        });
+    // 异步校验邮箱/手机号
+    const checkContact = (val) =>
+        new Promise((resolve) => {
+          if (val) {
+            getRegister(NaN, val).then((response) => {
+              console.log(response)
+              if (response.result === 1) {
+                resolve(true)
+              } else {
+                resolve(false)
+              }
+            })
+          } else {
+            resolve(false)
+          }
+        });
+
+    const onFailed = (errorInfo) => {
+      console.log('failed', errorInfo);
+    };
     // 获取验证码
     const pass = () => {
       console.log("通过验证了,获取验证码")
@@ -104,7 +141,10 @@ export default {
       registerForm,
       onSubmit,
       pass,
-      pattern
+      pattern,
+      checkUsername,
+      checkContact,
+      onFailed
     };
   }
 }
