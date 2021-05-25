@@ -320,6 +320,7 @@ export default {
         this.$refs.progressBar.style.width = _x + this.height / 2 + "px";
         this.$refs.movecanvas.style.left = _x + "px";
       }
+      e.preventDefault()
     },
     dragFinish: function (e) {
       if (this.isMoving && !this.isPassing) {
@@ -395,7 +396,7 @@ export default {
         this.reImg();
       }
     }
-  }
+  },
 };
 </script>
 <style scoped>
