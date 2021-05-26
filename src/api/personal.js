@@ -14,3 +14,9 @@ export function getRegister(username, contact) {
     return index.get('register/' + '?contact=' + contact)
   }
 }
+
+// 获取验证码
+export function postCode(params) {
+  console.log(params)
+  return index.post('code/', params)
+}

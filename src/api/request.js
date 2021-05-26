@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import { createApp } from 'vue';
 export function request(config) {
   // 创建axios的实例
   const instance = axios.create({
@@ -22,6 +22,8 @@ export function request(config) {
   }, error => {
     console.log(error)
     switch (error.response.status) {
+      case 400:
+        return Promise.reject(error.response.data)
       case 401:
         console.log("无权访问")
         break

@@ -68,7 +68,8 @@ import {reactive, ref} from "vue";
 import {Form, Button, Field, Icon, Toast} from 'vant';
 import {useRouter} from "vue-router";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn";
-import {getRegister} from '@/api/personal'
+import {getRegister, postCode, postLogin} from '@/api/personal'
+import store from "@/store";
 
 export default {
   components: {
@@ -76,7 +77,8 @@ export default {
     [Button.name]: Button,
     [Icon.name]: Icon,
     [Field.name]: Field,
-    VerifyCodeBtn
+    VerifyCodeBtn,
+    Toast
   },
   name: "Register",
   setup() {
@@ -88,6 +90,12 @@ export default {
       code: '',
       password: '',
     });
+    // 获取验证码表单
+    const codeForm = reactive({
+      contact: '',
+      action: '用户注册',
+      username: '新用户',
+    })
     // 密码正则校验
     const pattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
     // 异步校验用户名
@@ -96,42 +104,49 @@ export default {
           if (val) {
             getRegister(val, NaN).then((response) => {
               console.log(response)
-              if (response.result === 1) {
-                resolve(true)
-              } else {
-                resolve(false)
-              }
-            })
-          } else {
-            resolve(false)
+              resolve(true)
+            }).catch(response => {
+              //发生错误时执行的代码
+              console.log(response)
+              Toast.fail(response.msg);
+              resolve(false)
+            });
           }
-        });
+        })
     // 异步校验邮箱/手机号
     const checkContact = (val) =>
         new Promise((resolve) => {
           if (val) {
             getRegister(NaN, val).then((response) => {
               console.log(response)
-              if (response.result === 1) {
-                resolve(true)
-              } else {
-                resolve(false)
-              }
-            })
-          } else {
-            resolve(false)
+              resolve(true)
+            }).catch(response => {
+              //发生错误时执行的代码
+              console.log(response)
+              Toast.fail(response.msg);
+              resolve(false)
+            });
           }
-        });
-
+        })
     const onFailed = (errorInfo) => {
       console.log('failed', errorInfo);
     };
     // 获取验证码
     const pass = () => {
       console.log("通过验证了,获取验证码")
+      codeForm.contact = registerForm.contact
+      postCode(codeForm).then((response) => {
+        console.log(response)
+        Toast.success('验证码发送成功！');
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail('账号发送失败！');
+      });
     }
     const onSubmit = (values) => {
       console.log('submit', values);
+
       // Toast.success('注册成功，即将跳转至个人中心页');
       // setTimeout(function () {
       //   router.push('/personal')
