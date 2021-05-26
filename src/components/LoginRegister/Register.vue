@@ -68,7 +68,7 @@ import {reactive, ref} from "vue";
 import {Form, Button, Field, Icon, Toast} from 'vant';
 import {useRouter} from "vue-router";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn";
-import {getRegister, postCode, postLogin} from '@/api/personal'
+import {getRegister, postCode, postLogin, postRegister} from '@/api/personal'
 import store from "@/store";
 
 export default {
@@ -141,16 +141,23 @@ export default {
       }).catch(response => {
         //发生错误时执行的代码
         console.log(response)
-        Toast.fail('账号发送失败！');
+        Toast.fail(response.msg);
       });
     }
     const onSubmit = (values) => {
       console.log('submit', values);
-
-      // Toast.success('注册成功，即将跳转至个人中心页');
-      // setTimeout(function () {
-      //   router.push('/personal')
-      // }, 1500);
+      postRegister(registerForm).then((response) => {
+        console.log(response)
+        Toast.success('注册成功，即将跳转至登录页');
+        setTimeout(function () {
+          router.push({path: '/login_register', query: {component: 'Login'}})
+          router.go(0);
+        }, 1500);
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail('账号注册失败！');
+      });
     };
     return {
       registerForm,

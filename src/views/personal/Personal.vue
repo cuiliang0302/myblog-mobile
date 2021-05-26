@@ -7,9 +7,10 @@
       <div class="wave wave4"></div>
       <div class="photo">
         <div class="username">
-          <p>点击头像登录/注册</p>
+          <p v-if="isLogin">{{ userInfo.username }}</p>
+          <p v-else>点击头像登录/注册</p>
         </div>
-        <van-image :src="require('@/assets/images/logo.png')" width="1.867rem"
+        <van-image :src="isLogin?userInfo.photo:require('@/assets/images/logo.png')" width="1.867rem"
                    round
                    @click="$router.push('/login_register')"
         >
@@ -19,13 +20,14 @@
         </van-image>
       </div>
       <div class="history">
-        <span><van-icon name="clock" size="0.8rem" color="#2ecc71" @click="toView"/><p>浏览记录</p></span>
+        <span><van-icon name="clock" size="0.8rem" color="#2ecc71"
+                        @click="toView('/my-history')"/><p>浏览记录</p></span>
         <span><van-icon name="star" size="0.8rem" color="#f1c40f"
-                        @click="$router.push('/my-collect')"/><p>我的收藏</p></span>
+                        @click="toView('/my-collect')"/><p>我的收藏</p></span>
         <span><van-icon name="chat" size="0.8rem" color="#9b59b6"
-                        @click="$router.push('/my-comments')"/><p>我的评论</p></span>
+                        @click="toView('/my-comments')"/><p>我的评论</p></span>
         <span><van-icon name="bell" size="0.8rem" color="#e74c3c"
-                        @click="$router.push('/my-message')"/><p>消息通知</p></span>
+                        @click="toView('/my-message')"/><p>消息通知</p></span>
         <van-badge :content="3" :show-zero="false"/>
       </div>
     </section>
@@ -73,8 +75,10 @@
 import Tabbar from "@/components/common/Tabbar";
 import LoginPopup from "@/components/common/LoginPopup";
 import {Image as VanImage, Loading, Icon, Cell, CellGroup, Switch, Dialog, Toast, Badge} from 'vant';
-import {computed, ref} from "vue";
+import {computed, onMounted, reactive, ref} from "vue";
 import store from "@/store";
+import {useRouter} from "vue-router";
+import router from "@/router";
 
 export default {
   components: {
@@ -91,15 +95,17 @@ export default {
   },
   name: "Personal",
   setup() {
-    // 提示登录组件对象
-    const refLoginPopup = ref()
-    // 跳转到浏览历史页
-    const toView = () => {
-      refLoginPopup.value.showPopup()
-    }
+    // 引入公共方法
+    let {isLogin, userInfo, toView, refLoginPopup} = global()
+
     // 引入系统与设置模块
     let {flow, changeFlow, fontType, dark, changeDark, logout} = setting()
+    onMounted(() => {
+
+    })
     return {
+      isLogin,
+      userInfo,
       dark,
       toView,
       refLoginPopup,
@@ -111,6 +117,41 @@ export default {
     }
   },
 };
+
+// 公共方法
+function global() {
+  const router = useRouter()
+  const isLogin = ref(store.state.login.isLogin)
+  // 用户是否登录
+  const userInfo = reactive({})
+  const keepLogin = store.state.login.keepLogin
+  // 提示登录组件对象
+  const refLoginPopup = ref()
+  // 跳转到记录消息页
+  const toView = (value) => {
+    if (isLogin.value) {
+      router.push(value)
+    } else {
+      refLoginPopup.value.showPopup()
+    }
+  }
+  onMounted(() => {
+    if (keepLogin) {
+      console.log("保持登录了")
+      for (let i in store.state.userLocal) {
+        userInfo[i] = store.state.userLocal[i]
+      }
+    } else {
+      console.log("没有啊")
+    }
+  })
+  return {
+    isLogin,
+    userInfo,
+    toView,
+    refLoginPopup
+  }
+}
 
 function setting() {
   // 是否开启订阅
@@ -145,7 +186,10 @@ function setting() {
       cancelButtonText: '再想想',
     })
         .then(() => {
-          Toast('真的退出了')
+          window.sessionStorage.clear()
+          window.localStorage.clear()
+          Toast.success('成功退出，跳转至登录页')
+          router.push('/login_register')
         })
         .catch(() => {
           Toast('算了吧')

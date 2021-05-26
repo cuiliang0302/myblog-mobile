@@ -119,11 +119,14 @@ export default {
       postLogin(loginForm).then((response) => {
         console.log(response)
         Toast.success('登录成功！');
+        store.commit('setIsLogin', true)
         if (remember.value) {
           console.log('记住了')
+          store.commit('setKeepLogin', true)
           store.commit('setUserLocal', response)
         } else {
           console.log('记不住')
+          store.commit('setKeepLogin', false)
           store.commit('setUserSession', response)
         }
         router.push('/home')

@@ -15,8 +15,15 @@ export function getRegister(username, contact) {
   }
 }
 
+// 用户注册
+export function postRegister(params) {
+  console.log(params)
+  return index.post('register/', params)
+}
+
 // 获取验证码
 export function postCode(params) {
   console.log(params)
   return index.post('code/', params)
 }
+

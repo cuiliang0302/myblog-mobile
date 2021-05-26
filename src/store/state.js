@@ -6,9 +6,14 @@ const state = {
   },
   // 是否开启暗黑模式
   dark: false,
-  // 登录用户信息(localStorage)
+  // 登录信息
+  login: {
+    isLogin: false,
+    keepLogin: false
+  },
+  // 保持登录用户信息(localStorage)
   userLocal: {},
-  // 登录用户信息(sessionStorage)
+  // 临时登录用户信息(sessionStorage)
   userSession: {}
 }
 export default state
