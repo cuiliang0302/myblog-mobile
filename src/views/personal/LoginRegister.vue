@@ -1,5 +1,5 @@
 <template>
-  <div class="bgc">
+  <div class="bgc" ref="wraper">
     <section>
       <div class="wave wave1"></div>
       <div class="wave wave2"></div>
@@ -12,7 +12,7 @@
         <span :class="componentName==='Register'? ['is_activate']:[]" @click="switchRegister">注&nbsp;册</span>
       </div>
       <transition enter-active-class="animate__animated animate__flipInY">
-          <component :is="componentName"></component>
+        <component :is="componentName"></component>
       </transition>
     </div>
   </div>
@@ -32,6 +32,8 @@ export default {
   name: "LoginRegister",
   setup() {
     const router = useRouter();
+    // 阻止默认事件
+    const wraper = usePreventDefault()
     // 默认显示登录组件
     const componentName = ref('Login')
     // 其他页面调用，默认跳转
@@ -51,10 +53,21 @@ export default {
     return {
       componentName,
       switchRegister,
-      switchLogin
+      switchLogin,
+      wraper
     }
   }
 };
+
+export function usePreventDefault() {
+  const wraper = ref(null)
+  onMounted(() => {
+    wraper.value?.addEventListener('touchmove', e => {
+      e.preventDefault()
+    })
+  })
+  return wraper
+}
 </script>
 <style lang="scss" scoped>
 @import "../../assets/style/variable";
@@ -145,6 +158,7 @@ section {
   z-index: 4;
   opacity: 0.95;
   padding: 80px 40px;
+
   .title {
     color: white;
     width: 8rem;
