@@ -81,6 +81,8 @@ export default {
   margin: 0 auto;
   -webkit-overflow-scrolling: touch;
   animation-timing-function: linear;
-  animate-duration: 0.2s !important;
+}
+.animate__animated{
+  animation-duration: 0.3s!important;
 }
 </style>

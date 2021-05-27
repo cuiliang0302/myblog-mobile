@@ -3,8 +3,8 @@ import axios from 'axios'
 export function request(config) {
   // 创建axios的实例
   const instance = axios.create({
-    // baseURL: 'http://127.0.0.1:8000/api/',
-    baseURL: 'https://api.cuiliangblog.cn/api/',
+    // baseURL: 'http://127.0.0.1:8000/v1/',
+    baseURL: 'https://api.cuiliangblog.cn/v1/',
     timeout: 10000
   })
   // 请求拦截器配置

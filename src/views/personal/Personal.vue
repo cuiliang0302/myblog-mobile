@@ -121,10 +121,10 @@ export default {
 // 公共方法
 function global() {
   const router = useRouter()
-  const isLogin = ref(store.state.login.isLogin)
+  const isLogin = ref(computed(() => store.state.login.isLogin))
   // 用户是否登录
   const userInfo = reactive({})
-  const keepLogin = store.state.login.keepLogin
+  const keepLogin = computed(() => store.state.login.keepLogin)
   // 提示登录组件对象
   const refLoginPopup = ref()
   // 跳转到记录消息页
@@ -143,6 +143,9 @@ function global() {
       }
     } else {
       console.log("没有啊")
+      for (let i in store.state.userSession) {
+        userInfo[i] = store.state.userSession[i]
+      }
     }
   })
   return {
