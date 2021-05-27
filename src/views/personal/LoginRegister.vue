@@ -11,7 +11,7 @@
         <span :class="componentName==='Login'? ['is_activate']:[]" @click="switchLogin">登&nbsp;录</span>
         <span :class="componentName==='Register'? ['is_activate']:[]" @click="switchRegister">注&nbsp;册</span>
       </div>
-      <transition enter-active-class="animate__animated animate__flipInY">
+      <transition enter-active-class="animated animate__animated animate__flipInY">
         <component :is="componentName"></component>
       </transition>
     </div>
@@ -177,5 +177,8 @@ section {
       margin: 0 0.533rem;
     }
   }
+}
+.animated{
+  animation-duration: 1s!important;
 }
 </style>

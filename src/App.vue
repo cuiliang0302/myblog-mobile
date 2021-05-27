@@ -82,7 +82,11 @@ export default {
   -webkit-overflow-scrolling: touch;
   animation-timing-function: linear;
 }
-.animate__animated{
-  animation-duration: 0.3s!important;
+
+.animate__animated {
+  animation-duration: 0.4s;
+}
+.animate__fadeInRight, .animate__fadeOutLef, .animate__fadeInLeft, .animate__fadeOutRight {
+  animation-duration: 0.3s;
 }
 </style>

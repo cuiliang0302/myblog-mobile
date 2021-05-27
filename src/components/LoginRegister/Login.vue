@@ -129,7 +129,7 @@ export default {
           store.commit('setKeepLogin', false)
           store.commit('setUserSession', response)
         }
-        router.push('/home')
+        router.push('/personal')
       }).catch(response => {
         //发生错误时执行的代码
         console.log(response)
