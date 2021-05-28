@@ -2,7 +2,7 @@
 <template>
   <van-swipe :autoplay="3000" lazy-render>
     <van-swipe-item v-for="(item,index) in carouselList" :key="index">
-      <van-image :src="item.img" alt="" width="10rem" height="5.333rem" @click="toView(item.url)">
+      <van-image :src="item.img" alt="" width="100%" height="5.333rem" @click="toView(item.url)">
         <template v-slot:loading>
           <van-loading type="spinner" size="20"/>
         </template>

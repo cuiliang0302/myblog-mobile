@@ -1,26 +1,35 @@
 <template>
   <div class="home">
     <h1>这是测试页1</h1>
-    <VerifyCodeBtn @pass="pass"></VerifyCodeBtn>
+    <van-cell is-link @click="showBirthday=true">展示弹出层</van-cell>
+    <van-popup v-model:show="showBirthday" position="bottom" :style="{ height: '30%' }">
+      <van-datetime-picker
+          v-model="currentDate"
+          type="date"
+          title="选择生日"
+      />
+    </van-popup>
   </div>
 </template>
 
 <script>
-import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn";
+import {DatetimePicker, Popup, Cell} from 'vant';
 import {ref} from "vue";
 
 export default {
   components: {
-    VerifyCodeBtn
+    [DatetimePicker.name]: DatetimePicker,
+    [Popup.name]: Popup,
+    [Cell.name]: Cell
   },
   name: 'Test',
   setup() {
-    const pass = () => {
-      console.log("通过验证了,获取验证码")
-    }
+    const currentDate = ref(new Date(2021, 0, 17));
+    const showBirthday = ref(false)
     return {
-     pass
-    }
+      showBirthday,
+      currentDate,
+    };
   }
 }
 </script>

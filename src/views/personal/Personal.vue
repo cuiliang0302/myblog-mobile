@@ -10,7 +10,7 @@
           <p v-if="isLogin">{{ userInfo.username }}</p>
           <p v-else>点击头像登录/注册</p>
         </div>
-        <van-image :src="isLogin?userInfo.photo:require('@/assets/images/logo.png')" width="1.867rem"
+        <van-image :src="isLogin?userInfo.photo:require('@/assets/images/logo.png')" width="1.867rem" height="1.867rem"
                    round
                    @click="$router.push('/login_register')"
         >

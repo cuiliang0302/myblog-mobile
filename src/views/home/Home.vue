@@ -114,7 +114,6 @@ export default {
       console.log(article_data)
       listState.list = article_data.results
       listState.count = article_data.count
-
     }
 
     onMounted(() => {

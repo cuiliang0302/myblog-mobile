@@ -27,3 +27,8 @@ export function postCode(params) {
   return index.post('code/', params)
 }
 
+// 查询指定用户信息
+export function getUserinfoId(userId) {
+  console.log(userId)
+  return index.get('userinfo/' + userId)
+}

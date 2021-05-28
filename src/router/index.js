@@ -100,7 +100,7 @@ const routes = [
     meta: {
       title: '留言板',
       keepAlive: true,
-      transitionClass: 'jump',//跳跃
+      transitionClass: 'gradually',//跳跃
       index: 1
     }
   },
@@ -133,7 +133,18 @@ const routes = [
     meta: {
       title: '搜索',
       keepAlive: true,
-      transitionClass: 'gradually',//上下切换
+      transitionClass: 'gradually',//渐入
+      index: 1
+    }
+  },
+  {
+    path: '/my-history',
+    name: 'MyHistory',
+    component: () => import('@/views/personal/MyHistory'),
+    meta: {
+      title: '浏览记录',
+      keepAlive: true,
+      transitionClass: 'gradually',//渐入
       index: 1
     }
   },
@@ -144,7 +155,7 @@ const routes = [
     meta: {
       title: '我的收藏',
       keepAlive: true,
-      transitionClass: 'gradually',//跳跃
+      transitionClass: 'gradually',//渐入
       index: 1
     }
   },
@@ -155,7 +166,7 @@ const routes = [
     meta: {
       title: '我的评论',
       keepAlive: true,
-      transitionClass: 'gradually',//跳跃
+      transitionClass: 'gradually',//渐入
       index: 1
     }
   },
@@ -166,7 +177,7 @@ const routes = [
     meta: {
       title: '消息通知',
       keepAlive: true,
-      transitionClass: 'gradually',//跳跃
+      transitionClass: 'gradually',//渐入
       index: 1
     }
   },

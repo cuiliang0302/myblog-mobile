@@ -2,17 +2,16 @@
 @import "./transition.scss";
 @import "./variable.scss";
 @import "./vant.scss";
-body{
-  min-width: 320px!important;
-  max-width: 560px!important;
-  width: 10rem!important;
-  margin: 0 auto!important;
-  padding: 0!important;
+
+body {
+  margin: 0 !important;
+  padding: 0 !important;
   box-sizing: border-box;
   background-color: $color-background-base;
 }
+
 //markdown样式
-.github-markdown-body blockquote{
-  margin-left: 0px!important;
-  margin-right: 0px!important;
+.github-markdown-body blockquote {
+  margin-left: 0px !important;
+  margin-right: 0px !important;
 }
