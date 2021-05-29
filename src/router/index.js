@@ -208,10 +208,21 @@ const routes = [
     name: 'ChangeEmail',
     component: () => import('@/views/personal/ChangeEmail'),
     meta: {
-      title: '修改邮箱',
+      title: '更换邮箱',
       keepAlive: true,
       transitionClass: 'back',//前进后退
-      index: 2
+      index: 3
+    },
+  },
+  {
+    path: '/change-phone',
+    name: 'ChangePhone',
+    component: () => import('@/views/personal/ChangePhone'),
+    meta: {
+      title: '更换手机',
+      keepAlive: true,
+      transitionClass: 'back',//前进后退
+      index: 3
     },
   },
   {

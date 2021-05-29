@@ -34,11 +34,12 @@
     <div class="cell">
       <div class="cell-item">
         <van-cell-group title="账号与安全">
-          <van-cell title="我的信息" size="large" is-link to="/my-info"/>
-          <van-cell title="修改密码" size="large" is-link to="/change-password"/>
-          <van-cell title="更换邮箱" size="large" is-link to="/change-email"/>
-          <van-cell title="绑定第三方账号" size="large" is-link to="/binding"/>
-          <van-cell title="数据统计" size="large" is-link to="/statistics"/>
+          <van-cell title="我的信息" size="large" is-link @click="toView('/my-info')"/>
+          <van-cell title="修改密码" size="large" is-link @click="toView('/change-password')"/>
+          <van-cell title="更换邮箱" size="large" is-link @click="toView('/change-email')"/>
+          <van-cell title="更换手机" size="large" is-link @click="toView('/change-phone')"/>
+          <van-cell title="绑定第三方账号" size="large" is-link @click="toView('/binding')"/>
+          <van-cell title="数据统计" size="large" is-link @click="toView('/statistics')"/>
         </van-cell-group>
       </div>
       <div class="cell-item">
@@ -79,6 +80,8 @@ import {computed, onMounted, reactive, ref} from "vue";
 import store from "@/store";
 import {useRouter} from "vue-router";
 import router from "@/router";
+import user from "@/utils/user";
+import {getUserinfoId} from "@/api/personal";
 
 export default {
   components: {
@@ -100,6 +103,7 @@ export default {
 
     // 引入系统与设置模块
     let {flow, changeFlow, fontType, dark, changeDark, logout} = setting()
+
     onMounted(() => {
 
     })
@@ -121,10 +125,10 @@ export default {
 // 公共方法
 function global() {
   const router = useRouter()
-  const isLogin = ref(computed(() => store.state.login.isLogin))
-  // 用户是否登录
+  // 引入用户信息模块
+  let {userId,isLogin} = user();
+  // 用户信息
   const userInfo = reactive({})
-  const keepLogin = computed(() => store.state.login.keepLogin)
   // 提示登录组件对象
   const refLoginPopup = ref()
   // 跳转到记录消息页
@@ -135,23 +139,21 @@ function global() {
       refLoginPopup.value.showPopup()
     }
   }
-  onMounted(() => {
-    if (keepLogin) {
-      console.log("保持登录了")
-      for (let i in store.state.userLocal) {
-        userInfo[i] = store.state.userLocal[i]
-      }
-    } else {
-      console.log("没有啊")
-      for (let i in store.state.userSession) {
-        userInfo[i] = store.state.userSession[i]
-      }
+  // 获取用户信息
+  async function getUserinfo(userid) {
+    const userinfo_data = await getUserinfoId(userid)
+    console.log(userinfo_data)
+    for (let i in userinfo_data) {
+      userInfo[i] = userinfo_data[i]
     }
+  }
+  onMounted(() => {
+    getUserinfo(userId.value)
   })
   return {
     isLogin,
-    userInfo,
     toView,
+    userInfo,
     refLoginPopup
   }
 }

@@ -6,22 +6,24 @@ import store from "@/store";
 function user() {
   const isLogin = ref(computed(() => store.state.login.isLogin))
   const keepLogin = computed(() => store.state.login.keepLogin)
-  const userInfo = reactive({})
-  onMounted(()=>{
-    if(isLogin){
-      if (keepLogin) {
-        for (let i in store.state.userLocal) {
-          userInfo[i] = store.state.userLocal[i]
-        }
+  const userId = ref()
+  const userToken = ref()
+  onMounted(() => {
+    if (isLogin) {
+      console.log("登录了")
+      if (keepLogin === true) {
+        console.log('吃久了')
+        userId.value = store.state.userLocal.userid
+        userToken.value = store.state.userLocal.token
       } else {
-        for (let i in store.state.userSession) {
-          userInfo[i] = store.state.userLocal[i]
-        }
+        console.log('并没有')
+        userId.value = store.state.userSession.userid
+        userToken.value = store.state.userSession.token
       }
     }
   })
   return {
-    isLogin, userInfo
+    isLogin, userId, userToken
   }
 }
 

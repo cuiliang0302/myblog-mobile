@@ -1,4 +1,4 @@
-// 将日期对象转换为几天前
+// 日期对象格式化转换
 
 function timeFormat() {
   const timeAgo = (valueTime) => {
@@ -67,9 +67,17 @@ function timeFormat() {
       return (year+"-"+month+"-"+date);
     }
   }
+  const timeNowDate = ()=>{
+    // let nowDataObj = Date.parse(new Date());
+    let nowDate = new Date(1980, 0, 1)
+    return{
+      nowDate
+    }
+  }
   return {
     timeAgo,
-    timeDate
+    timeDate,
+    timeNowDate
   }
 }
 

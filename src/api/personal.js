@@ -29,6 +29,11 @@ export function postCode(params) {
 
 // 查询指定用户信息
 export function getUserinfoId(userId) {
-  console.log(userId)
   return index.get('userinfo/' + userId)
+}
+
+// 修改用户信息
+export function putUserinfoId(userId, params) {
+  const url = 'userinfo/' + userId + '/'
+  return index.put(url, params)
 }
