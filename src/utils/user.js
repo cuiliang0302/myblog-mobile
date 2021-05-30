@@ -4,26 +4,29 @@ import {computed, onMounted, reactive, ref} from "vue";
 import store from "@/store";
 
 function user() {
-  const isLogin = ref(computed(() => store.state.login.isLogin))
+  const isLogin = ref(false)
   const keepLogin = computed(() => store.state.login.keepLogin)
   const userId = ref()
   const userToken = ref()
+  const userName = ref()
   onMounted(() => {
-    if (isLogin) {
-      console.log("登录了")
-      if (keepLogin === true) {
-        console.log('吃久了')
-        userId.value = store.state.userLocal.userid
-        userToken.value = store.state.userLocal.token
+    if (keepLogin === true) {
+      userId.value = store.state.userLocal.userid
+      userToken.value = store.state.userLocal.token
+      userName.value = store.state.userLocal.username
+    } else {
+      if (JSON.stringify(store.state.userSession) === '{}') {
+        isLogin.value = false
       } else {
-        console.log('并没有')
+        isLogin.value = true
         userId.value = store.state.userSession.userid
         userToken.value = store.state.userSession.token
+        userName.value = store.state.userSession.username
       }
     }
   })
   return {
-    isLogin, userId, userToken
+    isLogin, userId, userToken, userName
   }
 }
 

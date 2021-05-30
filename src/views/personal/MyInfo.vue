@@ -138,6 +138,7 @@ import {
 import {computed, onMounted, reactive, ref} from "vue";
 import {getRegister, getUserinfoId, postLogin, putUserinfoId} from "@/api/personal";
 import user from "@/utils/user";
+import qiniuUpload from "@/utils/qiniuUpload";
 import store from "@/store";
 import {areaList} from "@vant/area-data";
 import timeFormat from "@/utils/timeFormat";
@@ -162,6 +163,8 @@ export default {
   setup() {
     // 格式化处理时间
     // let {timeNowDate} = timeFormat()
+    // 七牛图片上传
+    let {upload} = qiniuUpload()
     // 引入用户信息模块
     let {userId, isLogin} = user();
     const title = "我的信息"
@@ -233,9 +236,17 @@ export default {
         }
       });
     };
+    // 头像上传
     const afterRead = (file) => {
-      // 此时可以自行将文件上传至服务器
-      console.log(file);
+      upload('photo', file.file).then((response) => {
+        console.log(response)
+        userInfoForm.photo = response
+        Toast.success('图片上传成功！');
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail('图片上传失败！');
+      });
     };
 
     // 获取用户信息

@@ -27,13 +27,31 @@ export function postCode(params) {
   return index.post('code/', params)
 }
 
+// 重置密码
+export function postSetPassword(params) {
+  console.log(params)
+  return index.post('setPassword/', params)
+}
+
+// 修改密码
+export function putChangePassword(userId, params) {
+  const url = 'changePassword/' + userId + '/'
+  return index.put(url, params)
+}
+
 // 查询指定用户信息
 export function getUserinfoId(userId) {
-  return index.get('userinfo/' + userId)
+  return index.get('userinfo/' + userId + '/')
 }
 
 // 修改用户信息
 export function putUserinfoId(userId, params) {
   const url = 'userinfo/' + userId + '/'
+  return index.put(url, params)
+}
+
+// 修改用户邮箱
+export function putChangeEmail(userId, params) {
+  const url = 'changeEmail/' + userId + '/'
   return index.put(url, params)
 }

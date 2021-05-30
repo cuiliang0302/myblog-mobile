@@ -119,7 +119,6 @@ export default {
       postLogin(loginForm).then((response) => {
         console.log(response)
         Toast.success('登录成功！');
-        store.commit('setIsLogin', true)
         if (remember.value) {
           console.log('记住了')
           store.commit('setKeepLogin', true)

@@ -90,12 +90,6 @@ export default {
       code: '',
       password: '',
     });
-    // 获取验证码表单
-    const codeForm = reactive({
-      contact: '',
-      action: '用户注册',
-      username: '新用户',
-    })
     // 密码正则校验
     const pattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
     // 异步校验用户名
@@ -131,6 +125,12 @@ export default {
     const onFailed = (errorInfo) => {
       console.log('failed', errorInfo);
     };
+    // 获取验证码表单
+    const codeForm = reactive({
+      contact: '',
+      action: '用户注册',
+      username: '新用户',
+    })
     // 获取验证码
     const pass = () => {
       console.log("通过验证了,获取验证码")

@@ -16,15 +16,15 @@
         <van-step>设置密码</van-step>
         <van-step>重置完成</van-step>
       </van-steps>
-      <van-form @submit="onSubmit">
+      <van-form @submit="verifySubmit">
         <van-field
             v-show="active===0"
-            v-model="state.username"
-            name="邮箱号"
-            label="邮箱号"
-            placeholder="邮箱号"
+            v-model="verifyForm.contact"
+            name="邮箱/手机号"
+            label="邮箱/手机号"
+            placeholder="邮箱/手机号"
             label-width="20"
-            :rules="[{ required: true, message: '请填写邮箱号' }]"
+            :rules="[{ validator: checkContact, message: '填写正确的邮箱/手机号' }]"
         >
           <template #label>
             <img :src="require('@/assets/icon/email.png')" alt="">
@@ -32,8 +32,7 @@
         </van-field>
         <van-field
             v-show="active===0"
-            v-model="state.password"
-            type="password"
+            v-model="verifyForm.code"
             name="验证码"
             label="验证码"
             placeholder="验证码"
@@ -44,25 +43,25 @@
             <img :src="require('@/assets/icon/code.png')" alt="">
           </template>
           <template #right-icon>
-            <van-button type="primary"
-                        block
-                        plain
-                        size="small"
-                        :text="codeBtn.btnText"
-                        :disabled="codeBtn.disabled"
-                        @click="getCode">
-            </van-button>
+            <VerifyCodeBtn @pass="pass"></VerifyCodeBtn>
           </template>
         </van-field>
+        <div style="margin: 16px;" v-show="active===0">
+          <van-button round block type="primary" native-type="submit">
+            下一步
+          </van-button>
+        </div>
+      </van-form>
+      <van-form @submit="passwordSubmit">
         <van-field
             v-show="active===1"
-            v-model="state.password"
+            v-model="passwordForm.password1"
             type="password"
             name="密码"
             label-width="20"
             validate-first
             placeholder="请输入密码(数字+字符,最少8位)"
-            :rules="[{ required: true, message: '请填写密码' }]"
+            :rules="[{ pattern, message: '请填写密码' }]"
         >
           <template #label>
             <img :src="require('@/assets/icon/password.png')" alt="">
@@ -70,39 +69,43 @@
         </van-field>
         <van-field
             v-show="active===1"
-            v-model="state.password"
+            v-model="passwordForm.password2"
             type="password"
             name="密码"
             label-width="20"
             validate-first
             placeholder="请再次输入密码"
-            :rules="[{ required: true, message: '请再次输入密码' }]"
+            :rules="[{ validator: checkPassword, message: '请再次填写密码' }]"
         >
           <template #label>
             <img :src="require('@/assets/icon/password.png')" alt="">
           </template>
         </van-field>
-        <div v-show="active===2" class="success">
-          恭喜，密码重置成功 😊
-        </div>
-        <div class="btn" @click="nextBtn">
-          <van-button v-if="active===2" round block type="primary" native-type="submit">
-            登录
-          </van-button>
-          <van-button v-else round block type="primary">
+        <div style="margin: 16px;" v-show="active===1">
+          <van-button round block type="primary" native-type="submit">
             下一步
           </van-button>
         </div>
       </van-form>
+      <div v-show="active===2" class="success">
+        恭喜，密码重置成功 😊
+      </div>
+      <div class="btn">
+        <van-button v-show="active===2" round block type="primary" native-type="submit"
+                    @click="$router.push('/login_register')">
+          登录
+        </van-button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import {Step, Steps, Form, Button, Field} from 'vant';
+import {Step, Steps, Form, Button, Field, Toast} from 'vant';
 import {reactive, ref} from "vue";
-import {useRouter} from "vue-router";
-import emailCode from "@/utils/emailCode";
+import {getRegister, postCode, postSetPassword} from "@/api/personal";
+import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn";
+import store from "@/store";
 
 export default {
   components: {
@@ -110,36 +113,99 @@ export default {
     [Steps.name]: Steps,
     [Form.name]: Form,
     [Button.name]: Button,
-    [Field.name]: Field
+    [Field.name]: Field,
+    VerifyCodeBtn
   },
   name: "SetPassword",
   setup() {
-    // 获取验证码模块
-    let {codeBtn, getCode} = emailCode();
-    const router = useRouter()
     const active = ref(0);
-    const state = reactive({
-      username: '',
-      password: '',
+    // 用户验证表单
+    const verifyForm = reactive({
+      contact: '',
+      code: '',
+      password: ''
     });
-    const onSubmit = (values) => {
+    // 异步校验邮箱/手机号
+    const checkContact = (val) =>
+        new Promise((resolve) => {
+          if (val) {
+            getRegister(NaN, val).then((response) => {
+              console.log(response)
+              resolve(false)
+            }).catch(response => {
+              //发生错误时执行的代码
+              console.log(response)
+              resolve(true)
+            });
+          } else {
+            resolve(false)
+          }
+        })
+    // 获取验证码表单
+    const codeForm = reactive({
+      contact: '',
+      action: '重置密码',
+      username: '用户',
+    })
+    // 获取验证码
+    const pass = () => {
+      console.log("通过验证了,获取验证码")
+      codeForm.contact = verifyForm.contact
+      postCode(codeForm).then((response) => {
+        console.log(response)
+        Toast.success('验证码发送成功！');
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail(response.msg);
+      });
+    }
+    // 用户验证表单提交
+    const verifySubmit = (values) => {
       console.log('submit', values);
+      active.value = 1
     };
-    //按钮点击下一步
-    const nextBtn = () => {
-      if (active.value !== 2) {
-        active.value = active.value + 1
-      } else {
-        router.push('/login_register')
+    // 密码正则校验
+    const pattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
+    // 密码一致性校验
+    const checkPassword = (val) =>
+        new Promise((resolve) => {
+          console.log(val)
+          if (val && passwordForm.password1 === passwordForm.password2) {
+            resolve(true)
+          } else {
+            resolve(false)
+          }
+        })
+    // 设置密码表单
+    const passwordForm = reactive({
+      password1: '',
+      password2: '',
+    });
+    // 密码表单提交
+    async function passwordSubmit() {
+      verifyForm.password = passwordForm.password1
+      try {
+        let response = await postSetPassword(verifyForm)
+        console.log(response)
+        Toast.success('重置成功！');
+        active.value = 2
+      } catch (error) {
+        console.log(error)
+        Toast.fail(error.msg);
+        active.value = 0
       }
     }
     return {
-      state,
       active,
-      onSubmit,
-      getCode,
-      codeBtn,
-      nextBtn
+      verifyForm,
+      pass,
+      checkContact,
+      verifySubmit,
+      pattern,
+      checkPassword,
+      passwordForm,
+      passwordSubmit,
     };
   },
 }

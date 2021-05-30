@@ -10,14 +10,21 @@
           <p v-if="isLogin">{{ userInfo.username }}</p>
           <p v-else>点击头像登录/注册</p>
         </div>
-        <van-image :src="isLogin?userInfo.photo:require('@/assets/images/logo.png')" width="1.867rem" height="1.867rem"
-                   round
-                   @click="$router.push('/login_register')"
-        >
-          <template v-slot:loading>
-            <van-loading type="spinner" size="20"/>
-          </template>
-        </van-image>
+        <div>
+          <van-image v-if="isLogin" :src="userInfo.photo" width="1.867rem" height="1.867rem" round>
+            <template v-slot:loading>
+              <van-loading type="spinner" size="20"/>
+            </template>
+          </van-image>
+          <van-image v-else :src="require('@/assets/images/logo.png')" width="1.867rem" height="1.867rem"
+                     round
+                     @click="$router.push('/login_register')"
+          >
+            <template v-slot:loading>
+              <van-loading type="spinner" size="20"/>
+            </template>
+          </van-image>
+        </div>
       </div>
       <div class="history">
         <span><van-icon name="clock" size="0.8rem" color="#2ecc71"
@@ -54,7 +61,7 @@
         <van-cell-group title="系统与设置">
           <van-cell title="博文更新邮件通知" size="large">
             <template #right-icon>
-              <van-switch v-model="flow" @change="changeFlow" size="0.533rem"/>
+              <van-switch v-model="userInfo.is_flow" @change="changeFlow" size="0.533rem"/>
             </template>
           </van-cell>
           <van-cell title="字体大小" size="large" is-link :value="fontType" to="/fontsize"/>
@@ -81,7 +88,7 @@ import store from "@/store";
 import {useRouter} from "vue-router";
 import router from "@/router";
 import user from "@/utils/user";
-import {getUserinfoId} from "@/api/personal";
+import {getUserinfoId, putUserinfoId} from "@/api/personal";
 
 export default {
   components: {
@@ -99,10 +106,10 @@ export default {
   name: "Personal",
   setup() {
     // 引入公共方法
-    let {isLogin, userInfo, toView, refLoginPopup} = global()
+    let {isLogin, userInfo, userId, toView, refLoginPopup} = global()
 
     // 引入系统与设置模块
-    let {flow, changeFlow, fontType, dark, changeDark, logout} = setting()
+    let {changeFlow, fontType, dark, changeDark, logout} = setting(userId, userInfo)
 
     onMounted(() => {
 
@@ -116,7 +123,6 @@ export default {
       fontType,
       changeDark,
       logout,
-      flow,
       changeFlow
     }
   },
@@ -126,7 +132,7 @@ export default {
 function global() {
   const router = useRouter()
   // 引入用户信息模块
-  let {userId,isLogin} = user();
+  let {userId, isLogin} = user();
   // 用户信息
   const userInfo = reactive({})
   // 提示登录组件对象
@@ -139,6 +145,7 @@ function global() {
       refLoginPopup.value.showPopup()
     }
   }
+
   // 获取用户信息
   async function getUserinfo(userid) {
     const userinfo_data = await getUserinfoId(userid)
@@ -147,27 +154,37 @@ function global() {
       userInfo[i] = userinfo_data[i]
     }
   }
+
   onMounted(() => {
-    getUserinfo(userId.value)
+    if (isLogin.value) {
+      getUserinfo(userId.value)
+    }
   })
   return {
     isLogin,
+    userId,
     toView,
     userInfo,
     refLoginPopup
   }
 }
 
-function setting() {
-  // 是否开启订阅
-  const flow = ref(false)
+function setting(userId, userInfo) {
   // 切换订阅
   const changeFlow = (value) => {
     if (value) {
-      Toast('已关闭文章订阅功能')
-    } else {
       Toast('已开启文章订阅功能')
+      userInfo.is_flow = true
+    } else {
+      Toast('已关闭文章订阅功能')
+      userInfo.is_flow = false
     }
+    putUserinfoId(userId.value, userInfo).then((response) => {
+      console.log(response)
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+    });
   }
   // 字体大小
   const fontType = computed(() => store.state.font.fontType)
@@ -200,7 +217,7 @@ function setting() {
           Toast('算了吧')
         });
   }
-  return {fontType, dark, changeDark, logout, flow, changeFlow}
+  return {fontType, dark, changeDark, logout, changeFlow}
 }
 </script>
 <style lang="scss" scoped>

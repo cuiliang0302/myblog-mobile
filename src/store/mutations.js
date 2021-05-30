@@ -8,11 +8,8 @@ const mutations = {
   setDark(state) {
     state.dark = !state.dark
   },
-  setIsLogin(state, value) {
-    state.login.isLogin = value
-  },
   setKeepLogin(state, value) {
-    state.login.keepLogin = value
+    state.keepLogin = value
   },
   setUserLocal(state, value) {
     state.userLocal = value

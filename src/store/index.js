@@ -13,7 +13,7 @@ export default createStore({
   plugins: [
     createVuexAlong({
       local: {
-        list: ["font", "dark", "userLocal","login"],
+        list: ["font", "dark", "userLocal","keepLogin"],
       },
       session: {
         list: ["userSession"]

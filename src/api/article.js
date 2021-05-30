@@ -7,10 +7,10 @@ export function getCategory() {
 
 // 获取文章详情
 export function getArticleDetail(id) {
-  return index.get('article/' + id)
+  return index.get('article/' + id + '/')
 }
 
 // 获取猜你喜欢列表
 export function getGuessLike(id) {
-  return index.get('guessLike/' + id)
+  return index.get('guessLike/' + id + '/')
 }
