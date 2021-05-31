@@ -1,6 +1,6 @@
 <!--内容详情页-->
 <template>
-  <div class="detail">
+  <div class="detail" v-title="detail.title+'-崔亮的博客'">
     <NavBar :componentName="componentName"></NavBar>
     <van-skeleton title round :row="10" :loading="loading">
       <div class="main">
@@ -131,7 +131,8 @@ export default {
     let {recommendList, articleData, guessLikeData} = article(detail)
     // 笔记模块
     let {context, catalogList, dirTab, toNoteDetail, sectionData, contextData} = note(detail, toDetail)
-    async function getDetail(DetailID){
+
+    async function getDetail(DetailID) {
       Toast.loading({
         message: '加载中...',
         forbidClick: true,
@@ -147,6 +148,7 @@ export default {
       await getTitle()
       window.scrollTo({top: 0})
     }
+
     onMounted(async () => {
       componentName.value = router.currentRoute.value.query.component
       let DetailID = router.currentRoute.value.params.id
@@ -162,7 +164,7 @@ export default {
         id: '1',
         username: '张三',
         photo: 'https://cdn.cuiliangblog.cn/media/photo/2020_10_22_13_29_07_420444.jpg',
-        comment: '你笑起来真好看，像春天的花一样',
+        comment: '这是一条测试评论',
         time: '三天前',
         like: 10,
         is_like: true,
@@ -172,7 +174,7 @@ export default {
             username: '张小三',
             target: '张三',
             photo: 'https://cdn.cuiliangblog.cn/media/photo/2021_02_20_11_18_31_393596.jpg',
-            comment: '你说的真对',
+            comment: '这是测试评论的回复',
             time: '一天前',
             like: 8,
             is_like: false,
@@ -182,7 +184,7 @@ export default {
             username: '张大三',
             target: '张小三',
             photo: 'https://cdn.cuiliangblog.cn/media/photo/2020_12_26_21_47_08_682774.jpg',
-            comment: '你们说的都对',
+            comment: '这是另一条测试回复',
             time: '8分钟前',
             like: 2,
             is_like: false,
@@ -193,7 +195,7 @@ export default {
         id: '4',
         username: '李四',
         photo: 'https://cdn.cuiliangblog.cn/media/photo/default.jpg',
-        comment: '我笑起来也很好看的哦',
+        comment: '这是测试评论',
         time: '四天前',
         like: 8,
         is_like: false,
@@ -202,7 +204,7 @@ export default {
         id: '5',
         username: '王五',
         photo: 'https://cdn.cuiliangblog.cn/media/photo/2020_12_26_15_35_59_908281.jpg',
-        comment: '别争了，我最好看',
+        comment: '别看了，这也是测试评论',
         time: '一个月前',
         like: 18,
         is_like: true,

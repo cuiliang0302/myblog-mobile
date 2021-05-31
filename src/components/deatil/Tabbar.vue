@@ -258,7 +258,7 @@ function fnShare() {
 // 点赞功能模块
 function fnLike() {
   const likeClick = () => {
-    Toast("点赞了");
+    Toast("点赞功能开发中");
   };
 
   return {
@@ -269,7 +269,7 @@ function fnLike() {
 // 收藏功能模块
 function fnCollection() {
   const collectionClick = () => {
-    Toast("收藏了");
+    Toast("收藏功能开发中");
   };
 
   return {
@@ -281,7 +281,7 @@ function fnCollection() {
 function fnComment() {
   const router = useRouter()
   const commentClick = () => {
-    Toast("评论了");
+    Toast("评论功能开发中");
     const returnEle = document.querySelector("#comment");  //productId是将要跳转区域的id
     if (!!returnEle) {
       returnEle.scrollIntoView({behavior: 'smooth'}); // true 是默认的

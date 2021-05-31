@@ -12,3 +12,9 @@ app.use(Toast)
 app.use(store)
 app.use(router)
 app.mount('#app')
+// 自定义指令-动态title
+app.directive('title', {
+  updated(el, binding) {
+    document.title = binding.value
+  }
+})
