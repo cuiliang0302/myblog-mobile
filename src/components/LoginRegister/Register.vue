@@ -38,7 +38,7 @@
             <img :src="require('@/assets/icon/code.png')" alt="">
           </template>
           <template #right-icon>
-            <VerifyCodeBtn @pass="pass"></VerifyCodeBtn>
+            <VerifyCodeBtn @pass="pass" :btnDisabled="btnDisabled"></VerifyCodeBtn>
           </template>
         </van-field>
         <van-field
@@ -113,11 +113,13 @@ export default {
           if (val) {
             getRegister(NaN, val).then((response) => {
               console.log(response)
+              btnDisabled.value = false
               resolve(true)
             }).catch(response => {
               //发生错误时执行的代码
               console.log(response)
               Toast.fail(response.msg);
+              btnDisabled.value = true
               resolve(false)
             });
           }
@@ -125,6 +127,8 @@ export default {
     const onFailed = (errorInfo) => {
       console.log('failed', errorInfo);
     };
+    // 验证码按钮状态
+    const btnDisabled = ref(true)
     // 获取验证码表单
     const codeForm = reactive({
       contact: '',
@@ -163,6 +167,7 @@ export default {
       registerForm,
       onSubmit,
       pass,
+      btnDisabled,
       pattern,
       checkUsername,
       checkContact,

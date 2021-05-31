@@ -172,6 +172,7 @@ export default {
         margin-right: 0.08rem;
         width: 0.267rem;
         height: 0.267rem;
+        vertical-align: -1px;
       }
     }
 

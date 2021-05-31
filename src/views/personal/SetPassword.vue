@@ -43,7 +43,7 @@
             <img :src="require('@/assets/icon/code.png')" alt="">
           </template>
           <template #right-icon>
-            <VerifyCodeBtn @pass="pass"></VerifyCodeBtn>
+            <VerifyCodeBtn @pass="pass" :btnDisabled="btnDisabled"></VerifyCodeBtn>
           </template>
         </van-field>
         <div style="margin: 16px;" v-show="active===0">
@@ -135,12 +135,16 @@ export default {
             }).catch(response => {
               //发生错误时执行的代码
               console.log(response)
+              btnDisabled.value = false
               resolve(true)
             });
           } else {
+            btnDisabled.value = true
             resolve(false)
           }
         })
+    // 验证码按钮状态
+    const btnDisabled = ref(true)
     // 获取验证码表单
     const codeForm = reactive({
       contact: '',
@@ -182,6 +186,7 @@ export default {
       password1: '',
       password2: '',
     });
+
     // 密码表单提交
     async function passwordSubmit() {
       verifyForm.password = passwordForm.password1
@@ -196,10 +201,12 @@ export default {
         active.value = 0
       }
     }
+
     return {
       active,
       verifyForm,
       pass,
+      btnDisabled,
       checkContact,
       verifySubmit,
       pattern,

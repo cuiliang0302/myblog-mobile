@@ -6,21 +6,20 @@
       <van-field
           v-model="emailForm.password"
           type="password"
-          name="当前密码"
-          label="当前密码"
+          name="密码"
+          label="密码"
           placeholder="当前密码"
           label-width="1.867rem"
-          :rules="[{ required: true, message: '请填写当前密码' }]"
+          :rules="[{ required: true, message: '请填写密码' }]"
       />
       <van-field
           v-model="emailForm.newEmail"
-          type="password"
           name="新邮箱号"
           label="新邮箱号"
           placeholder="新邮箱号"
           label-width="1.867rem"
           center
-          :rules="[{ required: true, message: '请填写新邮箱号' }]">
+          :rules="[{ validator: checkContact, message: '请填写正确的新邮箱号' }]">
       </van-field>
       <van-field
           v-model="emailForm.code"
@@ -30,9 +29,9 @@
           placeholder="验证码"
           label-width="1.867rem"
           :rules="[{ required: true, message: '请填写验证码' }]"
-          >
+      >
         <template #right-icon>
-          <VerifyCodeBtn @pass="pass"></VerifyCodeBtn>
+          <VerifyCodeBtn @pass="pass" :btnDisabled="btnDisabled"></VerifyCodeBtn>
         </template>
       </van-field>
       <div style="margin: 0.427rem;">
@@ -47,9 +46,10 @@
 <script>
 import NavBar from "@/components/personal/NavBar";
 import {Form, Field, Button, Toast} from 'vant';
-import {reactive} from "vue";
-import {postCode, putChangeEmail} from "@/api/personal";
+import {reactive, ref} from "vue";
+import {getRegister, postCode, putChangeEmail} from "@/api/personal";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn";
+import user from "@/utils/user";
 
 export default {
   components: {
@@ -62,25 +62,26 @@ export default {
   name: "ChangeEmail",
   setup() {
     const title = '更换邮箱'
+    // 引入用户信息模块
+    let {userName, userId} = user();
     // 更换邮箱表单
     const emailForm = reactive({
       password: '',
       newEmail: '',
       code: '',
     });
+    // 验证码按钮状态
+    const btnDisabled = ref(true)
     // 获取验证码表单
     const codeForm = reactive({
       contact: '',
       action: '更换邮箱',
-      username: '新用户',
+      username: '',
     })
     // 获取验证码
     const pass = () => {
-      console.log("通过验证了,获取验证码")
-      if (!emailForm.newEmail) {
-        return false
-      }
       codeForm.contact = emailForm.newEmail
+      codeForm.username = userName.value
       postCode(codeForm).then((response) => {
         console.log(response)
         Toast.success('验证码发送成功！');
@@ -90,12 +91,44 @@ export default {
         Toast.fail(response.msg);
       });
     }
-    const onSubmit = (values) => {
-      console.log('submit', values);
+    // 异步校验邮箱号
+    const checkContact = (val) =>
+        new Promise((resolve) => {
+          const objRegExp = /^.+@.+$/;
+          if (objRegExp.test(val)) {
+            getRegister(NaN, val).then((response) => {
+              console.log(response)
+              btnDisabled.value = false
+              resolve(true)
+            }).catch(response => {
+              //发生错误时执行的代码
+              console.log(response)
+              Toast.fail(response.msg);
+              btnDisabled.value = true
+              resolve(false)
+            });
+          } else {
+            btnDisabled.value = true
+            resolve(false)
+          }
+        })
+    // 表单提交事件
+    const onSubmit = () => {
+      putChangeEmail(userId.value, emailForm).then((response) => {
+        console.log(response)
+        Toast.success('邮箱修改成功！');
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail(response.msg);
+      });
     };
+
     return {
       title,
       emailForm,
+      checkContact,
+      btnDisabled,
       pass,
       onSubmit,
     }

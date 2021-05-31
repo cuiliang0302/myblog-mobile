@@ -3,6 +3,7 @@
   <div class="main">
     <div>
       <van-button type="primary" @click="showPopup" block plain size="small"
+                  :class="[btnDisabled ? 'btn-disabled' :'']"
                   :text="codeBtn.btnText"
                   :disabled="codeBtn.disabled"/>
     </div>
@@ -38,7 +39,15 @@ export default {
     [Icon.name]: Icon,
     Toast
   },
-
+  props: {
+    // 加载中动画
+    btnDisabled: {
+      type: Boolean,
+      default() {
+        return true;
+      }
+    }
+  },
   name: "VerifyCodeBtn",
   setup(props, {emit}) {
     // 是否通过验证
@@ -93,7 +102,7 @@ export default {
       reimg()
     })
     return {
-      show, showPopup, imgList, imgId, reimg, pass, codeBtn, dragVerify,isPassing
+      show, showPopup, imgList, imgId, reimg, pass, codeBtn, dragVerify, isPassing
     }
   }
 }
@@ -103,6 +112,11 @@ export default {
 
 .verify {
   padding: 20px
+}
+
+.btn-disabled {
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 .van-button__text {

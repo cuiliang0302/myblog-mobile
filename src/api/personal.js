@@ -55,3 +55,9 @@ export function putChangeEmail(userId, params) {
   const url = 'changeEmail/' + userId + '/'
   return index.put(url, params)
 }
+
+// 修改用户手机
+export function putChangePhone(userId, params) {
+  const url = 'changePhone/' + userId + '/'
+  return index.put(url, params)
+}

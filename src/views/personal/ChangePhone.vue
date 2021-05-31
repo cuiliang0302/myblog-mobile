@@ -1,46 +1,38 @@
-<!--更换手机-->
+<!--更换邮箱-->
 <template>
   <div class="password">
     <NavBar :title="title"></NavBar>
     <van-form @submit="onSubmit">
       <van-field
-          v-model="state.password"
+          v-model="phoneForm.password"
           type="password"
-          name="当前密码"
-          label="当前密码"
-          placeholder="当前密码"
+          name="密码"
+          label="密码"
+          placeholder="密码"
           label-width="1.867rem"
-          :rules="[{ required: true, message: '请填写当前密码' }]"
+          :rules="[{ required: true, message: '请填写密码' }]"
       />
       <van-field
-          v-model="state.password"
-          type="password"
+          v-model="phoneForm.newPhone"
           name="新手机号"
           label="新手机号"
           placeholder="新手机号"
           label-width="1.867rem"
           center
-          :rules="[{ required: true, message: '请填写新手机号' }]">
-        <template #right-icon>
-          <van-button type="primary"
-                      block
-                      plain
-                      size="small"
-                      :text="codeBtn.btnText"
-                      :disabled="codeBtn.disabled"
-                      @click="getCode">
-          </van-button>
-        </template>
+          :rules="[{ validator: checkContact, message: '请填写正确的新手机号' }]">
       </van-field>
       <van-field
-          v-model="state.password"
-          type="password"
+          v-model="phoneForm.code"
           name="验证码"
           label="验证码"
           placeholder="验证码"
           label-width="1.867rem"
           :rules="[{ required: true, message: '请填写验证码' }]"
-      />
+      >
+        <template #right-icon>
+          <VerifyCodeBtn @pass="pass" :btnDisabled="btnDisabled"></VerifyCodeBtn>
+        </template>
+      </van-field>
       <div style="margin: 0.427rem;">
         <van-button round block type="primary" native-type="submit">
           提交
@@ -52,34 +44,92 @@
 
 <script>
 import NavBar from "@/components/personal/NavBar";
-import {Form, Field, Button} from 'vant';
-import {reactive} from "vue";
-import emailCode from "@/utils/emailCode";
+import {Form, Field, Button, Toast} from 'vant';
+import {reactive, ref} from "vue";
+import {postCode, getRegister,putChangePhone} from "@/api/personal";
+import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn";
+import user from "@/utils/user";
+
 export default {
   components: {
     [Form.name]: Form,
     [Field.name]: Field,
     [Button.name]: Button,
-    NavBar
+    NavBar,
+    VerifyCodeBtn,
   },
-  name: "Pay",
+  name: "ChangePhone",
   setup() {
-    // 获取验证码模块
-    let {codeBtn,getCode} = emailCode();
     const title = '更换手机'
-    const state = reactive({
-      username: '',
+    // 引入用户信息模块
+    let {userName, userId} = user();
+    // 更换手机表单
+    const phoneForm = reactive({
       password: '',
+      newPhone: '',
+      code: '',
     });
-    const onSubmit = (values) => {
-      console.log('submit', values);
+    // 验证码按钮状态
+    const btnDisabled = ref(true)
+    // 获取验证码表单
+    const codeForm = reactive({
+      contact: '',
+      action: '更换手机',
+      username: '',
+    })
+    // 获取验证码
+    const pass = () => {
+      codeForm.contact = phoneForm.newPhone
+      codeForm.username = userName.value
+      postCode(codeForm).then((response) => {
+        console.log(response)
+        Toast.success('验证码发送成功！');
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail(response.msg);
+      });
+    }
+    // 异步校验手机号
+    const checkContact = (val) =>
+        new Promise((resolve) => {
+          const objRegExp = /^1[0-9]\d{9}$/;
+          if (objRegExp.test(val)) {
+            getRegister(NaN, val).then((response) => {
+              console.log(response)
+              btnDisabled.value = false
+              resolve(true)
+            }).catch(response => {
+              //发生错误时执行的代码
+              console.log(response)
+              Toast.fail(response.msg);
+              btnDisabled.value = true
+              resolve(false)
+            });
+          } else {
+            btnDisabled.value = true
+            resolve(false)
+          }
+        })
+    // 表单提交事件
+    const onSubmit = () => {
+      putChangePhone(userId.value, phoneForm).then((response) => {
+        console.log(response)
+        Toast.success('手机修改成功！');
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail(response.msg);
+      });
     };
+
     return {
       title,
-      state,
+      phoneForm,
+      checkContact,
+      btnDisabled,
+      pass,
       onSubmit,
-      codeBtn,
-      getCode
     }
   }
 }
