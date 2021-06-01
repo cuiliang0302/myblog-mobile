@@ -300,7 +300,6 @@ function article(detail) {
   async function articleData(DetailID) {
     const detail_data = await getArticleDetail(DetailID)
     for (let i in detail_data) {
-      // detail[i] = detail_data[i]
       if (i === 'body') {
         // 图片防盗链处理
         detail.body = detail_data.body
