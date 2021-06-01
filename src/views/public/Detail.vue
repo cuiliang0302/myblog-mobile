@@ -300,6 +300,7 @@ function article(detail) {
   async function articleData(DetailID) {
     const detail_data = await getArticleDetail(DetailID)
     for (let i in detail_data) {
+      // detail[i] = detail_data[i]
       if (i === 'body') {
         // 图片防盗链处理
         detail.body = detail_data.body
@@ -312,7 +313,7 @@ function article(detail) {
         for (let i = 0; i < imgArr.length; i++) {
           detail.body = detail.body.replace(
               imgArr[i],
-              "https://images.weserv.nl/?url=" + imgArr[i]
+              "https://api.cuiliangblog.cn/v1/imgProxy/?url=" + imgArr[i]
           );
         }
       } else {
