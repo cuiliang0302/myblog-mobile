@@ -43,7 +43,7 @@
 import NavBar from "@/components/personal/NavBar";
 import {Form, Field, Button, Toast} from 'vant';
 import {reactive} from "vue";
-import {putChangePassword} from "@/api/personal";
+import {putChangePassword} from "@/api/account";
 import user from "@/utils/user";
 import {useRouter} from "vue-router";
 

@@ -47,7 +47,7 @@
 import NavBar from "@/components/personal/NavBar";
 import {Form, Field, Button, Toast} from 'vant';
 import {reactive, ref} from "vue";
-import {getRegister, postCode, putChangeEmail} from "@/api/personal";
+import {getRegister, postCode, putChangeEmail} from "@/api/account";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn";
 import user from "@/utils/user";
 

@@ -34,7 +34,7 @@ import Tabbar from "@/components/common/Tabbar";
 import IsNull from "@/components/common/IsNull";
 import {Collapse, CollapseItem, Cell, CellGroup, Tab, Tabs, Loading} from 'vant';
 import {onMounted, reactive, ref} from "vue";
-import {getCatalogue} from "@/api/note";
+import {getCatalogue} from "@/api/blog";
 import {useRouter} from "vue-router";
 
 export default {

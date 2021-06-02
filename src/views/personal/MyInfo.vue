@@ -136,7 +136,7 @@ import {
   DatetimePicker
 } from 'vant';
 import {computed, onMounted, reactive, ref} from "vue";
-import {getRegister, getUserinfoId, postLogin, putUserinfoId} from "@/api/personal";
+import {getRegister, getUserinfoId, postLogin, putUserinfoId} from "@/api/account";
 import user from "@/utils/user";
 import qiniuUpload from "@/utils/qiniuUpload";
 import store from "@/store";

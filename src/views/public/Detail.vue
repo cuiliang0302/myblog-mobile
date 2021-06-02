@@ -82,7 +82,6 @@ import Comments from '@/components/common/Comments'
 import {Divider, Image as VanImage, Loading, Skeleton, Toast} from 'vant'
 import {nextTick, onMounted, reactive, ref} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
-import {getArticleDetail, getGuessLike} from "@/api/article";
 import timeFormat from "@/utils/timeFormat";
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
 import '@kangc/v-md-editor/lib/style/preview.css';
@@ -94,7 +93,8 @@ import dockerfile from 'highlight.js/lib/languages/dockerfile';
 import json from 'highlight.js/lib/languages/json';
 import yaml from 'highlight.js/lib/languages/yaml';
 import sql from 'highlight.js/lib/languages/sql';
-import {getCatalogue, getContext, getSectionDetail} from "@/api/note";
+import {getCatalogue, getContext, getSectionDetail,getArticleDetail, getGuessLike} from "@/api/blog";
+import {getImgProxy} from "@/api/public";
 
 VMdPreview.use(githubTheme, {
   codeHighlightExtensionMap: {
@@ -312,7 +312,7 @@ function article(detail) {
         for (let i = 0; i < imgArr.length; i++) {
           detail.body = detail.body.replace(
               imgArr[i],
-              "https://api.cuiliangblog.cn/v1/imgProxy/?url=" + imgArr[i]
+              getImgProxy(imgArr[i])
           );
         }
       } else {

@@ -20,7 +20,7 @@ import NavBar from "@/components/common/NavBar";
 import Tabbar from '@/components/common/Tabbar'
 import {Grid, GridItem, Image as VanImage, Loading} from 'vant';
 import {onMounted, ref} from "vue";
-import {getNote} from "@/api/note";
+import {getNote} from "@/api/blog";
 
 export default {
   components: {

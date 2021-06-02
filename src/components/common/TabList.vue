@@ -57,7 +57,7 @@ export default {
     [VanImage.name]: VanImage,
     [Loading.name]: Loading
   },
-  name: "Tab",
+  name: "TabList",
   props: {
     // 加载中动画
     load: {

@@ -88,7 +88,7 @@ import store from "@/store";
 import {useRouter} from "vue-router";
 import router from "@/router";
 import user from "@/utils/user";
-import {getUserinfoId, putUserinfoId} from "@/api/personal";
+import {getUserinfoId, putUserinfoId} from "@/api/account";
 
 export default {
   components: {

@@ -13,8 +13,9 @@ import NavBar from "@/components/common/NavBar";
 import Swipe from "@/components/home/Swipe";
 import TabList from "@/components/common/TabList";
 import Tabbar from '@/components/common/Tabbar'
-import {getCarousel, getArticle} from '@/api/home'
-import {onDeactivated, onMounted, reactive, ref} from "vue";
+import  {getCarousel} from "@/api/management";
+import {getArticle} from '@/api/blog'
+import {onDeactivated, onMounted, reactive, ref, watch} from "vue";
 import {Toast} from "vant";
 
 export default {
@@ -69,12 +70,14 @@ export default {
       listState.list = []
       listState.order = types[index]
       listState.page = 1
+      load.value = true
       getArticle(listState.page, listState.order).then((response) => {
         console.log(response)
         listState.page++
         listState.list = response.results
         listState.count = response.count
         listState.loading = false;
+        load.value = false
       })
     }
     // 子组件的加载下一页事件
@@ -120,7 +123,6 @@ export default {
       carouselData()
       articleData()
     })
-
     return {
       tabList,
       carouselList,

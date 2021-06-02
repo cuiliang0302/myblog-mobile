@@ -76,7 +76,7 @@
 import {Form, Button, Field, Divider, Icon, Checkbox, Toast} from 'vant';
 import VerifyImgBtn from "@/components/verify/VerifyImgBtn";
 import {reactive, ref} from "vue";
-import {postLogin} from '@/api/personal'
+import {postLogin} from '@/api/account'
 import store from "@/store";
 import {useRouter} from "vue-router";
 

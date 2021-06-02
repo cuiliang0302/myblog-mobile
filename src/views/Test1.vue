@@ -132,7 +132,7 @@ import {
   DatetimePicker
 } from 'vant';
 import {computed, onMounted, reactive, ref} from "vue";
-import {getRegister, getUserinfoId} from "@/api/personal";
+import {getRegister, getUserinfoId} from "@/api/account";
 import user from "@/utils/user";
 import store from "@/store";
 import {areaList} from "@vant/area-data";

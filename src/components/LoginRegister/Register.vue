@@ -68,7 +68,7 @@ import {reactive, ref} from "vue";
 import {Form, Button, Field, Icon, Toast} from 'vant';
 import {useRouter} from "vue-router";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn";
-import {getRegister, postCode, postLogin, postRegister} from '@/api/personal'
+import {getRegister, postCode, postRegister} from '@/api/account'
 import store from "@/store";
 
 export default {

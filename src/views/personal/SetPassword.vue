@@ -103,7 +103,7 @@
 <script>
 import {Step, Steps, Form, Button, Field, Toast} from 'vant';
 import {reactive, ref} from "vue";
-import {getRegister, postCode, postSetPassword} from "@/api/personal";
+import {getRegister, postCode, postSetPassword} from "@/api/account";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn";
 import store from "@/store";
 

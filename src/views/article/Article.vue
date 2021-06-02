@@ -12,8 +12,7 @@ import NavBar from "@/components/common/NavBar";
 import Tabbar from '@/components/common/Tabbar'
 import TabList from "@/components/common/TabList";
 import {onMounted, reactive, ref} from "vue";
-import {getCategory} from "@/api/article";
-import {getArticle} from "@/api/home";
+import {getCategory, getArticle} from "@/api/blog";
 import {Toast} from "vant";
 
 export default {
@@ -45,12 +44,14 @@ export default {
       listState.list = []
       listState.category = index
       listState.page = 1
+      load.value = true
       getArticle(listState.page, listState.order, listState.category).then((response) => {
         console.log(response)
         listState.page++
         listState.list = response.results
         listState.count = response.count
         listState.loading = false;
+        load.value = false
       })
     }
     // 子组件的加载下一页事件
