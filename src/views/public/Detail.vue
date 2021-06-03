@@ -76,8 +76,8 @@
 </template>
 
 <script>
-import NavBar from '@/components/deatil/NavBar';
-import Tabbar from '@/components/deatil/Tabbar';
+import NavBar from '@/components/datail/NavBar';
+import Tabbar from '@/components/datail/Tabbar';
 import Comments from '@/components/common/Comments'
 import {Divider, Image as VanImage, Loading, Skeleton, Toast} from 'vant'
 import {nextTick, onMounted, reactive, ref} from "vue";

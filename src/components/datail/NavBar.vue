@@ -15,7 +15,7 @@
 import {NavBar, Toast, Icon} from 'vant';
 import {useRoute, useRouter} from "vue-router";
 import SearchInput from '@/components/common/SearchInput'
-import ActionSheet from "@/components/deatil/ActionSheet";
+import ActionSheet from "@/components/datail/ActionSheet";
 import {ref} from "vue";
 
 export default {

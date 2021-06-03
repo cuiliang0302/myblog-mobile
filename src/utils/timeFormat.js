@@ -3,6 +3,7 @@
 function timeFormat() {
   const timeAgo = (valueTime) => {
     let result = ''
+    // 显示几天前
     if (valueTime) {
       let nowData = Date.parse(new Date());
       let diffTime = Math.abs(nowData - new Date(valueTime));
@@ -58,26 +59,41 @@ function timeFormat() {
     }
     return result
   }
-  const timeDate = (valueTime) =>{
-    if(valueTime){
+  // 只显示日期
+  const timeDate = (valueTime) => {
+    if (valueTime) {
       const valueDate = new Date(valueTime)
       const year = valueDate.getFullYear()
-      const month = valueDate.getMonth()+1
+      const month = valueDate.getMonth() + 1
       const date = valueDate.getDate()
-      return (year+"-"+month+"-"+date);
+      return (year + "-" + month + "-" + date);
     }
   }
-  const timeNowDate = ()=>{
+  // 显示全部时间
+  const timeFull = (valueTime) => {
+    if (valueTime) {
+      const valueDate = new Date(valueTime)
+      const year = valueDate.getFullYear()
+      const month = valueDate.getMonth() + 1
+      const date = valueDate.getDate()
+      const hour = valueDate.getHours()
+      const minute = valueDate.getMinutes()
+      const seconds = valueDate.getSeconds()
+      return (year + "-" + month + "-" + date + ' ' + hour + ':' + minute + ':' + seconds);
+    }
+  }
+  const timeNowDate = () => {
     // let nowDataObj = Date.parse(new Date());
     let nowDate = new Date(1980, 0, 1)
-    return{
+    return {
       nowDate
     }
   }
   return {
     timeAgo,
     timeDate,
-    timeNowDate
+    timeNowDate,
+    timeFull
   }
 }
 
