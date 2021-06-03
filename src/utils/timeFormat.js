@@ -82,6 +82,19 @@ function timeFormat() {
       return (year + "-" + month + "-" + date + ' ' + hour + ':' + minute + ':' + seconds);
     }
   }
+  // 时间_用于文件名
+  const timeFile = (valueTime) => {
+    if (valueTime) {
+      const valueDate = new Date(valueTime)
+      const year = valueDate.getFullYear()
+      const month = valueDate.getMonth() + 1
+      const date = valueDate.getDate()
+      const hour = valueDate.getHours()
+      const minute = valueDate.getMinutes()
+      const seconds = valueDate.getSeconds()
+      return (year + "_" + month + "_" + date + '_' + hour + '_' + minute + '_' + seconds);
+    }
+  }
   const timeNowDate = () => {
     // let nowDataObj = Date.parse(new Date());
     let nowDate = new Date(1980, 0, 1)
@@ -93,7 +106,8 @@ function timeFormat() {
     timeAgo,
     timeDate,
     timeNowDate,
-    timeFull
+    timeFull,
+    timeFile
   }
 }
 

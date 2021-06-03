@@ -2,9 +2,7 @@
   <div class="info">
     <NavBar :title="title"></NavBar>
     <div class="photo">
-      <van-uploader :after-read="afterRead">
-        <van-image round width="2.667rem" height="2.667rem" :src="userInfoForm.photo"/>
-      </van-uploader>
+      <UploadImg :imgURL="userInfoForm.photo" @saveImg="saveImg"></UploadImg>
       <p>点击更换头像</p>
     </div>
     <van-form @submit="onSubmit">
@@ -121,11 +119,11 @@
 
 <script>
 import NavBar from "@/components/personal/NavBar";
+import UploadImg from "@/components/common/UploadImg";
 import {
   Form,
   Field,
   Button,
-  Uploader,
   Cell,
   CellGroup,
   Toast,
@@ -135,20 +133,16 @@ import {
   Area,
   DatetimePicker
 } from 'vant';
-import {computed, onMounted, reactive, ref} from "vue";
-import {getRegister, getUserinfoId, postLogin, putUserinfoId} from "@/api/account";
+import {onMounted, reactive, ref} from "vue";
+import {getRegister, getUserinfoId, putUserinfoId} from "@/api/account";
 import user from "@/utils/user";
-import qiniuUpload from "@/utils/qiniuUpload";
-import store from "@/store";
 import {areaList} from "@vant/area-data";
-import timeFormat from "@/utils/timeFormat";
 
 export default {
   components: {
     [Form.name]: Form,
     [Field.name]: Field,
     [Button.name]: Button,
-    [Uploader.name]: Uploader,
     [Cell.name]: Cell,
     [CellGroup.name]: CellGroup,
     [Picker.name]: Picker,
@@ -158,18 +152,19 @@ export default {
     [DatetimePicker.name]: DatetimePicker,
     NavBar,
     Toast,
+    UploadImg,
   },
   name: "MyInfo",
   setup() {
-    // 格式化处理时间
-    // let {timeNowDate} = timeFormat()
-    // 七牛图片上传
-    let {upload} = qiniuUpload()
     // 引入用户信息模块
     let {userId, isLogin} = user();
     const title = "我的信息"
     // 我的信息表单
     const userInfoForm = reactive({});
+    // 上传头像完成事件
+    const saveImg = (URL) => {
+      userInfoForm.photo = URL
+    }
     // 原始用户名
     const oldUsername = ref()
     // 异步校验用户名
@@ -236,18 +231,6 @@ export default {
         }
       });
     };
-    // 头像上传
-    const afterRead = (file) => {
-      upload('photo', file.file).then((response) => {
-        console.log(response)
-        userInfoForm.photo = response
-        Toast.success('图片上传成功！');
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail('图片上传失败！');
-      });
-    };
 
     // 获取用户信息
     async function getUserinfo(userid) {
@@ -265,6 +248,7 @@ export default {
     return {
       title,
       userInfoForm,
+      saveImg,
       oldUsername,
       checkUsername,
       showSex,
@@ -272,7 +256,6 @@ export default {
       columns,
       onCancel,
       chooseSex,
-      afterRead,
       areaList,
       showArea,
       chooseArea,

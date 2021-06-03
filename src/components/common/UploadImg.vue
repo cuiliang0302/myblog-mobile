@@ -3,15 +3,18 @@
     <van-image
         round
         width="2.667rem" height="2.667rem"
-        :src="photoCrop.previewImage"
-    />
+        :src="imgURL"
+    >
+      <template v-slot:loading>
+        <van-loading type="spinner" size="20"/>
+      </template>
+    </van-image>
     <input class="uploadBtn" type="file" accept="image/*" @change="onChange"/>
     <Cropper v-if="photoCrop.cropperVisible"
              :imagePath="photoCrop.imagePath"
              fileType="blob"
              @save="onSave"
              @cancel="onCancel"
-             fixedBox
     />
   </div>
 </template>
@@ -23,16 +26,27 @@ import {reactive} from "vue";
 import {Toast} from "vant";
 import qiniuUpload from "@/utils/qiniuUpload";
 import timeFormat from "@/utils/timeFormat";
-import {Image as VanImage} from 'vant';
+import {Image as VanImage, Loading} from 'vant';
 
 const URL = window.URL || window.webkitURL;
 export default {
   components: {
-    Cropper, Toast,
-    [VanImage.name]: VanImage
+    Cropper,
+    Toast,
+    [VanImage.name]: VanImage,
+    [Loading.name]: Loading
   },
-  name: 'Test',
-  setup() {
+  name: 'uploadImg',
+  props: {
+    // 图片地址
+    imgURL: {
+      type: String,
+      default() {
+        return '';
+      }
+    }
+  },
+  setup(props, {emit}) {
     // 七牛图片上传
     let {upload} = qiniuUpload()
     // 格式化处理时间
@@ -41,7 +55,6 @@ export default {
     const photoCrop = reactive({
       cropperVisible: false,
       imagePath: '',
-      previewImage: null
     })
     // 裁剪框改变事件
     const onChange = (e) => {
@@ -55,7 +68,7 @@ export default {
       const file = new File([res], timeFile(Date.now()) + '.jpg', {type: res.type});
       upload('photo', file).then((response) => {
         console.log(response)
-        photoCrop.previewImage = response
+        emit('saveImg', response)
         Toast.success('图片上传成功！');
       }).catch(response => {
         //发生错误时执行的代码
@@ -84,7 +97,8 @@ export default {
 
   .uploadBtn {
     position: absolute;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     height: 100px;
     width: 100px;
     opacity: 0;

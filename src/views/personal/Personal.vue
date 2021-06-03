@@ -109,7 +109,7 @@ export default {
     let {isLogin, userInfo, userId, toView, refLoginPopup} = global()
 
     // 引入系统与设置模块
-    let {changeFlow, fontType, dark, changeDark, logout} = setting(userId, userInfo)
+    let {changeFlow, fontType, dark, changeDark, logout} = setting(userId, userInfo, isLogin, refLoginPopup)
 
     onMounted(() => {
 
@@ -169,22 +169,27 @@ function global() {
   }
 }
 
-function setting(userId, userInfo) {
+function setting(userId, userInfo, isLogin, refLoginPopup) {
   // 切换订阅
   const changeFlow = (value) => {
-    if (value) {
-      Toast('已开启文章订阅功能')
-      userInfo.is_flow = true
+    if (isLogin.value) {
+      if (value) {
+        Toast('已开启文章订阅功能')
+        userInfo.is_flow = true
+      } else {
+        Toast('已关闭文章订阅功能')
+        userInfo.is_flow = false
+      }
+      putUserinfoId(userId.value, userInfo).then((response) => {
+        console.log(response)
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+      });
     } else {
-      Toast('已关闭文章订阅功能')
-      userInfo.is_flow = false
+      console.log("没登录了")
+      refLoginPopup.value.showPopup()
     }
-    putUserinfoId(userId.value, userInfo).then((response) => {
-      console.log(response)
-    }).catch(response => {
-      //发生错误时执行的代码
-      console.log(response)
-    });
   }
   // 字体大小
   const fontType = computed(() => store.state.font.fontType)

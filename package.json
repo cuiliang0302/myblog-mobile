@@ -19,7 +19,9 @@
     "vant": "^3.0.17",
     "vue": "^3.0.0",
     "vue-clipboard3": "^1.0.0",
+    "vue-mocropper": "^2.0.0",
     "vue-router": "^4.0.0-0",
+    "vue3-cropper": "^0.4.0",
     "vuex": "^4.0.0-0",
     "vuex-along": "^1.2.13"
   },
