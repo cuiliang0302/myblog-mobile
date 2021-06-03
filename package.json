@@ -16,7 +16,7 @@
     "lib-flexible": "^0.3.2",
     "lodash": "^4.17.21",
     "qiniu-js": "^3.2.0",
-    "vant": "^3.0.12",
+    "vant": "^3.0.17",
     "vue": "^3.0.0",
     "vue-clipboard3": "^1.0.0",
     "vue-router": "^4.0.0-0",
