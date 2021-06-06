@@ -1,6 +1,6 @@
 <!--搜索输入框-->
 <template>
-  <van-search v-model="key" ref="refInput" input-align="center" placeholder="搜一搜 发现更大的世界" @click="$router.push('/search')"/>
+  <van-search v-model="key" ref="refInput" input-align="center" placeholder="搜一搜 世界大不同" @click="$router.push('/search')"/>
 </template>
 
 <script>

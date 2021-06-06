@@ -265,6 +265,10 @@ body {
     margin: 0 0.133rem 0.267rem 0;
   }
 
+  .van-empty {
+    padding: 0;
+  }
+
   .list-item {
     background-color: $color-background-white;
     padding: 0.267rem;
@@ -303,7 +307,6 @@ body {
 
     .info {
       display: flex;
-      align-items: center;
       justify-content: space-between;
 
       span {
