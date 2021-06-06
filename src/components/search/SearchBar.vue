@@ -24,7 +24,7 @@ export default {
     [NavBar.name]: NavBar
   },
   name: "SearchBar",
-  setup() {
+  setup(props, {emit}) {
     // 搜索输入框输入内容
     const keyWords = ref('')
     // 搜索栏输入内容改变
@@ -36,9 +36,9 @@ export default {
     // 搜索输入内容点击按钮
     const onSearch = () => {
       if (keyWords.value) {
-        Toast(keyWords.value);
+        emit('onSearch', keyWords.value)
       } else {
-        Toast('啥都没有，搜个毛');
+        Toast('请先输入搜索内容');
       }
     }
     const router = useRouter()
