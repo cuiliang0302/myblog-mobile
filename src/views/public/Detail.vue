@@ -67,7 +67,7 @@
     </div>
     <div class="comment" id="comment">
       <van-divider content-position="left">📝 评论交流</van-divider>
-      <Comments :commentsList="commentsList"></Comments>
+      <Comments :commentsList="commentsList" :placeholder="'元芳，你怎么看？'"></Comments>
     </div>
     <div class="bottom-margin"></div>
     <Tabbar :componentName="componentName" :titleList="titleList" :catalogList="catalogList" @rollTo="rollTo"
@@ -95,7 +95,6 @@ import yaml from 'highlight.js/lib/languages/yaml';
 import sql from 'highlight.js/lib/languages/sql';
 import {getCatalogue, getContext, getSectionDetail,getArticleDetail, getGuessLike} from "@/api/blog";
 import {getImgProxy} from "@/api/public";
-f
 VMdPreview.use(githubTheme, {
   codeHighlightExtensionMap: {
     vue: 'xml',

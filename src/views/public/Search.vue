@@ -73,6 +73,7 @@ import user from "@/utils/user";
 import timeFormat from "@/utils/timeFormat";
 import setColor from "@/utils/setColor";
 import {Image as VanImage} from "vant/lib/image";
+import {useRouter} from "vue-router";
 
 export default {
   components: {
@@ -86,6 +87,7 @@ export default {
   },
   name: "Search",
   setup() {
+    const router = useRouter()
     // 引入用户信息模块
     let {userId, isLogin} = user();
     // 时间显示几天前
@@ -107,6 +109,11 @@ export default {
     const clickSearch = (key) => {
       console.log(key)
       searchData(key)
+    }
+    // 点击查看文章详情
+    const toDetail = (id) => {
+      console.log(id)
+      router.push({path: `/detail/${id}`, query: {component: 'article'}})
     }
 
     // 获取搜索结果列表
@@ -161,7 +168,8 @@ export default {
       clickSearch,
       onSearch,
       timeAgo,
-      tagColor
+      tagColor,
+      toDetail
     }
   }
 }

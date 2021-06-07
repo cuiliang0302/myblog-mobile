@@ -7,7 +7,7 @@
         autosize
         type="textarea"
         maxlength="50"
-        placeholder="对这篇文章有何看法？"
+        :placeholder=placeholder
         show-word-limit
         clearable
         :right-icon="require('@/assets/icon/send.png')"
@@ -96,6 +96,12 @@ export default {
     [Icon.name]: Icon
   },
   props: {
+    // 输入框提示内容
+    placeholder: {
+      type: String, default() {
+        return '请输入内容'
+      }
+    },
     // 评论回复列表
     commentsList: {
       type: Array, default() {

@@ -2,7 +2,7 @@
   <div>
     <NavBar></NavBar>
     <section class="message">
-      <Comments :commentsList="messageList"></Comments>
+      <Comments :commentsList="messageList" :placeholder="'既然来了，留下点东西再走吧……'"></Comments>
     </section>
     <Tabbar></Tabbar>
   </div>
