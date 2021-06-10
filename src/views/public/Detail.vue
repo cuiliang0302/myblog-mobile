@@ -67,7 +67,18 @@
     </div>
     <div class="comment" id="comment">
       <van-divider content-position="left">📝 评论交流</van-divider>
-      <Comments :commentsList="commentsList" :placeholder="'元芳，你怎么看？'"></Comments>
+      <van-field
+          v-model="message"
+          rows="2"
+          autosize
+          type="textarea"
+          maxlength="50"
+          placeholder="元芳，你怎么看？"
+          show-word-limit
+          clearable
+          :right-icon="require('@/assets/icon/send.png')"
+          @click-right-icon="clickSend"
+      />
     </div>
     <div class="bottom-margin"></div>
     <Tabbar :componentName="componentName" :titleList="titleList" :catalogList="catalogList" @rollTo="rollTo"
@@ -79,7 +90,7 @@
 import NavBar from '@/components/datail/NavBar';
 import Tabbar from '@/components/datail/Tabbar';
 import Comments from '@/components/common/Comments'
-import {Divider, Image as VanImage, Loading, Skeleton, Toast} from 'vant'
+import {Divider, Image as VanImage, Loading, Skeleton, Toast, Field} from 'vant'
 import {nextTick, onMounted, reactive, ref} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
 import timeFormat from "@/utils/timeFormat";
@@ -93,8 +104,9 @@ import dockerfile from 'highlight.js/lib/languages/dockerfile';
 import json from 'highlight.js/lib/languages/json';
 import yaml from 'highlight.js/lib/languages/yaml';
 import sql from 'highlight.js/lib/languages/sql';
-import {getCatalogue, getContext, getSectionDetail,getArticleDetail, getGuessLike} from "@/api/blog";
+import {getCatalogue, getContext, getSectionDetail, getArticleDetail, getGuessLike} from "@/api/blog";
 import {getImgProxy} from "@/api/public";
+
 VMdPreview.use(githubTheme, {
   codeHighlightExtensionMap: {
     vue: 'xml',
@@ -114,6 +126,7 @@ export default {
     [VanImage.name]: VanImage,
     [Loading.name]: Loading,
     [Skeleton.name]: Skeleton,
+    [Field.name]: Field,
     NavBar,
     Tabbar,
     Comments,
@@ -130,6 +143,12 @@ export default {
     let {recommendList, articleData, guessLikeData} = article(detail)
     // 笔记模块
     let {context, catalogList, dirTab, toNoteDetail, sectionData, contextData} = note(detail, toDetail)
+    // 评论内容
+    const message = ref()
+    // 点击发表评论事件
+    const clickSend = () => {
+      Toast("发表评论啦")
+    }
 
     async function getDetail(DetailID) {
       Toast.loading({
@@ -224,6 +243,8 @@ export default {
       dirTab,
       catalogList,
       toNoteDetail,
+      message,
+      clickSend
     }
   }
 }

@@ -1,8 +1,22 @@
 <template>
   <div>
     <NavBar></NavBar>
-    <section class="message">
-      <Comments :commentsList="messageList" :placeholder="'既然来了，留下点东西再走吧……'"></Comments>
+    <section>
+      <van-field
+          v-model="message"
+          rows="2"
+          autosize
+          type="textarea"
+          maxlength="50"
+          placeholder="既然来了，留下点东西再走吧……"
+          show-word-limit
+          clearable
+          :right-icon="require('@/assets/icon/send.png')"
+          @click-right-icon="clickSend"
+      />
+      <div class="comment-list">
+        <Comments :commentsList="messageList"></Comments>
+      </div>
     </section>
     <Tabbar></Tabbar>
   </div>
@@ -12,74 +26,55 @@
 import NavBar from "@/components/common/NavBar";
 import Tabbar from '@/components/common/Tabbar'
 import Comments from "@/components/common/Comments";
+import {getLeaveMessage} from "@/api/record";
+import {onMounted, ref} from "vue";
+import {Field, Toast, Image as VanImage, Icon} from 'vant'
+
 export default {
   components: {
     NavBar,
     Comments,
     Tabbar,
+    Toast,
+    [Field.name]: Field,
+    [VanImage.name]: VanImage,
+    [Icon.name]: Icon,
   },
-name: "Message",
-  setup(){
-    const messageList = [
-      {
-        id: '1',
-        username: '张三',
-        photo: 'https://cdn.cuiliangblog.cn/media/photo/2020_10_22_13_29_07_420444.jpg',
-        comment: '你笑起来真好看，像春天的花一样',
-        time: '三天前',
-        like: 10,
-        is_like: true,
-        child: [
-          {
-            id: '2',
-            username: '张小三',
-            target: '张三',
-            photo: 'https://cdn.cuiliangblog.cn/media/photo/2021_02_20_11_18_31_393596.jpg',
-            comment: '你说的真对',
-            time: '一天前',
-            like: 8,
-            is_like: false,
-          },
-          {
-            id: '3',
-            username: '张大三',
-            target: '张小三',
-            photo: 'https://cdn.cuiliangblog.cn/media/photo/2020_12_26_21_47_08_682774.jpg',
-            comment: '你们说的都对',
-            time: '8分钟前',
-            like: 2,
-            is_like: false,
-          },
-        ]
-      },
-      {
-        id: '4',
-        username: '李四',
-        photo: 'https://cdn.cuiliangblog.cn/media/photo/default.jpg',
-        comment: '我笑起来也很好看的哦',
-        time: '四天前',
-        like: 8,
-        is_like: false,
-      },
-      {
-        id: '5',
-        username: '王五',
-        photo: 'https://cdn.cuiliangblog.cn/media/photo/2020_12_26_15_35_59_908281.jpg',
-        comment: '别争了，我最好看',
-        time: '一个月前',
-        like: 18,
-        is_like: true,
-      }
-    ]
-    return{
-      messageList
+  name: "Message",
+  setup() {
+    // 留言列表
+    const messageList = ref([])
+
+    // 获取留言列表
+    async function leaveMessageData() {
+      messageList.value = await getLeaveMessage()
+    }
+
+    // 留言内容
+    const message = ref()
+    // 点击发表留言事件
+    const clickSend = () => {
+      Toast("发表评论啦")
+    }
+    onMounted(() => {
+      leaveMessageData()
+    })
+    return {
+      messageList,
+      message,
+      clickSend
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import "../../assets/style/variable";
-.message{
+@import "~@/assets/style/variable";
+
+.comment-list {
+  padding: 10px;
+  background-color: white;
 }
+
+
 </style>

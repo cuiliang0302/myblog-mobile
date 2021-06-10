@@ -15,3 +15,16 @@ body {
   margin-left: 0px !important;
   margin-right: 0px !important;
 }
+
+.comment-list > .comments > ol > .reply {
+  margin-left: 35px;
+  background-color: #f5f7fa;
+  border-radius: .133rem;
+  padding: 10px;
+}
+
+.comment-list > .comments > ol {
+  padding: 10px 0;
+}
+
+
