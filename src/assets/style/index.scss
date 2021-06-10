@@ -7,7 +7,7 @@ body {
   margin: 0 !important;
   padding: 0 !important;
   box-sizing: border-box;
-  background-color: $color-background-base;
+  background-color: $color-border-extra-light;
 }
 
 //markdown样式
@@ -15,7 +15,7 @@ body {
   margin-left: 0px !important;
   margin-right: 0px !important;
 }
-
+// 多级评论回复样式
 .comment-list > .comments > ol > .reply {
   margin-left: 35px;
   background-color: #f5f7fa;
@@ -25,6 +25,14 @@ body {
 
 .comment-list > .comments > ol {
   padding: 10px 0;
+}
+
+.comment-list > .comments {
+  border-bottom: 1px solid #fafafb;
+}
+
+.comment-list > .comments:last-child {
+  border-bottom: none;
 }
 
 

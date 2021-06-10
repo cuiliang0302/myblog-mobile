@@ -1,6 +1,6 @@
 <!--评论回复组件-->
 <template>
-  <div class="comments"  v-for="(item,index) in commentsList" :key="index">
+  <div class="comments" v-for="(item,index) in commentsList" :key="index">
     <ol>
       <div class="comment-info">
           <span>
@@ -38,7 +38,6 @@
         <Comments :commentsList="item.child"></Comments>
       </div>
     </ol>
-    <div class="van-hairline--bottom"></div>
   </div>
 </template>
 
@@ -144,9 +143,8 @@ export default {
     .comment-action {
       display: flex;
       justify-content: space-between;
-      width: 6.667rem;
+      padding: 0 40px 10px 40px;
       margin: 0 auto;
-      padding-bottom: 0.267rem;
       color: $color-text-regular;
 
       p {
@@ -161,7 +159,5 @@ export default {
       }
     }
   }
-
-
 }
 </style>
