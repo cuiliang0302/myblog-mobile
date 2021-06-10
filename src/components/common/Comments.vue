@@ -5,9 +5,9 @@
       <div class="comment-info">
           <span>
             <van-image round lazy-load width="0.8rem" height="0.8rem" :src="item.photo"/>
-            <h3>{{ item.username }}</h3>
+            <p class="comment-user">{{ item.username }}</p>
             <span v-show="item.father_name" class="reply-text">回复</span>
-            <h3>{{ item.father_name }}</h3>
+            <p>{{ item.father_name }}</p>
           </span>
         <span @click="clickLike(item.id,index)">
             <span v-if="item.is_like===true">
@@ -111,12 +111,6 @@ export default {
           margin-left: 0.267rem;
           font-size: 0.4rem;
         }
-
-        h3 {
-          display: inline;
-          vertical-align: 0.267rem;
-          margin-left: 0.373rem;
-        }
       }
 
       span:nth-child(2) {
@@ -132,9 +126,13 @@ export default {
         height: 0.4rem;
         opacity: 1;
       }
+      .comment-user{
+        font-weight: bolder;
+      }
       .reply-text{
         vertical-align: 10px;
         margin-left: 10px;
+        font-size: 14px;
       }
     }
 
