@@ -6,6 +6,8 @@
           <span>
             <van-image round lazy-load width="0.8rem" height="0.8rem" :src="item.photo"/>
             <h3>{{ item.username }}</h3>
+            <span v-show="item.father_name" class="reply-text">回复</span>
+            <h3>{{ item.father_name }}</h3>
           </span>
         <span @click="clickLike(item.id,index)">
             <span v-if="item.is_like===true">
@@ -129,6 +131,10 @@ export default {
         width: 0.4rem;
         height: 0.4rem;
         opacity: 1;
+      }
+      .reply-text{
+        vertical-align: 10px;
+        margin-left: 10px;
       }
     }
 
