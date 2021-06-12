@@ -9,11 +9,11 @@
             <span v-show="item.father_name" class="reply-text">回复</span>
             <p>{{ item.father_name }}</p>
           </span>
-        <span @click="clickLike(item.id,index)">
-            <span v-if="item.is_like===true">
-              <img :src="require('@/assets/icon/like-article.png')" alt="">
+        <span>
+            <span v-if="isLike(item.id)===true">
+              <img :src="require('@/assets/icon/like-colour.png')" alt="">
             </span>
-            <span v-else>
+            <span v-else @click="likeMessage(item.id)">
               <img :src="require('@/assets/icon/like-article.png')" alt="">
             </span>
             <p>{{ item.like }}</p>
@@ -31,12 +31,16 @@
             <img :src="require('@/assets/icon/comment-color.png')" alt="">
             <p>回复</p>
           </span>
-        <span>
+        <span v-if="isDelete(item.user)" @click="delMessage(item.id)">
             <img :src="require('@/assets/icon/delete-color.png')" alt="">
             <p>删除</p>
-          </span>
+        </span>
+        <span v-else style="opacity: 0.3">
+            <img :src="require('@/assets/icon/delete-color.png')" alt="">
+            <p>删除</p>
+        </span>
       </div>
-      <div class="reply" v-if="item.child">
+      <div class="reply" v-if="(JSON.stringify(item.child)!=='[]')">
         <Comments :commentsList="item.child"></Comments>
       </div>
     </ol>
@@ -44,14 +48,17 @@
 </template>
 
 <script>
-import {Toast, Image as VanImage, Icon} from 'vant'
+import {Toast, Image as VanImage, Icon, Dialog} from 'vant'
 import {ref} from "vue";
 import timeFormat from "@/utils/timeFormat";
+import user from "@/utils/user";
 
 export default {
   components: {
     [VanImage.name]: VanImage,
     [Icon.name]: Icon,
+    Dialog,
+    Toast
   },
   props: {
     // 评论回复列表
@@ -62,32 +69,55 @@ export default {
     },
   },
   name: "Comments",
-  setup(props) {
+  emits: ['likeMessage', 'delMessage'],
+  setup(props, {emit}) {
+    // 引入用户信息模块
+    let {userId, isLogin} = user();
     // 时间显示几天前
     let {timeAgo} = timeFormat()
-    const message = ref(null)
-    // 发布评论
-    const likeFlag = ref(0)
-    const clickSend = () => {
-      Toast("发表评论啦")
-    }
-    // 评论点赞
-    const clickLike = (id, index) => {
-      console.log(id)
-      console.log(index)
-      if (likeFlag.value === 0) {
-        Toast.success("点赞成功，感谢支持！")
-        likeFlag.value = likeFlag.value + 1
-        // contentList[index].like = parseInt(contentList[index].like) + 1
-      } else {
-        Toast.fail("既然点赞了，岂能取消？")
+    // 已点赞列表
+    const likeList = ref([])
+    // 判断是否已点赞
+    const isLike = (messageId) => {
+      for (let i = 0; i < likeList.value.length; i++) {
+        if (messageId === parseInt(likeList.value[i])) {
+          return true;
+        }
       }
+      return false;
+    }
+    // 留言评论点赞
+    const likeMessage = (messageId) => {
+      likeList.value.push(messageId)
+      emit('likeMessage', messageId)
+    }
+    // 判断评论留言能否删除
+    const isDelete = (messageUser) => {
+      if (!isLogin.value) {
+        return false
+      }
+      if (messageUser !== userId.value) {
+        return false
+      }
+      return true
+    }
+    // 评论留言删除
+    const delMessage = (messageId) => {
+      Dialog.confirm({
+        title: '删除确认',
+        message: '当真要删除这条宝贵的记录吗？',
+      }).then(() => {
+        // on confirm
+        emit('delMessage', messageId)
+      })
     }
     return {
       timeAgo,
-      message,
-      clickSend,
-      clickLike
+      likeList,
+      isLike,
+      likeMessage,
+      delMessage,
+      isDelete
     }
   }
 }
@@ -126,13 +156,15 @@ export default {
         height: 0.4rem;
         opacity: 1;
       }
-      .comment-user{
+
+      .comment-user {
         font-weight: bolder;
       }
-      .reply-text{
-        vertical-align: 10px;
-        margin-left: 10px;
-        font-size: 14px;
+
+      .reply-text {
+        vertical-align: 0.267rem;
+        margin-left: 0.267rem;
+        font-size: 0.4rem;
       }
     }
 
@@ -147,7 +179,7 @@ export default {
     .comment-action {
       display: flex;
       justify-content: space-between;
-      padding: 0 40px 10px 40px;
+      padding: 0 1.067rem 0.267rem 1.067rem;
       margin: 0 auto;
       color: $color-text-regular;
 

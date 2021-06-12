@@ -15,16 +15,17 @@ body {
   margin-left: 0px !important;
   margin-right: 0px !important;
 }
+
 // 多级评论回复样式
 .comment-list > .comments > ol > .reply {
-  margin-left: 35px;
+  margin-left: 0.933rem;
   background-color: #f5f7fa;
   border-radius: .133rem;
-  padding: 10px;
+  padding: 0.267rem;
 }
 
 .comment-list > .comments > ol {
-  padding: 10px 0;
+  padding: 0.267rem 0;
 }
 
 .comment-list > .comments {
@@ -35,4 +36,8 @@ body {
   border-bottom: none;
 }
 
+//评论框清除按钮
+.van-field__clear {
+  padding-right: 25px !important;
+}
 

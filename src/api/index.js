@@ -27,7 +27,7 @@ const index = {
   },
   delete(url, params) {
     const config = {
-      method: 'post',
+      method: 'delete',
       url: url
     }
     if (params) config.params = params

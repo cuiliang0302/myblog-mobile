@@ -1,79 +1,42 @@
 <template>
   <div class="photo">
-    <van-image
-        round
-        width="2.667rem" height="2.667rem"
-        :src="photoCrop.previewImage"
-    />
-    <input class="uploadBtn" type="file" accept="image/*" @change="onChange"/>
-    <Cropper v-if="photoCrop.cropperVisible"
-             :imagePath="photoCrop.imagePath"
-             fileType="blob"
-             @save="onSave"
-             @cancel="onCancel"
-             fixedBox
-    />
+    <van-cell is-link @click="showPopup">评论输入弹窗</van-cell>
+    <van-popup v-model:show="show" position="bottom" :style="{ height: '15%' }" closeable>
+      <van-field
+          v-model="message"
+          rows="3"
+          autosize
+          label="留言"
+          type="textarea"
+          maxlength="50"
+          placeholder="请输入留言"
+          show-word-limit
+      />
+    </van-popup>
   </div>
 </template>
 
 <script>
-import Cropper from "vue3-cropper";
-import 'vue3-cropper/lib/vue3-cropper.css';
-import {reactive} from "vue";
-import {Toast} from "vant";
-import qiniuUpload from "@/utils/qiniuUpload";
-import timeFormat from "@/utils/timeFormat";
-import {Image as VanImage} from 'vant';
+import {Popup, Cell, Field} from 'vant';
+import {ref} from "vue";
 
-const URL = window.URL || window.webkitURL;
 export default {
   components: {
-    Cropper, Toast,
-    [VanImage.name]: VanImage
+    [Popup.name]: Popup,
+    [Cell.name]: Cell,
+    [Field.name]: Field
   },
   name: 'Test',
   setup() {
-    // 七牛图片上传
-    let {upload} = qiniuUpload()
-    // 格式化处理时间
-    let {timeFile} = timeFormat()
-    // 图片裁剪对象
-    const photoCrop = reactive({
-      cropperVisible: false,
-      imagePath: '',
-      previewImage: null
-    })
-    // 裁剪框改变事件
-    const onChange = (e) => {
-      const file = e.target.files[0]
-      photoCrop.imagePath = URL.createObjectURL(file);
-      photoCrop.cropperVisible = true
+    const show = ref(false);
+    const showPopup = () => {
+      show.value = true;
     };
-    // 裁剪框确定事件
-    const onSave = (res) => {
-      //blob转file
-      const file = new File([res], timeFile(Date.now()) + '.jpg', {type: res.type});
-      upload('photo', file).then((response) => {
-        console.log(response)
-        photoCrop.previewImage = response
-        Toast.success('图片上传成功！');
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail('图片上传失败！');
-      });
-      photoCrop.cropperVisible = false
-    };
-    // 裁剪框取消事件
-    const onCancel = () => {
-      photoCrop.cropperVisible = false
-    };
-
+    const message = ref('')
     return {
-      photoCrop,
-      onChange,
-      onSave,
-      onCancel
+      show,
+      showPopup,
+      message
     };
   }
 }
