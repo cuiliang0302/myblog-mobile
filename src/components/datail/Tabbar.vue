@@ -42,13 +42,15 @@
              :style="{ height: '75%' }"
              closeable
              close-icon="close"
-             :safe-area-inset-bottom=true
+             close-on-popstate
+             safe-area-inset-bottom
+             overlay-class="my-overlay"
   >
     <div class="directory">
       <van-tabs v-model:active="activeDir" color="#409EFF" @change="tabChange">
         <van-tab title="大纲">
           <div class="content">
-            <div v-if="titleList.length != 0">
+            <div v-if="titleList.length !== 0">
               <p v-for="(anchor,index) in titleList" :key="anchor.lineIndex"
                  :style="{ padding: `0px 0 0px ${anchor.indent * 15}px` }"
                  @click="rollTo(anchor)"

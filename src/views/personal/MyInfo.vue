@@ -24,7 +24,10 @@
           label-width="1.867rem"
           @click="showSex = true"
       />
-      <van-popup v-model:show="showSex" round position="bottom" :style="{ height: '30%' }">
+      <van-popup v-model:show="showSex" round position="bottom" :style="{ height: '30%' }"
+                 close-on-popstate
+                 safe-area-inset-bottom
+                 overlay-class="my-overlay">
         <van-picker
             :columns="columns"
             @cancel="showSex = false"
@@ -65,7 +68,10 @@
           label-width="1.867rem"
           @click="showArea=true"
       />
-      <van-popup v-model:show="showArea" position="bottom" :style="{ height: '40%' }">
+      <van-popup v-model:show="showArea" position="bottom" :style="{ height: '40%' }"
+                 close-on-popstate
+                 safe-area-inset-bottom
+                 overlay-class="my-overlay">
         <van-area title="选择地区" :area-list="areaList" :columns-num="2" :value="userInfoForm.area_code"
                   @cancel="showArea=false"
                   @confirm="chooseArea"/>
@@ -81,7 +87,10 @@
           @click="showBirthday=true"
           @confirm="chooseBirthday"
       />
-      <van-popup v-model:show="showBirthday" position="bottom" :style="{ height: '40%' }">
+      <van-popup v-model:show="showBirthday" position="bottom" :style="{ height: '40%' }"
+                 close-on-popstate
+                 safe-area-inset-bottom
+                 overlay-class="my-overlay">
         <van-datetime-picker
             type="date"
             title="选择生日"

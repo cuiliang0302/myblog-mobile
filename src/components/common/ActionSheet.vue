@@ -1,9 +1,11 @@
 <template>
   <van-action-sheet close-on-popstate
-      v-model:show="show"
-      cancel-text="取消"
-      close-on-click-action
-      @cancel="onCancel"
+                    v-model:show="show"
+                    cancel-text="取消"
+                    close-on-click-action
+                    safe-area-inset-bottom
+                    @cancel="onCancel"
+                    overlay-class="my-overlay"
   >
     <div class="content">
       <div class="menu">
