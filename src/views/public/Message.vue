@@ -135,6 +135,4 @@ export default {
   padding: 0.267rem;
   background-color: white;
 }
-
-
 </style>

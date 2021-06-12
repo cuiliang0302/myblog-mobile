@@ -1,24 +1,30 @@
 <template>
-  <div class="photo">
+  <div class="photo" id="apply">
+    <h1>{{ msg }}</h1>
+    <h1>{{ height }}</h1>
     <van-cell is-link @click="showPopup">评论输入弹窗</van-cell>
-    <van-popup v-model:show="show" position="bottom" :style="{ height: '15%' }" closeable
-               close-on-popstate
-               safe-area-inset-bottom
-               overlay-class="my-overlay"
-    >
-      <van-field
-          ref="textarea"
-          v-model="message"
-          rows="3"
-          autosize
-          label="留言"
-          type="textarea"
-          maxlength="50"
-          placeholder="请输入留言"
-          show-word-limit
-          @focus="aaa"
-      />
-    </van-popup>
+    <div class="textarea">
+      <van-popup v-model:show="show"
+                 position="bottom" :style="{ height: '15%' }" closeable
+                 close-on-popstate
+                 overlay-class="my-overlay"
+                 @close="popClose"
+      >
+        <van-field
+            v-model="message"
+            rows="4"
+            autosize
+            label="留言"
+            type="textarea"
+            maxlength="50"
+            label-width="30"
+            placeholder="请输入留言"
+            :right-icon="require('@/assets/icon/send.png')"
+            show-word-limit
+            @focus="focus"
+        />
+      </van-popup>
+    </div>
   </div>
 </template>
 
@@ -34,28 +40,54 @@ export default {
   },
   name: 'Test',
   setup() {
+    const msg = ref('aaa')
+    const height = ref()
     const textarea = ref(null)
     const show = ref(false);
     const showPopup = () => {
       show.value = true;
     };
     const message = ref('')
-    const aaa = () => {
+    const popClose = () => {
+      console.log("关了")
+      let textareaDom = document.querySelector('.textarea>.van-popup--bottom')
+      textareaDom.style.bottom = '20px';
+    }
+    const focus = () => {
       console.log("焦点我来了")
+      let UA = window.navigator.userAgent
+      if (UA.includes('MiuiBrowser')) {
+        if (window.screen.height / window.screen.width >= 2) {
+          msg.value = '是小米全面屏浏览器'
+          let textareaDom = document.querySelector('.textarea>.van-popup--bottom')
+          textareaDom.style.bottom = '42vh';
+        }
+      } else {
+        msg.value = '不是小米全面屏浏览器'
+      }
     }
     onMounted(() => {
-      console.log(textarea)
     })
     return {
+      msg,
+      height,
       show,
       showPopup,
       message,
       textarea,
-      aaa
+      focus,
+      popClose
     };
   }
 }
 </script>
 <style lang="scss">
+.focusState {
+  position: absolute;
+}
+
+.textarea > .van-popup--bottom {
+  bottom: 25px;
+}
 </style>
 
