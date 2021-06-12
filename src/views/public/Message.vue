@@ -15,7 +15,8 @@
           @click-right-icon="clickSend"
       />
       <div class="comment-list">
-        <Comments :commentsList="messageList" @likeMessage="likeMessage" @delMessage="delMessage"></Comments>
+        <Comments :commentsList="messageList" @likeMessage="likeMessage" @delMessage="delMessage"
+                  @replySend="replySend"></Comments>
       </div>
     </section>
     <Tabbar></Tabbar>
@@ -28,7 +29,13 @@ import NavBar from "@/components/common/NavBar";
 import Tabbar from '@/components/common/Tabbar'
 import Comments from "@/components/common/Comments";
 import LoginPopup from "@/components/common/LoginPopup";
-import {getLeaveMessage, postLeaveMessage, putLeaveMessage, deleteLeaveMessage} from "@/api/record";
+import {
+  getLeaveMessage,
+  postLeaveMessage,
+  putLeaveMessage,
+  deleteLeaveMessage,
+  postReplyLeaveMessage
+} from "@/api/record";
 import {onMounted, reactive, ref} from "vue";
 import {Field, Toast, Image as VanImage, Icon} from 'vant'
 import user from "@/utils/user";
@@ -106,6 +113,22 @@ export default {
         Toast.fail(response.msg);
       });
     }
+    // 留言回复事件
+    const replySend = (message) => {
+      console.log("收到了")
+      console.log(message)
+      postReplyLeaveMessage(message).then((response) => {
+        console.log(response)
+        Toast.success('回复成功！');
+        leaveMessageData()
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        for (let i in response) {
+          Toast.fail(i + response[i][0]);
+        }
+      });
+    }
 
     // 获取留言列表
     async function leaveMessageData() {
@@ -122,7 +145,8 @@ export default {
       messageForm,
       clickSend,
       likeMessage,
-      delMessage
+      delMessage,
+      replySend
     }
   }
 }

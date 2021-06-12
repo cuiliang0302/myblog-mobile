@@ -39,3 +39,8 @@ export function putLeaveMessage(messageId) {
 export function deleteLeaveMessage(messageId) {
     return index.delete('record/leaveMessage/' + messageId + '/')
 }
+
+// 回复留言
+export function postReplyLeaveMessage(params) {
+    return index.post('record/leaveMessage/', params)
+}
