@@ -60,7 +60,7 @@ export default {
         if (window.screen.height / window.screen.width >= 2) {
           msg.value = '是小米全面屏浏览器'
           let textareaDom = document.querySelector('.textarea>.van-popup--bottom')
-          textareaDom.style.bottom = '40vh';
+          textareaDom.style.bottom = '38vh';
         }
       } else {
         msg.value = '不是小米全面屏浏览器'
