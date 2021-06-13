@@ -15,8 +15,7 @@
           @click-right-icon="clickSend"
       />
       <div class="comment-list">
-        <Comments :commentsList="messageList" @likeMessage="likeMessage" @delMessage="delMessage"
-                  @replySend="replySend"></Comments>
+        <Comments :commentsList="messageList"></Comments>
       </div>
     </section>
     <Tabbar></Tabbar>
@@ -36,7 +35,7 @@ import {
   deleteLeaveMessage,
   postReplyLeaveMessage
 } from "@/api/record";
-import {onMounted, reactive, ref} from "vue";
+import {getCurrentInstance, onMounted, reactive, ref} from "vue";
 import {Field, Toast, Image as VanImage, Icon} from 'vant'
 import user from "@/utils/user";
 
@@ -53,6 +52,9 @@ export default {
   },
   name: "Message",
   setup() {
+    // 事件总线
+    const internalInstance = getCurrentInstance();  //当前组件实例
+    const $bus = internalInstance.appContext.config.globalProperties.$bus;
     // 引入用户信息模块
     let {userId, isLogin} = user();
     // 留言列表
@@ -89,8 +91,7 @@ export default {
       }
     }
     // 留言点赞事件
-    const likeMessage = (messageId) => {
-      console.log("父组件收到了")
+    if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", messageId => {
       console.log(messageId)
       putLeaveMessage(messageId).then((response) => {
         console.log(response)
@@ -101,9 +102,9 @@ export default {
         console.log(response)
         Toast.fail(response.msg);
       });
-    }
+    });
     // 留言删除事件
-    const delMessage = (messageId) => {
+    if (!$bus.all.get("delMessage")) $bus.on("delMessage", messageId => {
       console.log(messageId)
       deleteLeaveMessage(messageId).then((response) => {
         console.log(response)
@@ -114,11 +115,11 @@ export default {
         console.log(response)
         Toast.fail(response.msg);
       });
-    }
+    });
     // 留言回复事件
-    const replySend = (message) => {
-      console.log(message)
-      postReplyLeaveMessage(message).then((response) => {
+    if (!$bus.all.get("replySend")) $bus.on("replySend", replyForm => {
+      console.log(replyForm)
+      postReplyLeaveMessage(replyForm).then((response) => {
         console.log(response)
         Toast.success('回复成功！');
         leaveMessageData()
@@ -129,7 +130,7 @@ export default {
           Toast.fail(i + response[i][0]);
         }
       });
-    }
+    });
 
     // 获取留言列表
     async function leaveMessageData() {
@@ -145,9 +146,6 @@ export default {
       messageList,
       messageForm,
       clickSend,
-      likeMessage,
-      delMessage,
-      replySend
     }
   }
 }

@@ -80,7 +80,7 @@
 
 <script>
 import {Toast, Image as VanImage, Icon, Dialog, Popup, Field} from 'vant'
-import {reactive, ref} from "vue";
+import {reactive, ref, getCurrentInstance} from "vue";
 import timeFormat from "@/utils/timeFormat";
 import user from "@/utils/user";
 
@@ -104,6 +104,9 @@ export default {
   name: "Comments",
   emits: ['likeMessage', 'delMessage', 'replySend'],
   setup(props, {emit}) {
+    // 事件总线
+    const internalInstance = getCurrentInstance();
+    const $bus = internalInstance.appContext.config.globalProperties.$bus;
     // 引入用户信息模块
     let {userId, isLogin} = user();
     // 时间显示几天前
@@ -121,11 +124,8 @@ export default {
     }
     // 留言评论点赞
     const likeMessage = (messageId) => {
-      console.log("子组件点赞了")
-      console.log(messageId)
       likeList.value.push(messageId)
-      emit('likeMessage', messageId)
-      console.log("子组件传了")
+      $bus.emit("likeMessage", messageId);
     }
     // 判断评论留言能否删除
     const isDelete = (messageUser) => {
@@ -143,8 +143,7 @@ export default {
         title: '删除确认',
         message: '当真要删除这条宝贵的记录吗？',
       }).then(() => {
-        // on confirm
-        emit('delMessage', messageId)
+        $bus.emit("delMessage", messageId);
       })
     }
     // 回复输入框默认状态
@@ -167,7 +166,8 @@ export default {
         Toast.fail("请输入内容！")
         return false
       } else {
-        emit('replySend', replyForm)
+        $bus.emit("replySend", replyForm);
+        // emit('replySend', replyForm)
         replyForm.content = ''
         textareaShow.value = false
       }

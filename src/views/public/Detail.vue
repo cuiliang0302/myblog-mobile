@@ -81,8 +81,7 @@
       />
       <div class="comment-list">
         <van-empty v-show="commentsList.length === 0" description="暂无评论，快来抢沙发吧！"/>
-        <Comments :commentsList="commentsList" @likeMessage="likeMessage" @delMessage="delMessage"
-                  @replySend="replySend"></Comments>
+        <Comments :commentsList="commentsList"></Comments>
       </div>
     </div>
     <div class="bottom-margin"></div>
@@ -97,7 +96,7 @@ import NavBar from '@/components/datail/NavBar';
 import Tabbar from '@/components/datail/Tabbar';
 import Comments from '@/components/common/Comments'
 import {Divider, Image as VanImage, Loading, Skeleton, Toast, Field, Empty} from 'vant'
-import {nextTick, onMounted, reactive, ref} from "vue";
+import {getCurrentInstance, nextTick, onMounted, reactive, ref} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
 import timeFormat from "@/utils/timeFormat";
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
@@ -117,7 +116,7 @@ import {
   postArticleComment,
   deleteArticleComment,
   putArticleComment,
-  postReplyArticleComment
+  postReplyArticleComment, putLeaveMessage, deleteLeaveMessage, postReplyLeaveMessage
 } from "@/api/record";
 import user from "@/utils/user";
 import LoginPopup from "@/components/common/LoginPopup";
@@ -151,6 +150,9 @@ export default {
   },
   name: "Detail",
   setup() {
+    // 事件总线
+    const internalInstance = getCurrentInstance();  //当前组件实例
+    const $bus = internalInstance.appContext.config.globalProperties.$bus;
     const router = useRouter();
     // 调用公共组件模块
     let {DetailID, componentName, detail, timeDate, loading, toDetail} = publicFn(router, sectionData)
@@ -166,11 +168,8 @@ export default {
       commentsList,
       articleCommentData,
       clickSend,
-      refLoginPopup,
-      likeMessage,
-      delMessage,
-      replySend
-    } = comment(DetailID)
+      refLoginPopup
+    } = comment(DetailID, $bus)
 
     // 获取内容详情
     async function getDetail(DetailID) {
@@ -219,9 +218,6 @@ export default {
       messageForm,
       clickSend,
       refLoginPopup,
-      likeMessage,
-      delMessage,
-      replySend
     }
   }
 }
@@ -393,7 +389,7 @@ function note(detail, toDetail) {
 }
 
 // 评论回复模块
-function comment(DetailID) {
+function comment(DetailID,$bus) {
   // 引入用户信息模块
   let {userId, isLogin} = user();
   // 留言评论列表
@@ -439,8 +435,7 @@ function comment(DetailID) {
     }
   }
   // 评论点赞事件
-  const likeMessage = (messageId) => {
-    console.log(messageId)
+  if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", messageId => {
     putArticleComment(messageId).then((response) => {
       console.log(response)
       Toast.success('点赞成功！');
@@ -450,9 +445,9 @@ function comment(DetailID) {
       console.log(response)
       Toast.fail(response.msg);
     });
-  }
+  });
   // 评论删除事件
-  const delMessage = (messageId) => {
+  if (!$bus.all.get("delMessage")) $bus.on("delMessage", messageId => {
     deleteArticleComment(messageId).then((response) => {
       console.log(response)
       Toast.success('留言删除成功！');
@@ -462,12 +457,12 @@ function comment(DetailID) {
       console.log(response)
       Toast.fail(response.msg);
     });
-  }
+  });
   // 留言回复事件
-  const replySend = (message) => {
-    message['article'] = DetailID.value
-    console.log(message)
-    postReplyArticleComment(message).then((response) => {
+  if (!$bus.all.get("replySend")) $bus.on("replySend", replyForm => {
+    replyForm['article'] = DetailID.value
+    console.log(replyForm)
+    postReplyArticleComment(replyForm).then((response) => {
       console.log(response)
       Toast.success('回复成功！');
       articleCommentData(DetailID.value)
@@ -478,16 +473,13 @@ function comment(DetailID) {
         Toast.fail(i + response[i][0]);
       }
     });
-  }
+  });
   return {
     commentsList,
     articleCommentData,
     messageForm,
     clickSend,
     refLoginPopup,
-    likeMessage,
-    delMessage,
-    replySend
   }
 }
 </script>

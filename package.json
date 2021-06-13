@@ -15,6 +15,7 @@
     "highlight.js": "^10.7.2",
     "lib-flexible": "^0.3.2",
     "lodash": "^4.17.21",
+    "mitt": "^2.1.0",
     "qiniu-js": "^3.2.0",
     "vant": "^3.0.17",
     "vue": "^3.0.0",
