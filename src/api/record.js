@@ -66,3 +66,24 @@ export function putArticleComment(messageId) {
 export function postReplyArticleComment(params) {
     return index.post('record/articleComment/', params)
 }
+// 获取笔记评论数据
+export function getSectionComment(sectionId) {
+    return index.get('record/sectionComment/?section='+sectionId)
+}
+// 笔记评论
+export function postSectionComment(params) {
+    return index.post('record/sectionComment/', params)
+}
+// 删除笔记评论
+export function deleteSectionComment(messageId) {
+    return index.delete('record/sectionComment/' + messageId + '/')
+}
+// 点赞笔记评论
+export function putSectionComment(messageId) {
+    const url = 'record/sectionComment/' + messageId + '/'
+    return index.put(url, NaN)
+}
+// 回复笔记评论
+export function postReplySectionComment(params) {
+    return index.post('record/sectionComment/', params)
+}

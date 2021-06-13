@@ -116,7 +116,12 @@ import {
   postArticleComment,
   deleteArticleComment,
   putArticleComment,
-  postReplyArticleComment, putLeaveMessage, deleteLeaveMessage, postReplyLeaveMessage
+  postReplyArticleComment,
+  getSectionComment,
+  postSectionComment,
+  deleteSectionComment,
+  putSectionComment,
+  postReplySectionComment
 } from "@/api/record";
 import user from "@/utils/user";
 import LoginPopup from "@/components/common/LoginPopup";
@@ -167,9 +172,10 @@ export default {
       messageForm,
       commentsList,
       articleCommentData,
+      sectionCommentData,
       clickSend,
       refLoginPopup
-    } = comment(DetailID, $bus)
+    } = comment(DetailID, $bus, componentName)
 
     // 获取内容详情
     async function getDetail(DetailID) {
@@ -184,6 +190,7 @@ export default {
       } else {
         await sectionData(DetailID)
         await contextData(DetailID)
+        await sectionCommentData(DetailID)
       }
       loading.value = false;
       await getTitle()
@@ -389,7 +396,7 @@ function note(detail, toDetail) {
 }
 
 // 评论回复模块
-function comment(DetailID,$bus) {
+function comment(DetailID, $bus, componentName) {
   // 引入用户信息模块
   let {userId, isLogin} = user();
   // 留言评论列表
@@ -400,33 +407,54 @@ function comment(DetailID,$bus) {
     commentsList.value = await getArticleComment(DetailID)
   }
 
+  // 获取笔记评论数据
+  async function sectionCommentData(DetailID) {
+    commentsList.value = await getSectionComment(DetailID)
+  }
+
   // 提示登录组件对象
   const refLoginPopup = ref()
   // 评论表单
   const messageForm = reactive({
     content: '',
     user: '',
-    article: ''
   })
   // 点击发表评论事件
   const clickSend = () => {
     if (isLogin.value) {
       if (messageForm.content) {
         messageForm.user = userId.value
-        messageForm.article = DetailID.value
-        console.log(messageForm)
-        postArticleComment(messageForm).then((response) => {
-          console.log(response)
-          Toast.success('留言成功！');
-          messageForm.content = ''
-          articleCommentData(DetailID.value)
-        }).catch(response => {
-          //发生错误时执行的代码
-          console.log(response)
-          for (let i in response) {
-            Toast.fail(i + response[i][0]);
-          }
-        });
+        if (componentName.value === 'article'){
+          messageForm['article'] = DetailID.value
+          console.log(messageForm)
+          postArticleComment(messageForm).then((response) => {
+            console.log(response)
+            Toast.success('留言成功！');
+            messageForm.content = ''
+            articleCommentData(DetailID.value)
+          }).catch(response => {
+            //发生错误时执行的代码
+            console.log(response)
+            for (let i in response) {
+              Toast.fail(i + response[i][0]);
+            }
+          });
+        }else {
+          messageForm['section'] = DetailID.value
+          console.log(messageForm)
+          postSectionComment(messageForm).then((response) => {
+            console.log(response)
+            Toast.success('留言成功！');
+            messageForm.content = ''
+            sectionCommentData(DetailID.value)
+          }).catch(response => {
+            //发生错误时执行的代码
+            console.log(response)
+            for (let i in response) {
+              Toast.fail(i + response[i][0]);
+            }
+          });
+        }
       } else {
         Toast("毛都没有，发表个锤子")
       }
@@ -436,47 +464,89 @@ function comment(DetailID,$bus) {
   }
   // 评论点赞事件
   if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", messageId => {
-    putArticleComment(messageId).then((response) => {
-      console.log(response)
-      Toast.success('点赞成功！');
-      articleCommentData(DetailID.value)
-    }).catch(response => {
-      //发生错误时执行的代码
-      console.log(response)
-      Toast.fail(response.msg);
-    });
+    if (componentName.value === 'article'){
+      putArticleComment(messageId).then((response) => {
+        console.log(response)
+        Toast.success('点赞成功！');
+        articleCommentData(DetailID.value)
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail(response.msg);
+      });
+    }else {
+      putSectionComment(messageId).then((response) => {
+        console.log(response)
+        Toast.success('点赞成功！');
+        sectionCommentData(DetailID.value)
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail(response.msg);
+      });
+    }
   });
   // 评论删除事件
   if (!$bus.all.get("delMessage")) $bus.on("delMessage", messageId => {
-    deleteArticleComment(messageId).then((response) => {
-      console.log(response)
-      Toast.success('留言删除成功！');
-      articleCommentData(DetailID.value)
-    }).catch(response => {
-      //发生错误时执行的代码
-      console.log(response)
-      Toast.fail(response.msg);
-    });
+    if (componentName.value === 'article'){
+      deleteArticleComment(messageId).then((response) => {
+        console.log(response)
+        Toast.success('留言删除成功！');
+        articleCommentData(DetailID.value)
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail(response.msg);
+      });
+    }else {
+      deleteSectionComment(messageId).then((response) => {
+        console.log(response)
+        Toast.success('留言删除成功！');
+        sectionCommentData(DetailID.value)
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail(response.msg);
+      });
+    }
   });
   // 留言回复事件
   if (!$bus.all.get("replySend")) $bus.on("replySend", replyForm => {
-    replyForm['article'] = DetailID.value
-    console.log(replyForm)
-    postReplyArticleComment(replyForm).then((response) => {
-      console.log(response)
-      Toast.success('回复成功！');
-      articleCommentData(DetailID.value)
-    }).catch(response => {
-      //发生错误时执行的代码
-      console.log(response)
-      for (let i in response) {
-        Toast.fail(i + response[i][0]);
-      }
-    });
+    if (componentName.value === 'article'){
+      replyForm['article'] = DetailID.value
+      console.log(replyForm)
+      postReplyArticleComment(replyForm).then((response) => {
+        console.log(response)
+        Toast.success('回复成功！');
+        articleCommentData(DetailID.value)
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        for (let i in response) {
+          Toast.fail(i + response[i][0]);
+        }
+      });
+    }else {
+      replyForm['section'] = DetailID.value
+      console.log(replyForm)
+      postReplySectionComment(replyForm).then((response) => {
+        console.log(response)
+        Toast.success('回复成功！');
+        sectionCommentData(DetailID.value)
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        for (let i in response) {
+          Toast.fail(i + response[i][0]);
+        }
+      });
+    }
+
   });
   return {
     commentsList,
     articleCommentData,
+    sectionCommentData,
     messageForm,
     clickSend,
     refLoginPopup,
