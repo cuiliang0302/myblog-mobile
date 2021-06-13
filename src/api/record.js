@@ -44,3 +44,25 @@ export function deleteLeaveMessage(messageId) {
 export function postReplyLeaveMessage(params) {
     return index.post('record/leaveMessage/', params)
 }
+
+// 获取文章评论数据
+export function getArticleComment(articleId) {
+    return index.get('record/articleComment/?article='+articleId)
+}
+// 文章评论
+export function postArticleComment(params) {
+    return index.post('record/articleComment/', params)
+}
+// 删除文章评论
+export function deleteArticleComment(messageId) {
+    return index.delete('record/articleComment/' + messageId + '/')
+}
+// 点赞文章评论
+export function putArticleComment(messageId) {
+    const url = 'record/articleComment/' + messageId + '/'
+    return index.put(url, NaN)
+}
+// 回复文章评论
+export function postReplyArticleComment(params) {
+    return index.post('record/articleComment/', params)
+}

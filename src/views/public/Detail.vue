@@ -68,7 +68,7 @@
     <div class="comment" id="comment">
       <van-divider content-position="left">📝 评论交流</van-divider>
       <van-field
-          v-model="message"
+          v-model="messageForm.content"
           rows="2"
           autosize
           type="textarea"
@@ -79,10 +79,16 @@
           :right-icon="require('@/assets/icon/send.png')"
           @click-right-icon="clickSend"
       />
+      <div class="comment-list">
+        <van-empty v-show="commentsList.length === 0" description="暂无评论，快来抢沙发吧！"/>
+        <Comments :commentsList="commentsList" @likeMessage="likeMessage" @delMessage="delMessage"
+                  @replySend="replySend"></Comments>
+      </div>
     </div>
     <div class="bottom-margin"></div>
     <Tabbar :componentName="componentName" :titleList="titleList" :catalogList="catalogList" @rollTo="rollTo"
             @dirTab="dirTab" @toNoteDetail="toNoteDetail"></Tabbar>
+    <LoginPopup ref="refLoginPopup"></LoginPopup>
   </div>
 </template>
 
@@ -90,7 +96,7 @@
 import NavBar from '@/components/datail/NavBar';
 import Tabbar from '@/components/datail/Tabbar';
 import Comments from '@/components/common/Comments'
-import {Divider, Image as VanImage, Loading, Skeleton, Toast, Field} from 'vant'
+import {Divider, Image as VanImage, Loading, Skeleton, Toast, Field, Empty} from 'vant'
 import {nextTick, onMounted, reactive, ref} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
 import timeFormat from "@/utils/timeFormat";
@@ -106,6 +112,15 @@ import yaml from 'highlight.js/lib/languages/yaml';
 import sql from 'highlight.js/lib/languages/sql';
 import {getCatalogue, getContext, getSectionDetail, getArticleDetail, getGuessLike} from "@/api/blog";
 import {getImgProxy} from "@/api/public";
+import {
+  getArticleComment,
+  postArticleComment,
+  deleteArticleComment,
+  putArticleComment,
+  postReplyArticleComment
+} from "@/api/record";
+import user from "@/utils/user";
+import LoginPopup from "@/components/common/LoginPopup";
 
 VMdPreview.use(githubTheme, {
   codeHighlightExtensionMap: {
@@ -127,29 +142,37 @@ export default {
     [Loading.name]: Loading,
     [Skeleton.name]: Skeleton,
     [Field.name]: Field,
+    [Empty.name]: Empty,
     NavBar,
     Tabbar,
     Comments,
-    VMdPreview
+    VMdPreview,
+    LoginPopup
   },
   name: "Detail",
   setup() {
     const router = useRouter();
     // 调用公共组件模块
-    let {componentName, detail, timeDate, loading, toDetail} = publicFn(router, sectionData)
+    let {DetailID, componentName, detail, timeDate, loading, toDetail} = publicFn(router, sectionData)
     // markdown模块
     let {titleList, editor, rollTo, getTitle} = markdown(titleList)
     // 文章模块
     let {recommendList, articleData, guessLikeData} = article(detail)
     // 笔记模块
     let {context, catalogList, dirTab, toNoteDetail, sectionData, contextData} = note(detail, toDetail)
-    // 评论内容
-    const message = ref()
-    // 点击发表评论事件
-    const clickSend = () => {
-      Toast("发表评论啦")
-    }
+    // 评论回复模块
+    let {
+      messageForm,
+      commentsList,
+      articleCommentData,
+      clickSend,
+      refLoginPopup,
+      likeMessage,
+      delMessage,
+      replySend
+    } = comment(DetailID)
 
+    // 获取内容详情
     async function getDetail(DetailID) {
       Toast.loading({
         message: '加载中...',
@@ -158,6 +181,7 @@ export default {
       if (componentName.value === 'article') {
         await articleData(DetailID)
         await guessLikeData(DetailID)
+        await articleCommentData(DetailID)
       } else {
         await sectionData(DetailID)
         await contextData(DetailID)
@@ -177,57 +201,6 @@ export default {
       componentName.value = to.query.component
       await getDetail(to.params.id)
     });
-    const commentsList = [
-      {
-        id: '1',
-        username: '张三',
-        photo: 'https://cdn.cuiliangblog.cn/media/photo/2020_10_22_13_29_07_420444.jpg',
-        comment: '这是一条测试评论',
-        time: '三天前',
-        like: 10,
-        is_like: true,
-        child: [
-          {
-            id: '2',
-            username: '张小三',
-            target: '张三',
-            photo: 'https://cdn.cuiliangblog.cn/media/photo/2021_02_20_11_18_31_393596.jpg',
-            comment: '这是测试评论的回复',
-            time: '一天前',
-            like: 8,
-            is_like: false,
-          },
-          {
-            id: '3',
-            username: '张大三',
-            target: '张小三',
-            photo: 'https://cdn.cuiliangblog.cn/media/photo/2020_12_26_21_47_08_682774.jpg',
-            comment: '这是另一条测试回复',
-            time: '8分钟前',
-            like: 2,
-            is_like: false,
-          },
-        ]
-      },
-      {
-        id: '4',
-        username: '李四',
-        photo: 'https://cdn.cuiliangblog.cn/media/photo/default.jpg',
-        comment: '这是测试评论',
-        time: '四天前',
-        like: 8,
-        is_like: false,
-      },
-      {
-        id: '5',
-        username: '王五',
-        photo: 'https://cdn.cuiliangblog.cn/media/photo/2020_12_26_15_35_59_908281.jpg',
-        comment: '别看了，这也是测试评论',
-        time: '一个月前',
-        like: 18,
-        is_like: true,
-      }
-    ]
     return {
       componentName,
       detail,
@@ -243,8 +216,12 @@ export default {
       dirTab,
       catalogList,
       toNoteDetail,
-      message,
-      clickSend
+      messageForm,
+      clickSend,
+      refLoginPopup,
+      likeMessage,
+      delMessage,
+      replySend
     }
   }
 }
@@ -253,6 +230,8 @@ export default {
 function publicFn(router) {
   // 显示组件模块
   const componentName = ref('')
+  // 文章笔记ID
+  const DetailID = ref()
   // 内容详情
   let detail = reactive({})
   // 文章发布日期只保留天
@@ -264,8 +243,11 @@ function publicFn(router) {
     console.log(component)
     router.push({path: `/detail/${DetailID}`, query: {component: component}})
   }
+  onMounted(() => {
+    DetailID.value = router.currentRoute.value.params.id
+  })
   return {
-    componentName, detail, timeDate, loading, toDetail
+    DetailID, componentName, detail, timeDate, loading, toDetail
   }
 }
 
@@ -407,6 +389,105 @@ function note(detail, toDetail) {
 
   return {
     context, catalogList, dirTab, toNoteDetail, catalogueData, sectionData, contextData
+  }
+}
+
+// 评论回复模块
+function comment(DetailID) {
+  // 引入用户信息模块
+  let {userId, isLogin} = user();
+  // 留言评论列表
+  const commentsList = ref([])
+
+  // 获取文章评论数据
+  async function articleCommentData(DetailID) {
+    commentsList.value = await getArticleComment(DetailID)
+  }
+
+  // 提示登录组件对象
+  const refLoginPopup = ref()
+  // 评论表单
+  const messageForm = reactive({
+    content: '',
+    user: '',
+    article: ''
+  })
+  // 点击发表评论事件
+  const clickSend = () => {
+    if (isLogin.value) {
+      if (messageForm.content) {
+        messageForm.user = userId.value
+        messageForm.article = DetailID.value
+        console.log(messageForm)
+        postArticleComment(messageForm).then((response) => {
+          console.log(response)
+          Toast.success('留言成功！');
+          messageForm.content = ''
+          articleCommentData(DetailID.value)
+        }).catch(response => {
+          //发生错误时执行的代码
+          console.log(response)
+          for (let i in response) {
+            Toast.fail(i + response[i][0]);
+          }
+        });
+      } else {
+        Toast("毛都没有，发表个锤子")
+      }
+    } else {
+      refLoginPopup.value.showPopup()
+    }
+  }
+  // 评论点赞事件
+  const likeMessage = (messageId) => {
+    console.log(messageId)
+    putArticleComment(messageId).then((response) => {
+      console.log(response)
+      Toast.success('点赞成功！');
+      articleCommentData(DetailID.value)
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      Toast.fail(response.msg);
+    });
+  }
+  // 评论删除事件
+  const delMessage = (messageId) => {
+    deleteArticleComment(messageId).then((response) => {
+      console.log(response)
+      Toast.success('留言删除成功！');
+      articleCommentData(DetailID.value)
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      Toast.fail(response.msg);
+    });
+  }
+  // 留言回复事件
+  const replySend = (message) => {
+    message['article'] = DetailID.value
+    console.log(message)
+    postReplyArticleComment(message).then((response) => {
+      console.log(response)
+      Toast.success('回复成功！');
+      articleCommentData(DetailID.value)
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      for (let i in response) {
+        Toast.fail(i + response[i][0]);
+      }
+    });
+  }
+  return {
+    commentsList,
+    articleCommentData,
+    messageForm,
+    clickSend,
+    refLoginPopup,
+    likeMessage,
+    delMessage,
+    replySend
   }
 }
 </script>
@@ -584,7 +665,7 @@ function note(detail, toDetail) {
 
   .comment {
     background-color: $color-background-white;
-    padding-bottom: 1.333rem;
+    padding: 0 0.267rem 1.867rem 0.267rem;
   }
 }
 
@@ -608,5 +689,9 @@ function note(detail, toDetail) {
 
 .v-md-editor-preview {
   padding: 0;
+}
+
+.van-empty {
+  padding: 0 !important;
 }
 </style>

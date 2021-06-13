@@ -48,7 +48,7 @@
           </span>
         </span>
       </div>
-      <div class="reply" v-if="(JSON.stringify(item.child)!=='[]')">
+      <div class="reply" v-if="item.child.length!==0">
         <Comments :commentsList="item.child"></Comments>
       </div>
     </ol>
@@ -121,8 +121,11 @@ export default {
     }
     // 留言评论点赞
     const likeMessage = (messageId) => {
+      console.log("子组件点赞了")
+      console.log(messageId)
       likeList.value.push(messageId)
       emit('likeMessage', messageId)
+      console.log("子组件传了")
     }
     // 判断评论留言能否删除
     const isDelete = (messageUser) => {

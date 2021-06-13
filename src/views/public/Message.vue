@@ -90,6 +90,8 @@ export default {
     }
     // 留言点赞事件
     const likeMessage = (messageId) => {
+      console.log("父组件收到了")
+      console.log(messageId)
       putLeaveMessage(messageId).then((response) => {
         console.log(response)
         Toast.success('点赞成功！');
@@ -115,7 +117,6 @@ export default {
     }
     // 留言回复事件
     const replySend = (message) => {
-      console.log("收到了")
       console.log(message)
       postReplyLeaveMessage(message).then((response) => {
         console.log(response)
