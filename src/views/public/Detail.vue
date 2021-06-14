@@ -251,9 +251,10 @@ function publicFn(router) {
   // 骨架屏默认显示
   const loading = ref(true);
   // 切换新的文章或笔记
-  const toDetail = (component, DetailID) => {
+  const toDetail = (component, detailId) => {
     console.log(component)
-    router.push({path: `/detail/${DetailID}`, query: {component: component}})
+    DetailID.value = detailId
+    router.push({path: `/detail/${detailId}`, query: {component: component}})
   }
   // 点赞文章或笔记
   const likeClick = () => {
