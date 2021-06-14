@@ -19,7 +19,7 @@
       </template>
     </van-tabbar-item>
     <van-tabbar-item>
-      <span>收藏</span>
+      <span>{{ is_collect === true ? '已收藏' : '收藏' }}</span>
       <template #icon="props">
         <img :src="props.active ? collection.active : collection.inactive" @click="collectionClick"/>
       </template>
@@ -82,13 +82,15 @@
       </van-tabs>
     </div>
   </van-popup>
+  <LoginPopup ref="refLoginPopup"></LoginPopup>
 </template>
 
 <script>
 import {Tabbar, TabbarItem, ShareSheet, Toast, Popup, Tab, Tabs, Empty, Loading} from 'vant';
 import {ref} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
-
+import user from "@/utils/user";
+import LoginPopup from "@/components/common/LoginPopup";
 export default {
   components: {
     [Tabbar.name]: Tabbar,
@@ -98,7 +100,8 @@ export default {
     [Tab.name]: Tab,
     [Tabs.name]: Tabs,
     [Empty.name]: Empty,
-    [Loading.name]: Loading
+    [Loading.name]: Loading,
+    LoginPopup
   },
   props: {
     // markdown标题
@@ -122,9 +125,16 @@ export default {
         return 'article'
       }
     },
+    // 是否已收藏
+    is_collect: {
+      type: Boolean,
+      default() {
+        return false
+      }
+    }
   },
   name: "Tabbar",
-  emits: ['rollTo', 'dirTab', 'toNoteDetail', 'likeClick'],
+  emits: ['rollTo', 'dirTab', 'toNoteDetail', 'likeClick', 'collectClick'],
   setup(props, {emit}) {
     // 调用图标切换模块
     let {directory, comment, like, collection, share} = fnIcon()
@@ -135,7 +145,7 @@ export default {
     // 调用点赞模块
     let {isLike, likeClick} = fnLike(props, {emit})
     // 调用收藏模块
-    let {collectionClick} = fnCollection()
+    let {collectionClick,refLoginPopup} = fnCollection(props, {emit})
     // 调用评论模块
     let {commentClick} = fnComment()
     // 调用公共模块
@@ -159,7 +169,8 @@ export default {
       activeDir,
       rollTo,
       tabChange,
-      toDetail
+      toDetail,
+      refLoginPopup
     };
   },
 }
@@ -294,12 +305,22 @@ function fnLike(props, {emit}) {
 }
 
 // 收藏功能模块
-function fnCollection() {
+function fnCollection(props, {emit}) {
+  // 提示登录组件对象
+  const refLoginPopup = ref()
+  let {userId, isLogin} = user();
   const collectionClick = () => {
-    Toast("收藏功能开发中");
+    console.log(props.is_collect)
+    if (isLogin.value === true) {
+      console.log("登录了")
+      emit('collectClick')
+    } else {
+      refLoginPopup.value.showPopup()
+    }
   };
 
   return {
+    refLoginPopup,
     collectionClick,
   };
 }

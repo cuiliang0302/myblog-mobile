@@ -47,43 +47,84 @@ export function postReplyLeaveMessage(params) {
 
 // 获取文章评论数据
 export function getArticleComment(articleId) {
-    return index.get('record/articleComment/?article='+articleId)
+    return index.get('record/articleComment/?article=' + articleId)
 }
+
 // 文章评论
 export function postArticleComment(params) {
     return index.post('record/articleComment/', params)
 }
+
 // 删除文章评论
 export function deleteArticleComment(messageId) {
     return index.delete('record/articleComment/' + messageId + '/')
 }
+
 // 点赞文章评论
 export function putArticleComment(messageId) {
     const url = 'record/articleComment/' + messageId + '/'
     return index.put(url, NaN)
 }
+
 // 回复文章评论
 export function postReplyArticleComment(params) {
     return index.post('record/articleComment/', params)
 }
+
 // 获取笔记评论数据
 export function getSectionComment(sectionId) {
-    return index.get('record/sectionComment/?section='+sectionId)
+    return index.get('record/sectionComment/?section=' + sectionId)
 }
+
 // 笔记评论
 export function postSectionComment(params) {
     return index.post('record/sectionComment/', params)
 }
+
 // 删除笔记评论
 export function deleteSectionComment(messageId) {
     return index.delete('record/sectionComment/' + messageId + '/')
 }
+
 // 点赞笔记评论
 export function putSectionComment(messageId) {
     const url = 'record/sectionComment/' + messageId + '/'
     return index.put(url, NaN)
 }
+
 // 回复笔记评论
 export function postReplySectionComment(params) {
     return index.post('record/sectionComment/', params)
+}
+
+// 获取文章浏览记录
+export function getArticleHistory(article, user) {
+    return index.get('record/articleHistory/?article=' + article + '&user=' + user)
+}
+
+// 添加文章浏览记录
+export function postArticleHistory(params) {
+    return index.post('record/articleHistory/', params)
+}
+
+// 修改文章收藏
+export function putArticleHistory(params) {
+    const url = 'record/articleHistory/'
+    return index.put(url, params)
+}
+
+// 获取笔记浏览记录
+export function getSectionHistory(section, user) {
+    return index.get('record/sectionHistory/?section=' + section + '&user=' + user)
+}
+
+// 添加笔记浏览记录
+export function postSectionHistory(params) {
+    return index.post('record/sectionHistory/', params)
+}
+
+// 修改笔记收藏
+export function putSectionHistory(params) {
+    const url = 'record/sectionHistory/'
+    return index.put(url, params)
 }

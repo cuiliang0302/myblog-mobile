@@ -85,7 +85,8 @@
       </div>
     </div>
     <div class="bottom-margin"></div>
-    <Tabbar :componentName="componentName" :titleList="titleList" :catalogList="catalogList" @rollTo="rollTo"
+    <Tabbar :componentName="componentName" :titleList="titleList" :catalogList="catalogList" :is_collect="is_collect"
+            @collectClick="collectClick" @rollTo="rollTo"
             @dirTab="dirTab" @toNoteDetail="toNoteDetail" @likeClick="likeClick"></Tabbar>
     <LoginPopup ref="refLoginPopup"></LoginPopup>
   </div>
@@ -129,7 +130,13 @@ import {
   postSectionComment,
   deleteSectionComment,
   putSectionComment,
-  postReplySectionComment
+  postReplySectionComment,
+  postArticleHistory,
+  putArticleHistory,
+  getArticleHistory,
+  getSectionHistory,
+  postSectionHistory,
+  putSectionHistory
 } from "@/api/record";
 import user from "@/utils/user";
 import LoginPopup from "@/components/common/LoginPopup";
@@ -184,6 +191,15 @@ export default {
       clickSend,
       refLoginPopup
     } = comment(DetailID, $bus, componentName)
+    // 浏览记录模块
+    let {
+      is_collect,
+      getArticleHistoryData,
+      postArticleHistoryData,
+      collectClick,
+      getSectionHistoryData,
+      postSectionHistoryData
+    } = history(DetailID, componentName)
 
     // 获取内容详情
     async function getDetail(DetailID) {
@@ -195,10 +211,14 @@ export default {
         await articleData(DetailID)
         await guessLikeData(DetailID)
         await articleCommentData(DetailID)
+        await getArticleHistoryData(DetailID)
+        await postArticleHistoryData(DetailID)
       } else {
         await sectionData(DetailID)
         await contextData(DetailID)
         await sectionCommentData(DetailID)
+        await getSectionHistoryData(DetailID)
+        await postSectionHistoryData(DetailID)
       }
       loading.value = false;
       await getTitle()
@@ -233,7 +253,9 @@ export default {
       messageForm,
       clickSend,
       refLoginPopup,
-      likeClick
+      likeClick,
+      is_collect,
+      collectClick
     }
   }
 }
@@ -368,7 +390,7 @@ function article(detail) {
   }
 
   return {
-    recommendList, articleData, guessLikeData
+    recommendList, articleData, guessLikeData,
   }
 }
 
@@ -577,7 +599,6 @@ function comment(DetailID, $bus, componentName) {
         }
       });
     }
-
   });
   return {
     commentsList,
@@ -586,6 +607,111 @@ function comment(DetailID, $bus, componentName) {
     messageForm,
     clickSend,
     refLoginPopup,
+  }
+}
+
+// 浏览记录模块
+function history(DetailID, componentName) {
+  // 引入用户信息模块
+  let {userId, isLogin} = user();
+  // 文章收藏状态
+  const is_collect = ref(false)
+
+  // 获取文章浏览记录（是否已收藏）
+  async function getArticleHistoryData(DetailID) {
+    if (isLogin.value === true) {
+      let res = await getArticleHistory(DetailID, userId.value)
+      console.log(res)
+      is_collect.value = res.is_collect
+    }
+  }
+
+  // 获取笔记浏览记录（是否已收藏）
+  async function getSectionHistoryData(DetailID) {
+    if (isLogin.value === true) {
+      let res = await getSectionHistory(DetailID, userId.value)
+      console.log(res)
+      is_collect.value = res.is_collect
+    }
+  }
+
+  // 添加文章浏览记录表单
+  const articleHistoryForm = reactive({
+    article: '',
+    user: ''
+  })
+
+  // 添加文章浏览记录
+  async function postArticleHistoryData(DetailID) {
+    if (isLogin.value === true) {
+      articleHistoryForm.article = DetailID
+      articleHistoryForm.user = userId.value
+      console.log(articleHistoryForm)
+      let res = await postArticleHistory(articleHistoryForm)
+      console.log(res)
+    }
+  }
+
+  // 添加笔记浏览记录表单
+  const sectionHistoryForm = reactive({
+    section: '',
+    user: ''
+  })
+
+  // 添加文章浏览记录
+  async function postSectionHistoryData(DetailID) {
+    if (isLogin.value === true) {
+      sectionHistoryForm.section = DetailID
+      sectionHistoryForm.user = userId.value
+      console.log(sectionHistoryForm)
+      let res = await postSectionHistory(sectionHistoryForm)
+      console.log(res)
+    }
+  }
+
+  // 添加/取消收藏表单
+  const CollectForm = reactive({
+    user: '',
+    is_collect: ''
+  })
+  // 子组件添加/取消收藏事件
+  const collectClick = () => {
+    console.log("爹收到了")
+    is_collect.value = !is_collect.value
+    CollectForm.user = userId.value
+    CollectForm.is_collect = is_collect.value
+    if (componentName.value === 'article') {
+      console.log("是文章")
+      CollectForm['article'] = DetailID
+      putArticleHistory(CollectForm).then((response) => {
+        console.log(response)
+        Toast.success('更新收藏成功！');
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail(response.msg);
+      });
+    } else {
+      console.log("是笔记")
+      CollectForm['section'] = DetailID
+      putSectionHistory(CollectForm).then((response) => {
+        console.log(response)
+        Toast.success('更新收藏成功！');
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail(response.msg);
+      });
+    }
+  }
+
+  return {
+    is_collect,
+    getArticleHistoryData,
+    postArticleHistoryData,
+    collectClick,
+    getSectionHistoryData,
+    postSectionHistoryData
   }
 }
 </script>
