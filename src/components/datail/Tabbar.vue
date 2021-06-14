@@ -13,7 +13,7 @@
       </template>
     </van-tabbar-item>
     <van-tabbar-item>
-      <span>点赞</span>
+      <span>{{ isLike === true ? '已点赞' : '点赞' }}</span>
       <template #icon="props">
         <img :src="props.active ? like.active : like.inactive" @click="likeClick"/>
       </template>
@@ -124,7 +124,7 @@ export default {
     },
   },
   name: "Tabbar",
-  emits: ['rollTo', 'dirTab', 'toNoteDetail'],
+  emits: ['rollTo', 'dirTab', 'toNoteDetail','likeClick'],
   setup(props, {emit}) {
     // 当前选中的tabbar
     const active = ref('');
@@ -135,7 +135,7 @@ export default {
     // 调用分享模块
     let {options, onSelect, showShare} = fnShare()
     // 调用点赞模块
-    let {likeClick} = fnLike()
+    let {isLike, likeClick} = fnLike(props, {emit})
     // 调用收藏模块
     let {collectionClick} = fnCollection()
     // 调用评论模块
@@ -167,6 +167,7 @@ export default {
       onSelect,
       showShare,
       likeClick,
+      isLike,
       collectionClick,
       commentClick,
       directoryClick,
@@ -258,12 +259,20 @@ function fnShare() {
 }
 
 // 点赞功能模块
-function fnLike() {
+function fnLike(props, {emit}) {
+  // 是否已点赞
+  const isLike = ref(false)
   const likeClick = () => {
-    Toast("点赞功能开发中");
+    if (isLike.value === false) {
+      console.log("要点赞了")
+      console.log(isLike.value)
+      isLike.value = true
+      emit('likeClick')
+    }
   };
 
   return {
+    isLike,
     likeClick,
   };
 }
@@ -283,7 +292,6 @@ function fnCollection() {
 function fnComment() {
   const router = useRouter()
   const commentClick = () => {
-    Toast("评论功能开发中");
     const returnEle = document.querySelector("#comment");  //productId是将要跳转区域的id
     if (!!returnEle) {
       returnEle.scrollIntoView({behavior: 'smooth'}); // true 是默认的

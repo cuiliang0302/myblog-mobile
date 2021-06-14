@@ -86,7 +86,7 @@
     </div>
     <div class="bottom-margin"></div>
     <Tabbar :componentName="componentName" :titleList="titleList" :catalogList="catalogList" @rollTo="rollTo"
-            @dirTab="dirTab" @toNoteDetail="toNoteDetail"></Tabbar>
+            @dirTab="dirTab" @toNoteDetail="toNoteDetail" @likeClick="likeClick"></Tabbar>
     <LoginPopup ref="refLoginPopup"></LoginPopup>
   </div>
 </template>
@@ -109,7 +109,15 @@ import dockerfile from 'highlight.js/lib/languages/dockerfile';
 import json from 'highlight.js/lib/languages/json';
 import yaml from 'highlight.js/lib/languages/yaml';
 import sql from 'highlight.js/lib/languages/sql';
-import {getCatalogue, getContext, getSectionDetail, getArticleDetail, getGuessLike} from "@/api/blog";
+import {
+  getCatalogue,
+  getContext,
+  getSectionDetail,
+  getArticleDetail,
+  getGuessLike,
+  putArticleDetail,
+  putSectionDetail
+} from "@/api/blog";
 import {getImgProxy} from "@/api/public";
 import {
   getArticleComment,
@@ -160,7 +168,7 @@ export default {
     const $bus = internalInstance.appContext.config.globalProperties.$bus;
     const router = useRouter();
     // 调用公共组件模块
-    let {DetailID, componentName, detail, timeDate, loading, toDetail} = publicFn(router, sectionData)
+    let {DetailID, componentName, detail, timeDate, loading, toDetail, likeClick} = publicFn(router, sectionData)
     // markdown模块
     let {titleList, editor, rollTo, getTitle} = markdown(titleList)
     // 文章模块
@@ -225,6 +233,7 @@ export default {
       messageForm,
       clickSend,
       refLoginPopup,
+      likeClick
     }
   }
 }
@@ -246,11 +255,37 @@ function publicFn(router) {
     console.log(component)
     router.push({path: `/detail/${DetailID}`, query: {component: component}})
   }
+  // 点赞文章或笔记
+  const likeClick = () => {
+    if (componentName.value === 'article') {
+      detail.like = detail.like + 1
+      putArticleDetail(DetailID.value, detail).then((response) => {
+        console.log(response)
+        Toast.success('点赞成功！');
+        getArticleDetail(DetailID.value)
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail(response.msg);
+      });
+    } else {
+      detail.like = detail.like + 1
+      putSectionDetail(DetailID.value, detail).then((response) => {
+        console.log(response)
+        Toast.success('点赞成功！');
+        getSectionDetail(DetailID.value)
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail(response.msg);
+      });
+    }
+  }
   onMounted(() => {
     DetailID.value = router.currentRoute.value.params.id
   })
   return {
-    DetailID, componentName, detail, timeDate, loading, toDetail
+    DetailID, componentName, detail, timeDate, loading, toDetail, likeClick
   }
 }
 
@@ -424,7 +459,7 @@ function comment(DetailID, $bus, componentName) {
     if (isLogin.value) {
       if (messageForm.content) {
         messageForm.user = userId.value
-        if (componentName.value === 'article'){
+        if (componentName.value === 'article') {
           messageForm['article'] = DetailID.value
           console.log(messageForm)
           postArticleComment(messageForm).then((response) => {
@@ -439,7 +474,7 @@ function comment(DetailID, $bus, componentName) {
               Toast.fail(i + response[i][0]);
             }
           });
-        }else {
+        } else {
           messageForm['section'] = DetailID.value
           console.log(messageForm)
           postSectionComment(messageForm).then((response) => {
@@ -464,7 +499,7 @@ function comment(DetailID, $bus, componentName) {
   }
   // 评论点赞事件
   if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", messageId => {
-    if (componentName.value === 'article'){
+    if (componentName.value === 'article') {
       putArticleComment(messageId).then((response) => {
         console.log(response)
         Toast.success('点赞成功！');
@@ -474,7 +509,7 @@ function comment(DetailID, $bus, componentName) {
         console.log(response)
         Toast.fail(response.msg);
       });
-    }else {
+    } else {
       putSectionComment(messageId).then((response) => {
         console.log(response)
         Toast.success('点赞成功！');
@@ -488,7 +523,7 @@ function comment(DetailID, $bus, componentName) {
   });
   // 评论删除事件
   if (!$bus.all.get("delMessage")) $bus.on("delMessage", messageId => {
-    if (componentName.value === 'article'){
+    if (componentName.value === 'article') {
       deleteArticleComment(messageId).then((response) => {
         console.log(response)
         Toast.success('留言删除成功！');
@@ -498,7 +533,7 @@ function comment(DetailID, $bus, componentName) {
         console.log(response)
         Toast.fail(response.msg);
       });
-    }else {
+    } else {
       deleteSectionComment(messageId).then((response) => {
         console.log(response)
         Toast.success('留言删除成功！');
@@ -512,7 +547,7 @@ function comment(DetailID, $bus, componentName) {
   });
   // 留言回复事件
   if (!$bus.all.get("replySend")) $bus.on("replySend", replyForm => {
-    if (componentName.value === 'article'){
+    if (componentName.value === 'article') {
       replyForm['article'] = DetailID.value
       console.log(replyForm)
       postReplyArticleComment(replyForm).then((response) => {
@@ -526,7 +561,7 @@ function comment(DetailID, $bus, componentName) {
           Toast.fail(i + response[i][0]);
         }
       });
-    }else {
+    } else {
       replyForm['section'] = DetailID.value
       console.log(replyForm)
       postReplySectionComment(replyForm).then((response) => {
