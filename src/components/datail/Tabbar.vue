@@ -87,7 +87,7 @@
 <script>
 import {Tabbar, TabbarItem, ShareSheet, Toast, Popup, Tab, Tabs, Empty, Loading} from 'vant';
 import {ref} from "vue";
-import {useRouter} from "vue-router";
+import {useRouter, onBeforeRouteUpdate} from "vue-router";
 
 export default {
   components: {
@@ -124,14 +124,12 @@ export default {
     },
   },
   name: "Tabbar",
-  emits: ['rollTo', 'dirTab', 'toNoteDetail','likeClick'],
+  emits: ['rollTo', 'dirTab', 'toNoteDetail', 'likeClick'],
   setup(props, {emit}) {
-    // 当前选中的tabbar
-    const active = ref('');
     // 调用图标切换模块
     let {directory, comment, like, collection, share} = fnIcon()
     // 调用大纲模块
-    let {directoryClick, showDir, activeDir} = fnDirectory()
+    let {directoryClick, showDir, activeDir, rollTo, tabChange, toDetail} = fnDirectory(props, {emit})
     // 调用分享模块
     let {options, onSelect, showShare} = fnShare()
     // 调用点赞模块
@@ -140,22 +138,8 @@ export default {
     let {collectionClick} = fnCollection()
     // 调用评论模块
     let {commentClick} = fnComment()
-    // title跳转事件
-    const rollTo = (height) => {
-      console.log("点击title了")
-      emit('rollTo', height)
-      showDir.value = false
-    }
-    // 大纲目录Tab切换
-    const tabChange = (index) => {
-      emit('dirTab', index)
-    }
-    // 点击获取其他笔记内容
-    const toDetail = (detailID) => {
-      console.log(detailID)
-      emit('toNoteDetail', detailID)
-      showDir.value = false
-    }
+    // 调用公共模块
+    let {active} = fnPublic(isLike)
     return {
       active,
       directory,
@@ -178,6 +162,20 @@ export default {
       toDetail
     };
   },
+}
+
+// 公共模块
+function fnPublic(isLike) {
+  // 当前选中的tabbar
+  const active = ref('');
+  // 切换页面，可重新点赞
+  onBeforeRouteUpdate(() => {
+    isLike.value = false
+    active.value = ''
+  });
+  return {
+    active
+  }
 }
 
 // 图标切换功能模块
@@ -213,17 +211,36 @@ function fnIcon() {
 }
 
 // 大纲功能模块
-function fnDirectory() {
+function fnDirectory(props, {emit}) {
   const activeDir = ref(0)
   const showDir = ref(false);
   // 大纲菜单打开
   const directoryClick = () => {
     showDir.value = true;
   };
+  // title跳转事件
+  const rollTo = (height) => {
+    console.log("点击title了")
+    emit('rollTo', height)
+    showDir.value = false
+  }
+  // 大纲目录Tab切换
+  const tabChange = (index) => {
+    emit('dirTab', index)
+  }
+  // 点击获取其他笔记内容
+  const toDetail = (detailID) => {
+    console.log(detailID)
+    emit('toNoteDetail', detailID)
+    showDir.value = false
+  }
   return {
     activeDir,
     showDir,
     directoryClick,
+    rollTo,
+    tabChange,
+    toDetail,
   };
 }
 
@@ -270,7 +287,6 @@ function fnLike(props, {emit}) {
       emit('likeClick')
     }
   };
-
   return {
     isLike,
     likeClick,
