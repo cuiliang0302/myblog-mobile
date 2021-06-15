@@ -185,23 +185,26 @@ export default {
       let UA = window.navigator.userAgent
       if (UA.includes('MiuiBrowser')) {
         if (window.screen.height / window.screen.width >= 2) {
+          console.log("是小米全面屏手机")
           return true
         }
+      } else {
+        console.log("不是小米全面屏手机")
+        return false
       }
-      return false
     }
     // 评论框获得焦点事件
     const focus = () => {
-      if (isMIUI === true) {
+      if (isMIUI() === true) {
         let textareaDom = document.querySelector('.textarea>.van-popup--bottom')
         textareaDom.style.bottom = '38vh';
       }
     }
     // 评论框失去焦点事件
     const blur = () => {
-      if (isMIUI === true) {
+      if (isMIUI() === true) {
         let textareaDom = document.querySelector('.textarea>.van-popup--bottom')
-        textareaDom.style.bottom = '25px';
+        textareaDom.style.bottom = '0.533rem';
       }
     }
     return {
@@ -297,6 +300,6 @@ export default {
 }
 
 .textarea > .van-popup--bottom {
-  bottom: 25px;
+  bottom: 0.533rem;
 }
 </style>
