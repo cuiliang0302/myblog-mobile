@@ -91,6 +91,7 @@ import {ref} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
 import user from "@/utils/user";
 import LoginPopup from "@/components/common/LoginPopup";
+
 export default {
   components: {
     [Tabbar.name]: Tabbar,
@@ -145,7 +146,7 @@ export default {
     // 调用点赞模块
     let {isLike, likeClick} = fnLike(props, {emit})
     // 调用收藏模块
-    let {collectionClick,refLoginPopup} = fnCollection(props, {emit})
+    let {collectionClick, refLoginPopup} = fnCollection(props, {emit})
     // 调用评论模块
     let {commentClick} = fnComment()
     // 调用公共模块
@@ -275,7 +276,7 @@ function fnShare() {
     ],
   ];
   const onSelect = (option) => {
-    Toast(option.name);
+    Toast(option.name + '分享功能正在开发中');
     showShare.value = false;
   };
 

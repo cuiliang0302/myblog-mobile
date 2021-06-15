@@ -637,14 +637,14 @@ function history(DetailID, componentName) {
 
   // 添加文章浏览记录表单
   const articleHistoryForm = reactive({
-    article: '',
+    article_id: '',
     user: ''
   })
 
   // 添加文章浏览记录
   async function postArticleHistoryData(DetailID) {
     if (isLogin.value === true) {
-      articleHistoryForm.article = DetailID
+      articleHistoryForm.article_id = DetailID
       articleHistoryForm.user = userId.value
       console.log(articleHistoryForm)
       let res = await postArticleHistory(articleHistoryForm)
@@ -654,14 +654,14 @@ function history(DetailID, componentName) {
 
   // 添加笔记浏览记录表单
   const sectionHistoryForm = reactive({
-    section: '',
+    section_id: '',
     user: ''
   })
 
   // 添加文章浏览记录
   async function postSectionHistoryData(DetailID) {
     if (isLogin.value === true) {
-      sectionHistoryForm.section = DetailID
+      sectionHistoryForm.section_id = DetailID
       sectionHistoryForm.user = userId.value
       console.log(sectionHistoryForm)
       let res = await postSectionHistory(sectionHistoryForm)
@@ -682,10 +682,14 @@ function history(DetailID, componentName) {
     CollectForm.is_collect = is_collect.value
     if (componentName.value === 'article') {
       console.log("是文章")
-      CollectForm['article'] = DetailID
+      CollectForm['article_id'] = DetailID
       putArticleHistory(CollectForm).then((response) => {
         console.log(response)
-        Toast.success('更新收藏成功！');
+        if(response.is_collect===true){
+          Toast.success('已添加收藏！');
+        }else {
+          Toast.success('已取消收藏！');
+        }
       }).catch(response => {
         //发生错误时执行的代码
         console.log(response)
@@ -693,10 +697,14 @@ function history(DetailID, componentName) {
       });
     } else {
       console.log("是笔记")
-      CollectForm['section'] = DetailID
+      CollectForm['section_id'] = DetailID
       putSectionHistory(CollectForm).then((response) => {
         console.log(response)
-        Toast.success('更新收藏成功！');
+        if(response.is_collect===true){
+          Toast.success('已添加收藏！');
+        }else {
+          Toast.success('已取消收藏！');
+        }
       }).catch(response => {
         //发生错误时执行的代码
         console.log(response)

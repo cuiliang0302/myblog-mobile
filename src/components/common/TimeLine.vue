@@ -1,15 +1,13 @@
 <template>
   <div class="timeline">
     <ul>
-      <li v-for="(item,index) in timeList" :key="index">
+      <li v-for="(item,index) in list" :key="index">
         <div class="time">
-          <span>{{ item.time }}</span><br>
-<!--          <span>18:30</span>-->
+          <span>{{ timeFull(item.time) }}</span><br>
         </div>
         <div class="icon"></div>
         <div class="label">
-          <p>
-            <span>{{ action }}{{ kind }}：</span>
+          <p @click="toDetail(item.id)">
             <span><van-tag round type="primary" size="medium" plain>{{ item.name }}</van-tag></span>
           </p>
         </div>
@@ -20,6 +18,7 @@
 
 <script>
 import {Tag} from 'vant';
+import timeFormat from "@/utils/timeFormat";
 
 export default {
   props: {
@@ -46,10 +45,16 @@ export default {
     [Tag.name]: Tag
   },
   name: "TimeLine",
-  setup(props) {
-    const timeList = props.list
+  setup(props,{emit}) {
+    // 日期格式化
+    let {timeFull} = timeFormat()
+    const toDetail= (detailId) =>{
+      console.log(detailId)
+      emit('toDetail', detailId)
+    }
     return {
-      timeList
+      toDetail,
+      timeFull
     }
   }
 }
@@ -73,6 +78,7 @@ export default {
         width: 25%;
         padding-right: 100px;
         position: absolute;
+        text-align: center;
 
         span:first-child {
           font-size: 16px;

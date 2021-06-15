@@ -99,7 +99,11 @@ export function postReplySectionComment(params) {
 
 // 获取文章浏览记录
 export function getArticleHistory(article, user) {
-    return index.get('record/articleHistory/?article=' + article + '&user=' + user)
+    if (article){
+        return index.get('record/articleHistory/?article=' + article + '&user=' + user)
+    }else {
+        return index.get('record/articleHistory/?user=' + user)
+    }
 }
 
 // 添加文章浏览记录
@@ -115,7 +119,12 @@ export function putArticleHistory(params) {
 
 // 获取笔记浏览记录
 export function getSectionHistory(section, user) {
-    return index.get('record/sectionHistory/?section=' + section + '&user=' + user)
+    if (section){
+        return index.get('record/sectionHistory/?section=' + section + '&user=' + user)
+    }else {
+        return index.get('record/sectionHistory/?user=' + user)
+    }
+
 }
 
 // 添加笔记浏览记录

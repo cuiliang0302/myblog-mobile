@@ -1,13 +1,13 @@
 <!--我的浏览记录-->
 <template>
   <div class="collect">
-    <NavBar :title="title"></NavBar>
+    <NavBar :title="'浏览记录'"></NavBar>
     <van-tabs v-model:active="active" color="#409EFF" animated swipeable @click="onClick">
       <van-tab title="文章">
-        <TimeLine :list="collect.list" :kind="collect.kind" :action="collect.action"></TimeLine>
+        <TimeLine :list="historyList" @toDetail="toDetail"></TimeLine>
       </van-tab>
       <van-tab title="笔记">
-        <TimeLine :list="collect.list" :kind="collect.kind" :action="collect.action"></TimeLine>
+        <TimeLine :list="historyList" @toDetail="toDetail"></TimeLine>
       </van-tab>
     </van-tabs>
   </div>
@@ -17,7 +17,10 @@
 import TimeLine from "@/components/common/TimeLine";
 import NavBar from "@/components/personal/NavBar";
 import {Tab, Tabs, Toast} from 'vant';
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
+import {getArticleHistory, getSectionHistory} from "@/api/record";
+import user from "@/utils/user";
+import {useRouter} from "vue-router";
 
 export default {
   components: {
@@ -27,39 +30,66 @@ export default {
     [Tabs.name]: Tabs,
     Toast
   },
-  name: "MyCollect",
+  name: "MyHistory",
   setup() {
+    // 引入用户信息模块
+    let {userId, isLogin} = user();
+    const router = useRouter()
     const active = ref(0);
-    const title = '浏览记录'
-    const collect = reactive({
-      list: [
-        {time: '2011-01-01 13:14', name: '三字经'},
-        {time: '2011-02-02 23:24', name: '百家姓'},
-      ],
-      kind: '文章',
-      action: '收藏'
-    })
-    const onClick = (name, title) => {
-      collect.kind = title
-      if (name) {
-        console.log('显示笔记')
-        collect.list = [
-          {time: '2011-01-01 13:14', name: '四字经'},
-          {time: '2011-02-02 23:24', name: '千家姓'},
-        ]
+    // 文章浏览记录
+    const historyList = ref([])
+
+    // 获取文章浏览记录
+    async function getArticleHistoryData() {
+      let articleHistory_data = await getArticleHistory(NaN, userId.value)
+      console.log(articleHistory_data)
+      historyList.value = articleHistory_data.map((item) => {
+        return {
+          id: item['article_id'],
+          name: item['article'],
+          time: item['time']
+        }
+      })
+    }
+
+    // 获取笔记浏览记录
+    async function getSectionHistoryData() {
+      let articleHistory_data = await getSectionHistory(NaN, userId.value)
+      console.log(articleHistory_data)
+      historyList.value = articleHistory_data.map((item) => {
+        return {
+          id: item['section_id'],
+          name: item['section'],
+          time: item['time']
+        }
+      })
+    }
+
+    // tab切换事件
+    const onClick = () => {
+      if (active.value === 0) {
+        getArticleHistoryData()
       } else {
-        console.log('显示文章')
-        collect.list = [
-          {time: '2022-01-01 13:14', name: '三字经'},
-          {time: '2022-02-02 23:24', name: '百家姓'},
-        ]
+        getSectionHistoryData()
       }
     }
+    // 子组件跳转文章详情事件
+    const toDetail = (detailID) => {
+      console.log(detailID)
+      if (active.value === 0) {
+        router.push({path: `/detail/${detailID}`, query: {component: 'article'}})
+      } else {
+        router.push({path: `/detail/${detailID}`, query: {component: 'note'}})
+      }
+    }
+    onMounted(() => {
+      getArticleHistoryData()
+    })
     return {
+      historyList,
       active,
-      title,
-      collect,
-      onClick
+      onClick,
+      toDetail
     }
   }
 }
