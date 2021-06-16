@@ -21,7 +21,11 @@
         </van-collapse>
       </van-tab>
       <van-tab title="书签">
-        <IsNull></IsNull>
+        <van-empty v-if="collectList.length===0" description="暂无收藏记录"/>
+        <van-cell-group v-else>
+          <van-cell v-for="(item,index) in collectList" :key="index" :title=item.name is-link
+                    @click="toDetail(item.id)"/>
+        </van-cell-group>
       </van-tab>
     </van-tabs>
     <Tabbar :activeBar="2"></Tabbar>
@@ -32,10 +36,12 @@
 import NavBar from "@/components/common/NavBar";
 import Tabbar from "@/components/common/Tabbar";
 import IsNull from "@/components/common/IsNull";
-import {Collapse, CollapseItem, Cell, CellGroup, Tab, Tabs, Loading} from 'vant';
+import {Collapse, CollapseItem, Cell, CellGroup, Tab, Tabs, Loading, Empty} from 'vant';
 import {onMounted, reactive, ref} from "vue";
 import {getCatalogue} from "@/api/blog";
 import {useRouter} from "vue-router";
+import {getSectionHistory} from "@/api/record";
+import user from "@/utils/user";
 
 export default {
   components: {
@@ -48,10 +54,13 @@ export default {
     [CellGroup.name]: CellGroup,
     [Tab.name]: Tab,
     [Tabs.name]: Tabs,
-    [Loading.name]: Loading
+    [Loading.name]: Loading,
+    [Empty.name]: Empty
   },
   name: "Catalog",
   setup() {
+    // 引入用户信息模块
+    let {userId, isLogin} = user();
     const router = useRouter();
     // 当前tabbar
     const active = 2
@@ -63,6 +72,35 @@ export default {
     const activeNames = ref([]);
     // 笔记目录列表
     const catalogList = ref([])
+    // 笔记收藏数据
+    const collectList = ref([])
+    // 跳转至笔记详情页
+    const toDetail = (detailId) => {
+      router.push({path: `/detail/${detailId}`, query: {component: 'note'}})
+    }
+
+    // 获取笔记收藏数据
+    async function sectionCollectData() {
+      if (isLogin.value === true) {
+        let collectHistory_data = await getSectionHistory(NaN, userId.value)
+        console.log(collectHistory_data)
+        let collect_data = []
+        for (let index in collectHistory_data) {
+          if (collectHistory_data[index]['is_collect'] === true) {
+            collect_data.push(collectHistory_data[index])
+          }
+        }
+        collectList.value = collect_data.map((item) => {
+          return {
+            id: item['section_id'],
+            name: item['section'],
+            time: item['time']
+          }
+        })
+      } else {
+        collectList.value = []
+      }
+    }
 
     // 获取笔记目录数据
     async function catalogueData() {
@@ -73,9 +111,10 @@ export default {
 
     onMounted(async () => {
       await catalogueData()
+      await sectionCollectData()
       load.value = false
     })
-    return {active, catalogList, activeNames, load, activeTab};
+    return {active, catalogList, activeNames, load, activeTab, collectList, toDetail};
   }
 }
 </script>

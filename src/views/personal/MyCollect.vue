@@ -1,13 +1,15 @@
 <!--我的收藏-->
 <template>
   <div class="collect">
-    <NavBar :title="title"></NavBar>
+    <NavBar :title="'我的收藏'"></NavBar>
     <van-tabs v-model:active="active" color="#409EFF" animated swipeable @click="onClick">
       <van-tab title="文章">
-        <TimeLine :list="collect.list" :kind="collect.kind" :action="collect.action"></TimeLine>
+        <van-empty v-if="collectList.length===0" description="暂无收藏记录"/>
+        <TimeLine v-else :list="collectList" @toDetail="toDetail"></TimeLine>
       </van-tab>
       <van-tab title="笔记">
-        <TimeLine :list="collect.list" :kind="collect.kind" :action="collect.action"></TimeLine>
+        <van-empty v-if="collectList.length===0" description="暂无收藏记录"/>
+        <TimeLine v-else :list="collectList" @toDetail="toDetail"></TimeLine>
       </van-tab>
     </van-tabs>
   </div>
@@ -16,8 +18,11 @@
 <script>
 import TimeLine from "@/components/common/TimeLine";
 import NavBar from "@/components/personal/NavBar";
-import {Tab, Tabs, Toast} from 'vant';
-import {reactive, ref} from "vue";
+import {Tab, Tabs, Toast, Empty} from 'vant';
+import {onMounted, reactive, ref} from "vue";
+import user from "@/utils/user";
+import {useRouter} from "vue-router";
+import {getArticleHistory, getSectionHistory} from "@/api/record";
 
 export default {
   components: {
@@ -25,41 +30,81 @@ export default {
     TimeLine,
     [Tab.name]: Tab,
     [Tabs.name]: Tabs,
+    [Empty.name]: Empty,
     Toast
   },
   name: "MyCollect",
   setup() {
+    // 引入用户信息模块
+    let {userId, isLogin} = user();
+    const router = useRouter()
     const active = ref(0);
-    const title = '我的收藏'
-    const collect = reactive({
-      list: [
-        {time: '2011-01-01 13:14', name: '三字经'},
-        {time: '2011-02-02 23:24', name: '百家姓'},
-      ],
-      kind: '文章',
-      action: '收藏'
-    })
-    const onClick = (name, title) => {
-      collect.kind = title
-      if (name) {
-        console.log('显示笔记')
-        collect.list = [
-          {time: '2011-01-01 13:14', name: '四字经'},
-          {time: '2011-02-02 23:24', name: '千家姓'},
-        ]
+    // 文章收藏记录
+    const collectList = ref([])
+
+    // 获取文章浏览记录
+    async function getArticleHistoryData() {
+      let collectHistory_data = await getArticleHistory(NaN, userId.value)
+      console.log(collectHistory_data)
+      let collect_data = []
+      for (let index in collectHistory_data) {
+        if (collectHistory_data[index]['is_collect'] === true) {
+          collect_data.push(collectHistory_data[index])
+        }
+      }
+      collectList.value = collect_data.map((item) => {
+        return {
+          id: item['article_id'],
+          name: item['article'],
+          time: item['time']
+        }
+      })
+    }
+
+    // 获取笔记浏览记录
+    async function getSectionHistoryData() {
+      let collectHistory_data = await getSectionHistory(NaN, userId.value)
+      console.log(collectHistory_data)
+      let collect_data = []
+      for (let index in collectHistory_data) {
+        if (collectHistory_data[index]['is_collect'] === true) {
+          collect_data.push(collectHistory_data[index])
+        }
+      }
+      collectList.value = collect_data.map((item) => {
+        return {
+          id: item['section_id'],
+          name: item['section'],
+          time: item['time']
+        }
+      })
+    }
+
+    // tab切换事件
+    const onClick = () => {
+      if (active.value === 0) {
+        getArticleHistoryData()
       } else {
-        console.log('显示文章')
-        collect.list = [
-          {time: '2022-01-01 13:14', name: '三字经'},
-          {time: '2022-02-02 23:24', name: '百家姓'},
-        ]
+        getSectionHistoryData()
       }
     }
+    // 子组件跳转文章详情事件
+    const toDetail = (detailID) => {
+      console.log(detailID)
+      if (active.value === 0) {
+        router.push({path: `/detail/${detailID}`, query: {component: 'article'}})
+      } else {
+        router.push({path: `/detail/${detailID}`, query: {component: 'note'}})
+      }
+    }
+    onMounted(() => {
+      getArticleHistoryData()
+    })
     return {
       active,
-      title,
-      collect,
-      onClick
+      onClick,
+      toDetail,
+      collectList
     }
   }
 }

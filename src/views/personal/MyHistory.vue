@@ -4,10 +4,12 @@
     <NavBar :title="'浏览记录'"></NavBar>
     <van-tabs v-model:active="active" color="#409EFF" animated swipeable @click="onClick">
       <van-tab title="文章">
-        <TimeLine :list="historyList" @toDetail="toDetail"></TimeLine>
+        <van-empty v-if="historyList.length===0" description="暂无浏览记录"/>
+        <TimeLine v-else :list="historyList" @toDetail="toDetail"></TimeLine>
       </van-tab>
       <van-tab title="笔记">
-        <TimeLine :list="historyList" @toDetail="toDetail"></TimeLine>
+        <van-empty v-if="historyList.length===0" description="暂无浏览记录"/>
+        <TimeLine v-else :list="historyList" @toDetail="toDetail"></TimeLine>
       </van-tab>
     </van-tabs>
   </div>
@@ -16,7 +18,7 @@
 <script>
 import TimeLine from "@/components/common/TimeLine";
 import NavBar from "@/components/personal/NavBar";
-import {Tab, Tabs, Toast} from 'vant';
+import {Tab, Tabs, Toast, Empty} from 'vant';
 import {onMounted, reactive, ref} from "vue";
 import {getArticleHistory, getSectionHistory} from "@/api/record";
 import user from "@/utils/user";
@@ -28,6 +30,7 @@ export default {
     TimeLine,
     [Tab.name]: Tab,
     [Tabs.name]: Tabs,
+    [Empty.name]: Empty,
     Toast
   },
   name: "MyHistory",

@@ -483,7 +483,7 @@ function comment(DetailID, $bus, componentName) {
       if (messageForm.content) {
         messageForm.user = userId.value
         if (componentName.value === 'article') {
-          messageForm['article'] = DetailID.value
+          messageForm['article_id'] = DetailID.value
           console.log(messageForm)
           postArticleComment(messageForm).then((response) => {
             console.log(response)
@@ -498,7 +498,7 @@ function comment(DetailID, $bus, componentName) {
             }
           });
         } else {
-          messageForm['section'] = DetailID.value
+          messageForm['section_id'] = DetailID.value
           console.log(messageForm)
           postSectionComment(messageForm).then((response) => {
             console.log(response)
@@ -571,7 +571,7 @@ function comment(DetailID, $bus, componentName) {
   // 留言回复事件
   if (!$bus.all.get("replySend")) $bus.on("replySend", replyForm => {
     if (componentName.value === 'article') {
-      replyForm['article'] = DetailID.value
+      replyForm['article_id'] = DetailID.value
       console.log(replyForm)
       postReplyArticleComment(replyForm).then((response) => {
         console.log(response)
@@ -585,7 +585,7 @@ function comment(DetailID, $bus, componentName) {
         }
       });
     } else {
-      replyForm['section'] = DetailID.value
+      replyForm['section_id'] = DetailID.value
       console.log(replyForm)
       postReplySectionComment(replyForm).then((response) => {
         console.log(response)

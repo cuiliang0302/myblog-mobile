@@ -8,6 +8,8 @@
         <div class="icon"></div>
         <div class="label">
           <p @click="toDetail(item.id)">
+            {{ item.content }}
+            <br>
             <span><van-tag round type="primary" size="medium" plain>{{ item.name }}</van-tag></span>
           </p>
         </div>
@@ -45,10 +47,10 @@ export default {
     [Tag.name]: Tag
   },
   name: "TimeLine",
-  setup(props,{emit}) {
+  setup(props, {emit}) {
     // 日期格式化
     let {timeFull} = timeFormat()
-    const toDetail= (detailId) =>{
+    const toDetail = (detailId) => {
       console.log(detailId)
       emit('toDetail', detailId)
     }

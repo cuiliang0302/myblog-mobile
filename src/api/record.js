@@ -137,3 +137,12 @@ export function putSectionHistory(params) {
     const url = 'record/sectionHistory/'
     return index.put(url, params)
 }
+
+// 获取用户文章评论数据
+export function getUserArticleComment(userId) {
+    return index.get('/record/articleComment/?user=' + userId)
+}
+// 获取用户笔记评论数据
+export function getUserSectionComment(userId) {
+    return index.get('/record/sectionComment/?user=' + userId)
+}
