@@ -6,7 +6,6 @@ import store from './store'
 import mitt from 'mitt'
 import './assets/style/index.scss'
 import 'lib-flexible'
-
 const app = createApp(App)
 //绑定事件总线
 app.config.globalProperties.$bus = new mitt();

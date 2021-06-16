@@ -33,9 +33,8 @@
                         @click="toView('/my-collect')"/><p>我的收藏</p></span>
         <span><van-icon name="chat" size="0.8rem" color="#9b59b6"
                         @click="toView('/my-comments')"/><p>我的评论</p></span>
-        <span><van-icon name="bell" size="0.8rem" color="#e74c3c"
-                        @click="toView('/my-message')"/><p>消息通知</p></span>
-        <van-badge :content="3" :show-zero="false"/>
+        <span><van-icon name="todo-list" size="0.8rem" color="#e74c3c"
+                        @click="toView('/statistics')"/><p>数据统计</p></span>
       </div>
     </section>
     <div class="cell">
@@ -46,7 +45,6 @@
           <van-cell title="更换邮箱" size="large" is-link @click="toView('/change-email')"/>
           <van-cell title="更换手机" size="large" is-link @click="toView('/change-phone')"/>
           <van-cell title="绑定第三方账号" size="large" is-link @click="toView('/binding')"/>
-          <van-cell title="数据统计" size="large" is-link @click="toView('/statistics')"/>
         </van-cell-group>
       </div>
       <div class="cell-item">
@@ -82,7 +80,7 @@
 <script>
 import Tabbar from "@/components/common/Tabbar";
 import LoginPopup from "@/components/common/LoginPopup";
-import {Image as VanImage, Loading, Icon, Cell, CellGroup, Switch, Dialog, Toast, Badge} from 'vant';
+import {Image as VanImage, Loading, Icon, Cell, CellGroup, Switch, Dialog, Toast} from 'vant';
 import {computed, onMounted, reactive, ref} from "vue";
 import store from "@/store";
 import {useRouter} from "vue-router";
@@ -100,7 +98,6 @@ export default {
     [Cell.name]: Cell,
     [CellGroup.name]: CellGroup,
     [Switch.name]: Switch,
-    [Badge.name]: Badge,
     Dialog,
   },
   name: "Personal",
@@ -352,10 +349,5 @@ section {
     background-color: white;
     box-shadow: 0 0.027rem 0.107rem rgb(0 0 0 / 10%);
   }
-}
-
-.van-badge {
-  position: absolute;
-  right: 3%;
 }
 </style>
