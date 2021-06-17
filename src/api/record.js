@@ -99,9 +99,9 @@ export function postReplySectionComment(params) {
 
 // 获取文章浏览记录
 export function getArticleHistory(article, user) {
-    if (article){
+    if (article) {
         return index.get('record/articleHistory/?article=' + article + '&user=' + user)
-    }else {
+    } else {
         return index.get('record/articleHistory/?user=' + user)
     }
 }
@@ -119,9 +119,9 @@ export function putArticleHistory(params) {
 
 // 获取笔记浏览记录
 export function getSectionHistory(section, user) {
-    if (section){
+    if (section) {
         return index.get('record/sectionHistory/?section=' + section + '&user=' + user)
-    }else {
+    } else {
         return index.get('record/sectionHistory/?user=' + user)
     }
 
@@ -142,7 +142,13 @@ export function putSectionHistory(params) {
 export function getUserArticleComment(userId) {
     return index.get('/record/articleComment/?user=' + userId)
 }
+
 // 获取用户笔记评论数据
 export function getUserSectionComment(userId) {
     return index.get('/record/sectionComment/?user=' + userId)
+}
+
+// 获取用户统计数据
+export function getStatistics(userId) {
+    return index.get('/record/statistics/?user=' + userId)
 }

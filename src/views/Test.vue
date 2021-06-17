@@ -13,19 +13,19 @@
             <span>
               <p>浏览文章数</p>
             </span>
-            <h2>20</h2>
+            <h2>{{ dataCount.article_history }}</h2>
           </van-grid-item>
           <van-grid-item>
             <span>
               <p>收藏文章数</p>
             </span>
-            <h2>12</h2>
+            <h2>{{ dataCount.article_collect }}</h2>
           </van-grid-item>
           <van-grid-item>
             <span>
               <p>评论文章数</p>
             </span>
-            <h2>2</h2>
+            <h2>{{ dataCount.article_comment }}</h2>
           </van-grid-item>
         </van-grid>
         <van-grid :column-num="3">
@@ -33,19 +33,19 @@
             <span>
               <p>浏览笔记数</p>
             </span>
-            <h2>20</h2>
+            <h2>{{ dataCount.section_history }}</h2>
           </van-grid-item>
           <van-grid-item>
             <span>
               <p>收藏笔记数</p>
             </span>
-            <h2>11</h2>
+            <h2>{{ dataCount.section_collect }}</h2>
           </van-grid-item>
           <van-grid-item>
             <span>
               <p>评论笔记数</p>
             </span>
-            <h2>1</h2>
+            <h2>{{ dataCount.section_comment }}</h2>
           </van-grid-item>
         </van-grid>
       </div>
@@ -83,7 +83,7 @@
         <span></span>
       </div>
       <div class="chart">
-        <div id="note" :style="{ width: '350px', height: '350px' }"></div>
+        <div id="note" :style="{ width: '350px', height: '360px' }"></div>
       </div>
     </section>
   </div>
@@ -94,6 +94,8 @@ import NavBar from "@/components/personal/NavBar";
 import {onMounted, reactive, ref} from "vue";
 import {Grid, GridItem, Tag} from 'vant';
 import * as echarts from 'echarts'
+import {getStatistics} from '@/api/record'
+import user from "@/utils/user";
 
 export default {
   components: {
@@ -104,6 +106,10 @@ export default {
   },
   name: "Test",
   setup() {
+    // 引入用户信息模块
+    let {userId, isLogin} = user()
+    // 数据概览
+    const dataCount = reactive({})
     // echarts曲线颜色
     const color = ref([
       "#3498db",
@@ -225,7 +231,7 @@ export default {
           }
         },
         legend: {
-          data: ['Direct', 'Mail Ad', 'Affiliate Ad', 'Video Ad', 'Search Engine']
+          data: ['Direct', 'Mail Ad']
         },
         grid: {
           left: '3%',
@@ -264,42 +270,6 @@ export default {
               focus: 'series'
             },
             data: [120, 132, 101, 134, 90, 230, 210]
-          },
-          {
-            name: 'Affiliate Ad',
-            type: 'bar',
-            stack: 'total',
-            label: {
-              show: true
-            },
-            emphasis: {
-              focus: 'series'
-            },
-            data: [220, 182, 191, 234, 290, 330, 310]
-          },
-          {
-            name: 'Video Ad',
-            type: 'bar',
-            stack: 'total',
-            label: {
-              show: true
-            },
-            emphasis: {
-              focus: 'series'
-            },
-            data: [150, 212, 201, 154, 190, 330, 410]
-          },
-          {
-            name: 'Search Engine',
-            type: 'bar',
-            stack: 'total',
-            label: {
-              show: true
-            },
-            emphasis: {
-              focus: 'series'
-            },
-            data: [820, 832, 901, 934, 1290, 1330, 1320]
           }
         ]
       });
@@ -317,9 +287,7 @@ export default {
         tooltip: {
           trigger: 'item'
         },
-        legend: {
-
-        },
+        legend: {},
         series: [
           {
             name: '访问来源',
@@ -356,19 +324,24 @@ export default {
         legend: {
           data: ['预算分配', '实际开销']
         },
+        grid:{
+          left: '5%',
+          right: '5%',
+          bottom: '5%',
+        },
         radar: {
           // shape: 'circle',
           indicator: [
-            { name: '销售（Sales）', max: 6500},
-            { name: '管理（Administration）', max: 16000},
-            { name: '信息技术（Information Technology）', max: 30000},
-            { name: '客服（Customer Support）', max: 38000},
-            { name: '研发（Development）', max: 52000},
-            { name: '市场（Marketing）', max: 25000}
+            {name: '销售', max: 6500},
+            {name: '管理', max: 16000},
+            {name: '信息', max: 30000},
+            {name: '客服', max: 38000},
+            {name: '研发', max: 52000},
+            {name: '市场', max: 25000}
           ]
         },
         series: [{
-          name: '预算 vs 开销（Budget vs spending）',
+          name: '预算 vs 开销',
           type: 'radar',
           data: [
             {
@@ -387,13 +360,24 @@ export default {
         myChart.resize();
       };
     };
+
+    // 获取数据概览数据
+    async function statisticsData() {
+      let statistics_data = await getStatistics(userId.value)
+      console.log(statistics_data)
+      for (let i in statistics_data) {
+        dataCount[i] = statistics_data[i]
+      }
+    }
+
     onMounted(() => {
+      statisticsData()
       trend();
       time()
       article()
       note()
     });
-    return {}
+    return {dataCount}
   }
 }
 </script>
