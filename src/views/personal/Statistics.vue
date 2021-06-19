@@ -326,42 +326,26 @@ export default {
         myChart.resize();
       };
     };
+
     // 浏览笔记雷达图
-    let note = () => {
+    async function note() {
+      let chartData = await getEcharts(userId.value, 'note')
+      console.log(chartData)
       let myChart = echarts.init(document.getElementById("note"));
       // 绘制图表
       myChart.setOption({
         color: color.value,
-        legend: {
-          data: ['预算分配', '实际开销']
-        },
-        grid: {
-          left: '5%',
-          right: '5%',
-          bottom: '5%',
-        },
+        legend: {},
         radar: {
           // shape: 'circle',
-          indicator: [
-            {name: '销售', max: 6500},
-            {name: '管理', max: 16000},
-            {name: '信息', max: 30000},
-            {name: '客服', max: 38000},
-            {name: '研发', max: 52000},
-            {name: '市场', max: 25000}
-          ]
+          radius: '60%',
+          indicator: chartData.indicator
         },
         series: [{
-          name: '预算 vs 开销',
           type: 'radar',
           data: [
             {
-              value: [4200, 3000, 20000, 35000, 50000, 18000],
-              name: '预算分配'
-            },
-            {
-              value: [5000, 14000, 28000, 26000, 42000, 21000],
-              name: '实际开销'
+              value: chartData.data
             }
           ]
         }]
