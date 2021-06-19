@@ -1,4 +1,7 @@
 import {createRouter, createWebHistory} from 'vue-router'
+import {Toast} from 'vant'
+import store from "@/store/index";
+import {computed} from "vue";
 
 const routes = [
     {
@@ -13,7 +16,8 @@ const routes = [
             title: '崔亮的博客',
             keepAlive: true,
             transitionClass: 'gradually',//渐入
-            index: 1
+            index: 1,
+            isAuth: false
         }
     },
     {
@@ -24,7 +28,8 @@ const routes = [
             title: '文章列表',
             keepAlive: true,
             transitionClass: 'gradually',//渐入
-            index: 1
+            index: 1,
+            isAuth: false
         }
     },
     {
@@ -35,7 +40,8 @@ const routes = [
             title: '笔记列表',
             keepAlive: true,
             transitionClass: 'gradually',//渐入
-            index: 1
+            index: 1,
+            isAuth: false
         }
     },
     {
@@ -46,7 +52,8 @@ const routes = [
             title: '个人中心',
             keepAlive: true,
             transitionClass: 'gradually',//渐入
-            index: 1
+            index: 1,
+            isAuth: false
         }
     },
     {
@@ -57,7 +64,8 @@ const routes = [
             title: '笔记目录',
             keepAlive: false,
             transitionClass: 'back',//前进后退
-            index: 2
+            index: 2,
+            isAuth: false
         }
     },
     {
@@ -68,7 +76,8 @@ const routes = [
             title: '文章正文',
             keepAlive: false,
             transitionClass: 'back',//前进后退
-            index: 2
+            index: 2,
+            isAuth: false
         }
     },
     {
@@ -79,7 +88,8 @@ const routes = [
             title: '标签',
             keepAlive: true,
             transitionClass: 'jump',//跳跃
-            index: 1
+            index: 1,
+            isAuth: false
         }
     },
     {
@@ -90,7 +100,8 @@ const routes = [
             title: '归档',
             keepAlive: true,
             transitionClass: 'jump',//跳跃
-            index: 1
+            index: 1,
+            isAuth: false
         }
     },
     {
@@ -101,7 +112,8 @@ const routes = [
             title: '留言板',
             keepAlive: true,
             transitionClass: 'gradually',//跳跃
-            index: 1
+            index: 1,
+            isAuth: false
         }
     },
     {
@@ -112,7 +124,8 @@ const routes = [
             title: '关于',
             keepAlive: true,
             transitionClass: 'jump',//跳跃
-            index: 1
+            index: 1,
+            isAuth: false
         }
     },
     {
@@ -123,7 +136,8 @@ const routes = [
             title: '友情链接',
             keepAlive: true,
             transitionClass: 'jump',//跳跃
-            index: 1
+            index: 1,
+            isAuth: false
         }
     },
     {
@@ -134,7 +148,8 @@ const routes = [
             title: '搜索',
             keepAlive: true,
             transitionClass: 'gradually',//渐入
-            index: 1
+            index: 1,
+            isAuth: false
         }
     },
     {
@@ -145,7 +160,8 @@ const routes = [
             title: '浏览记录',
             keepAlive: true,
             transitionClass: 'gradually',//渐入
-            index: 1
+            index: 1,
+            isAuth: true
         }
     },
     {
@@ -156,7 +172,8 @@ const routes = [
             title: '我的收藏',
             keepAlive: true,
             transitionClass: 'gradually',//渐入
-            index: 1
+            index: 1,
+            isAuth: true
         }
     },
     {
@@ -167,7 +184,8 @@ const routes = [
             title: '我的评论',
             keepAlive: true,
             transitionClass: 'gradually',//渐入
-            index: 1
+            index: 1,
+            isAuth: true
         }
     },
     {
@@ -178,7 +196,8 @@ const routes = [
             title: '数据统计',
             keepAlive: true,
             transitionClass: 'gradually',//渐入
-            index: 1
+            index: 1,
+            isAuth: true
         },
     },
     {
@@ -189,7 +208,8 @@ const routes = [
             title: '我的信息',
             keepAlive: true,
             transitionClass: 'back',//前进后退
-            index: 2
+            index: 2,
+            isAuth: true
         },
     },
     {
@@ -200,7 +220,8 @@ const routes = [
             title: '修改密码',
             keepAlive: true,
             transitionClass: 'back',//前进后退
-            index: 2
+            index: 2,
+            isAuth: true
         },
     },
     {
@@ -211,7 +232,8 @@ const routes = [
             title: '更换邮箱',
             keepAlive: true,
             transitionClass: 'back',//前进后退
-            index: 3
+            index: 3,
+            isAuth: true
         },
     },
     {
@@ -222,7 +244,8 @@ const routes = [
             title: '更换手机',
             keepAlive: true,
             transitionClass: 'back',//前进后退
-            index: 3
+            index: 3,
+            isAuth: true
         },
     },
     {
@@ -233,7 +256,8 @@ const routes = [
             title: '绑定第三方账号',
             keepAlive: true,
             transitionClass: 'back',//前进后退
-            index: 2
+            index: 2,
+            isAuth: true
         },
     },
     {
@@ -244,7 +268,8 @@ const routes = [
             title: '赞赏支持',
             keepAlive: true,
             transitionClass: 'back',//前进后退
-            index: 2
+            index: 2,
+            isAuth: false
         },
     },
     {
@@ -255,7 +280,8 @@ const routes = [
             title: '申请友链',
             keepAlive: true,
             transitionClass: 'back',//前进后退
-            index: 2
+            index: 2,
+            isAuth: false
         },
     },
     {
@@ -266,7 +292,8 @@ const routes = [
             title: '联系博主',
             keepAlive: true,
             transitionClass: 'back',//前进后退
-            index: 2
+            index: 2,
+            isAuth: false
         },
     },
     {
@@ -277,7 +304,8 @@ const routes = [
             title: '字体设置',
             keepAlive: true,
             transitionClass: 'back',//前进后退
-            index: 2
+            index: 2,
+            isAuth: false
         },
     },
     {
@@ -287,7 +315,8 @@ const routes = [
         meta: {
             title: '登录&注册',
             keepAlive: false,
-            transitionClass: 'gradually'
+            transitionClass: 'gradually',
+            isAuth: false
         }
     },
     {
@@ -298,7 +327,8 @@ const routes = [
             title: '重置密码',
             keepAlive: true,
             transitionClass: 'back',//前进后退
-            index: 2
+            index: 2,
+            isAuth: false
         }
     },
     {
@@ -309,7 +339,8 @@ const routes = [
             title: '测试页',
             keepAlive: true,
             transitionClass: 'back',//前进后退
-            index: 2
+            index: 2,
+            isAuth: false
         }
     },
     {
@@ -320,7 +351,8 @@ const routes = [
             title: '测试页1',
             keepAlive: true,
             transitionClass: 'back',//前进后退
-            index: 2
+            index: 2,
+            isAuth: false
         }
     }
 ]
@@ -332,14 +364,12 @@ const router = createRouter({
 // 路由导航守卫
 router.beforeEach((to, from, next) => {
     // to 访问的路径 from 从哪来 next 响应路径
-
-    // if (to.meta.isAuth && store.state.user.isLogin === false) {
-    //   Toast.fail('还未登录，跳转到登录页')
-    //   return next('/login')
-    // } else {
-    //   next()
-    // }
-    next()
+    if (to.meta.isAuth === true && JSON.stringify(store.state.userSession) === '{}') {
+        Toast.fail('还未登录，即将跳转至登录页')
+        return next('/login_register')
+    } else {
+        next()
+    }
     document.title = to.meta.title
 })
 export default router

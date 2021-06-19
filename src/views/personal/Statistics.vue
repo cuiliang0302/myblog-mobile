@@ -1,7 +1,7 @@
 <!--数据统计-->
 <template>
   <div class="statistics">
-    <NavBar :title="title"></NavBar>
+    <NavBar :title="'数据统计'"></NavBar>
     <section>
       <div class="title">
         <h2>数据概览</h2>
@@ -13,19 +13,19 @@
             <span>
               <p>浏览文章数</p>
             </span>
-            <h2>20</h2>
+            <h2>{{ dataCount.article_history }}</h2>
           </van-grid-item>
           <van-grid-item>
             <span>
               <p>收藏文章数</p>
             </span>
-            <h2>12</h2>
+            <h2>{{ dataCount.article_collect }}</h2>
           </van-grid-item>
           <van-grid-item>
             <span>
               <p>评论文章数</p>
             </span>
-            <h2>2</h2>
+            <h2>{{ dataCount.article_comment }}</h2>
           </van-grid-item>
         </van-grid>
         <van-grid :column-num="3">
@@ -33,19 +33,19 @@
             <span>
               <p>浏览笔记数</p>
             </span>
-            <h2>20</h2>
+            <h2>{{ dataCount.section_history }}</h2>
           </van-grid-item>
           <van-grid-item>
             <span>
               <p>收藏笔记数</p>
             </span>
-            <h2>11</h2>
+            <h2>{{ dataCount.section_collect }}</h2>
           </van-grid-item>
           <van-grid-item>
             <span>
               <p>评论笔记数</p>
             </span>
-            <h2>1</h2>
+            <h2>{{ dataCount.section_comment }}</h2>
           </van-grid-item>
         </van-grid>
       </div>
@@ -56,7 +56,7 @@
         <span></span>
       </div>
       <div class="chart">
-        <canvas id="trend" width="350" height="260"></canvas>
+        <div id="trend" :style="{ width: '350px', height: '300px' }"></div>
       </div>
     </section>
     <section>
@@ -65,7 +65,7 @@
         <span></span>
       </div>
       <div class="chart">
-        <canvas id="time" width="350" height="260"></canvas>
+        <div id="time" :style="{ width: '350px', height: '300px' }"></div>
       </div>
     </section>
     <section>
@@ -74,7 +74,7 @@
         <span></span>
       </div>
       <div class="chart">
-        <canvas id="article" width="350" height="260"></canvas>
+        <div id="article" :style="{ width: '350px', height: '350px' }"></div>
       </div>
     </section>
     <section>
@@ -83,7 +83,7 @@
         <span></span>
       </div>
       <div class="chart">
-        <canvas id="note" width="350" height="260"></canvas>
+        <div id="note" :style="{ width: '350px', height: '360px' }"></div>
       </div>
     </section>
   </div>
@@ -91,10 +91,15 @@
 
 <script>
 import NavBar from "@/components/personal/NavBar";
-import {onMounted, reactive} from "vue";
-import {Grid, GridItem, Tag} from 'vant';
-import F2 from "@antv/f2";
-import _ from 'lodash';
+import {onMounted, reactive, ref} from "vue";
+import {Grid, GridItem, Tag, Toast} from 'vant';
+import * as echarts from 'echarts'
+import {getStatistics} from '@/api/record'
+import user from "@/utils/user";
+import {getCarousel} from "@/api/management";
+import {getEcharts} from "@/api/public";
+import {postLogin} from "@/api/account";
+import store from "@/store";
 
 export default {
   components: {
@@ -105,458 +110,292 @@ export default {
   },
   name: "Statistics",
   setup() {
-    const title = '数据统计'
-    // 浏览趋势折线图表
-    let trend = () => {
-      const data = [{
-        value: 63.4,
-        city: 'New York',
-        date: '2011-10-01'
-      }, {
-        value: 62.7,
-        city: 'Alaska',
-        date: '2011-10-01'
-      }, {
-        value: 72.2,
-        city: 'Austin',
-        date: '2011-10-01'
-      }, {
-        value: 58,
-        city: 'New York',
-        date: '2011-10-02'
-      }, {
-        value: 59.9,
-        city: 'Alaska',
-        date: '2011-10-02'
-      }, {
-        value: 67.7,
-        city: 'Austin',
-        date: '2011-10-02'
-      }, {
-        value: 53.3,
-        city: 'New York',
-        date: '2011-10-03'
-      }, {
-        value: 59.1,
-        city: 'Alaska',
-        date: '2011-10-03'
-      }, {
-        value: 69.4,
-        city: 'Austin',
-        date: '2011-10-03'
-      }, {
-        value: 55.7,
-        city: 'New York',
-        date: '2011-10-04'
-      }, {
-        value: 58.8,
-        city: 'Alaska',
-        date: '2011-10-04'
-      }, {
-        value: 68,
-        city: 'Austin',
-        date: '2011-10-04'
-      }, {
-        value: 64.2,
-        city: 'New York',
-        date: '2011-10-05'
-      }, {
-        value: 58.7,
-        city: 'Alaska',
-        date: '2011-10-05'
-      }, {
-        value: 72.4,
-        city: 'Austin',
-        date: '2011-10-05'
-      }, {
-        value: 58.8,
-        city: 'New York',
-        date: '2011-10-06'
-      }, {
-        value: 57,
-        city: 'Alaska',
-        date: '2011-10-06'
-      }, {
-        value: 77,
-        city: 'Austin',
-        date: '2011-10-06'
-      }];
-      // Step 1: 创建 Chart 对象
-      const chart = new F2.Chart({
-        id: 'trend',
-        pixelRatio: window.devicePixelRatio
-      });
-      // Step 2: 载入数据源
-      chart.source(data, {
-        date: {
-          range: [0, 1],
-          type: 'timeCat',
-          mask: 'MM-DD'
-        },
-        value: {
-          max: 300,
-          tickCount: 4
-        }
-      });
-      // Step 3：创建图形语法，绘制柱状图，由 genre 和 sold 两个属性决定图形位置，genre 映射至 x 轴，sold 映射至 y 轴
-      chart.tooltip({
-        showCrosshairs: true,
-        custom: true, // 自定义 tooltip 内容框
-        onChange: function onChange(obj) {
-          const legend = chart.get('legendController').legends.top[0];
-          const tooltipItems = obj.items;
-          const legendItems = legend.items;
-          const map = {};
-          legendItems.forEach(function (item) {
-            map[item.name] = _.clone(item);
-          });
-          tooltipItems.forEach(function (item) {
-            const name = item.name;
-            const value = item.value;
-            if (map[name]) {
-              map[name].value = value;
+    // 引入用户信息模块
+    let {userId, isLogin} = user()
+    // 数据概览
+    const dataCount = reactive({})
+    // echarts曲线颜色
+    const color = ref([
+      "#74b9ff",
+      "#81ecec",
+      "#55efc4",
+      "#a29bfe",
+      "#ffeaa7",
+      "#fab1a0",
+      "#ff7675",
+      "#ff7675",
+      "#b2bec3"
+    ])
+
+    // 浏览趋势折线图
+    async function trend() {
+      let chartData = await getEcharts(userId.value, 'trend')
+      console.log(chartData)
+      for (let i in chartData.xAxis) {
+        chartData.xAxis[i] = chartData.xAxis[i].slice(5)
+      }
+      let myChart = echarts.init(document.getElementById("trend"));
+      // 绘制图表
+      myChart.setOption({
+        color: color.value,
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            label: {
+              backgroundColor: '#6a7985'
             }
-          });
-          legend.setItems(_.values(map));
-        },
-        onHide: function onHide() {
-          const legend = chart.get('legendController').legends.top[0];
-          legend.setItems(chart.getLegendItems().country);
-        }
-      });
-      chart.axis('date', {
-        label: function label(text, index, total) {
-          const textCfg = {};
-          if (index === 0) {
-            textCfg.textAlign = 'left';
-          } else if (index === total - 1) {
-            textCfg.textAlign = 'right';
           }
-          return textCfg;
-        }
-      });
-      chart.area()
-          .position('date*value')
-          .color('city')
-          .adjust('stack');
-      chart.line()
-          .position('date*value')
-          .color('city')
-          .adjust('stack');
-      // Step 4: 渲染图表
-      chart.render();
-    };
-    // 浏览时间柱形图表
-    let time = () => {
-      const data = [{
-        name: 'London',
-        月份: 'Jan.',
-        月均降雨量: 18.9
-      }, {
-        name: 'London',
-        月份: 'Feb.',
-        月均降雨量: 28.8
-      }, {
-        name: 'London',
-        月份: 'Mar.',
-        月均降雨量: 39.3
-      }, {
-        name: 'London',
-        月份: 'Apr.',
-        月均降雨量: 81.4
-      }, {
-        name: 'London',
-        月份: 'May.',
-        月均降雨量: 47
-      }, {
-        name: 'London',
-        月份: 'Jun.',
-        月均降雨量: 20.3
-      }, {
-        name: 'London',
-        月份: 'Jul.',
-        月均降雨量: 24
-      }, {
-        name: 'London',
-        月份: 'Aug.',
-        月均降雨量: 35.6
-      }, {
-        name: 'Berlin',
-        月份: 'Jan.',
-        月均降雨量: 12.4
-      }, {
-        name: 'Berlin',
-        月份: 'Feb.',
-        月均降雨量: 23.2
-      }, {
-        name: 'Berlin',
-        月份: 'Mar.',
-        月均降雨量: 34.5
-      }, {
-        name: 'Berlin',
-        月份: 'Apr.',
-        月均降雨量: 99.7
-      }, {
-        name: 'Berlin',
-        月份: 'May.',
-        月均降雨量: 52.6
-      }, {
-        name: 'Berlin',
-        月份: 'Jun.',
-        月均降雨量: 35.5
-      }, {
-        name: 'Berlin',
-        月份: 'Jul.',
-        月均降雨量: 37.4
-      }, {
-        name: 'Berlin',
-        月份: 'Aug.',
-        月均降雨量: 42.4
-      }];
-      // Step 1: 创建 Chart 对象
-      const chart = new F2.Chart({
-        id: 'time',
-        pixelRatio: window.devicePixelRatio
-      });
-      // Step 2: 载入数据源
-      chart.source(data, {
-        月均降雨量: {
-          tickCount: 5
-        }
-      });
-      // Step 3：创建图形语法，绘制柱状图，由 genre 和 sold 两个属性决定图形位置，genre 映射至 x 轴，sold 映射至 y 轴
-      chart.tooltip({
-        custom: true, // 自定义 tooltip 内容框
-        onChange: function onChange(obj) {
-          const legend = chart.get('legendController').legends.top[0];
-          const tooltipItems = obj.items;
-          const legendItems = legend.items;
-          const map = {};
-          legendItems.forEach(function (item) {
-            map[item.name] = _.clone(item);
-          });
-          tooltipItems.forEach(function (item) {
-            const name = item.name;
-            const value = item.value;
-            if (map[name]) {
-              map[name].value = value;
-            }
-          });
-          legend.setItems(_.values(map));
         },
-        onHide: function onHide() {
-          const legend = chart.get('legendController').legends.top[0];
-          legend.setItems(chart.getLegendItems().country);
-        }
+        legend: {
+          data: ['浏览文章数', '收藏文章数', '评论文章数', '浏览笔记数', '收藏笔记数', '评论笔记数']
+        },
+        grid: {
+          left: '3%',
+          right: '5%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: [
+          {
+            type: 'category',
+            boundaryGap: false,
+            data: chartData.xAxis
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value'
+          }
+        ],
+        series: [
+          {
+            name: '浏览文章数',
+            type: 'line',
+            stack: '总量',
+            areaStyle: {},
+            emphasis: {
+              focus: 'series'
+            },
+            data: chartData.article_view
+          },
+          {
+            name: '收藏文章数',
+            type: 'line',
+            stack: '总量',
+            areaStyle: {},
+            emphasis: {
+              focus: 'series'
+            },
+            data: chartData.article_collect
+          },
+          {
+            name: '评论文章数',
+            type: 'line',
+            stack: '总量',
+            areaStyle: {},
+            emphasis: {
+              focus: 'series'
+            },
+            data: chartData.article_comment
+          },
+          {
+            name: '浏览笔记数',
+            type: 'line',
+            stack: '总量',
+            areaStyle: {},
+            emphasis: {
+              focus: 'series'
+            },
+            data: chartData.section_view
+          },
+          {
+            name: '收藏笔记数',
+            type: 'line',
+            stack: '总量',
+            areaStyle: {},
+            emphasis: {
+              focus: 'series'
+            },
+            data: chartData.section_comment
+          },
+          {
+            name: '评论笔记数',
+            type: 'line',
+            stack: '总量',
+            areaStyle: {},
+            emphasis: {
+              focus: 'series'
+            },
+            data: chartData.section_collect
+          }
+        ]
       });
-      chart.interval()
-          .position('月份*月均降雨量')
-          .color('name')
-          .adjust('stack');
-      // Step 4: 渲染图表
-      chart.render();
+      //自适应大小
+      window.onresize = function () {
+        myChart.resize();
+      };
     };
+
+    // 浏览时间柱形图
+    async function time() {
+      let chartData = await getEcharts(userId.value, 'time')
+      console.log(chartData)
+      let myChart = echarts.init(document.getElementById("time"));
+      // 绘制图表
+      myChart.setOption({
+        color: color.value,
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {            // Use axis to trigger tooltip
+            type: 'shadow'        // 'shadow' as default; can also be 'line' or 'shadow'
+          }
+        },
+        legend: {
+          data: ['文章', '笔记']
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: ['01', '03', '05', '07', '09', '11', '13', '15', '17', '19', '21', '23']
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            name: '文章',
+            type: 'bar',
+            stack: 'total',
+            emphasis: {
+              focus: 'series'
+            },
+            data: chartData.article
+          },
+          {
+            name: '笔记',
+            type: 'bar',
+            stack: 'total',
+            emphasis: {
+              focus: 'series'
+            },
+            data: chartData.section
+          }
+        ]
+      });
+      //自适应大小
+      window.onresize = function () {
+        myChart.resize();
+      };
+    };
+
     // 浏览文章饼图
-    let article = () => {
-      const data = [{
-        year: '2001',
-        population: 41.8
-      }, {
-        year: '2002',
-        population: 25.8
-      }, {
-        year: '2003',
-        population: 31.7
-      }, {
-        year: '2004',
-        population: 46
-      }, {
-        year: '2005',
-        population: 28
-      }];
-      // Step 1: 创建 Chart 对象
-      const chart = new F2.Chart({
-        id: 'article',
-        pixelRatio: window.devicePixelRatio
+    async function article() {
+      let chartData = await getEcharts(userId.value, 'article')
+      console.log(chartData)
+      let myChart = echarts.init(document.getElementById("article"));
+      // 绘制图表
+      myChart.setOption({
+        color: color.value,
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {},
+        series: [
+          {
+            type: 'pie',
+            radius: '50%',
+            data: chartData.data,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
       });
-      // Step 2: 载入数据源
-      chart.source(data);
-      // Step 3：创建图形语法，绘制柱状图，由 genre 和 sold 两个属性决定图形位置，genre 映射至 x 轴，sold 映射至 y 轴
-      chart.coord('polar');
-      chart.legend({
-        position: 'top'
-      });
-      chart.axis(false);
-      chart.interval()
-          .position('year*population')
-          .color('year')
-          .style({
-            lineWidth: 1,
-            stroke: '#fff'
-          });
-      // Step 4: 渲染图表
-      chart.render();
+      //自适应大小
+      window.onresize = function () {
+        myChart.resize();
+      };
     };
     // 浏览笔记雷达图
     let note = () => {
-      const data = [{
-        item: 'Design',
-        user: '用户 A',
-        score: 70
-      }, {
-        item: 'Design',
-        user: '用户 B',
-        score: 30
-      }, {
-        item: 'Development',
-        user: '用户 A',
-        score: 60
-      }, {
-        item: 'Development',
-        user: '用户 B',
-        score: 70
-      }, {
-        item: 'Marketing',
-        user: '用户 A',
-        score: 50
-      }, {
-        item: 'Marketing',
-        user: '用户 B',
-        score: 60
-      }, {
-        item: 'Users',
-        user: '用户 A',
-        score: 40
-      }, {
-        item: 'Users',
-        user: '用户 B',
-        score: 50
-      }, {
-        item: 'Test',
-        user: '用户 A',
-        score: 60
-      }, {
-        item: 'Test',
-        user: '用户 B',
-        score: 70
-      }, {
-        item: 'Language',
-        user: '用户 A',
-        score: 70
-      }, {
-        item: 'Language',
-        user: '用户 B',
-        score: 50
-      }, {
-        item: 'Technology',
-        user: '用户 A',
-        score: 70
-      }, {
-        item: 'Technology',
-        user: '用户 B',
-        score: 40
-      }, {
-        item: 'Support',
-        user: '用户 A',
-        score: 60
-      }, {
-        item: 'Support',
-        user: '用户 B',
-        score: 40
-      }];
-      // Step 1: 创建 Chart 对象
-      const chart = new F2.Chart({
-        id: 'note',
-        pixelRatio: window.devicePixelRatio
-      });
-      // Step 2: 载入数据源
-      chart.source(data, {
-        score: {
-          min: 0,
-          max: 120,
-          nice: false,
-          tickCount: 4
-        }
-      });
-      // Step 3：创建图形语法，绘制柱状图，由 genre 和 sold 两个属性决定图形位置，genre 映射至 x 轴，sold 映射至 y 轴
-      chart.coord('polar');
-      chart.tooltip({
-        custom: true, // 自定义 tooltip 内容框
-        onChange: function onChange(obj) {
-          const legend = chart.get('legendController').legends.top[0];
-          const tooltipItems = obj.items;
-          const legendItems = legend.items;
-          const map = {};
-          legendItems.forEach(function(item) {
-            map[item.name] = _.clone(item);
-          });
-          tooltipItems.forEach(function(item) {
-            const name = item.name;
-            const value = item.value;
-            if (map[name]) {
-              map[name].value = value;
-            }
-          });
-          legend.setItems(_.values(map));
+      let myChart = echarts.init(document.getElementById("note"));
+      // 绘制图表
+      myChart.setOption({
+        color: color.value,
+        legend: {
+          data: ['预算分配', '实际开销']
         },
-        onHide: function onHide() {
-          const legend = chart.get('legendController').legends.top[0];
-          legend.setItems(chart.getLegendItems().country);
-        }
-      });
-      chart.axis('score', {
-        label: function label(text, index, total) {
-          if (index === total - 1) {
-            return null;
-          }
-          return {
-            top: true
-          };
+        grid: {
+          left: '5%',
+          right: '5%',
+          bottom: '5%',
         },
-        grid: function grid(text) {
-          if (text === '120') {
-            return {
-              lineDash: null
-            };
-          }
+        radar: {
+          // shape: 'circle',
+          indicator: [
+            {name: '销售', max: 6500},
+            {name: '管理', max: 16000},
+            {name: '信息', max: 30000},
+            {name: '客服', max: 38000},
+            {name: '研发', max: 52000},
+            {name: '市场', max: 25000}
+          ]
         },
-        line: {
-          top: false
-        }
+        series: [{
+          name: '预算 vs 开销',
+          type: 'radar',
+          data: [
+            {
+              value: [4200, 3000, 20000, 35000, 50000, 18000],
+              name: '预算分配'
+            },
+            {
+              value: [5000, 14000, 28000, 26000, 42000, 21000],
+              name: '实际开销'
+            }
+          ]
+        }]
       });
-      chart.area().position('item*score').color('user')
-          .animate({
-            appear: {
-              animation: 'groupWaveIn'
-            }
-          });
-      chart.line().position('item*score').color('user')
-          .animate({
-            appear: {
-              animation: 'groupWaveIn'
-            }
-          });
-      chart.point().position('item*score').color('user')
-          .style({
-            stroke: '#fff',
-            lineWidth: 1
-          })
-          .animate({
-            appear: {
-              delay: 300
-            }
-          });
-      // Step 4: 渲染图表
-      chart.render();
+      //自适应大小
+      window.onresize = function () {
+        myChart.resize();
+      };
     };
+
+    // 获取数据概览数据
+    async function statisticsData() {
+      let statistics_data = await getStatistics(userId.value)
+      for (let i in statistics_data) {
+        dataCount[i] = statistics_data[i]
+      }
+    }
+
+    // // 获取浏览趋势图数据
+    // async function echartsData() {
+    //   trendData = await getEcharts(userId.value, 'trend')
+    //   console.log(trendData)
+    //   console.log(trendData.xAxis)
+    // }
+
     onMounted(() => {
+      statisticsData()
       trend();
-      time();
-      article();
-      note();
+      time()
+      article()
+      note()
     });
     return {
-      title
+      dataCount,
     }
   }
 }

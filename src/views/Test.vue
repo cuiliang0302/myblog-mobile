@@ -112,13 +112,14 @@ export default {
     const dataCount = reactive({})
     // echarts曲线颜色
     const color = ref([
-      "#3498db",
-      "#2ecc71",
-      "#1abc9c",
-      "#9b59b6",
-      "#f1c40f",
-      "#e67e22",
-      "#e74c3c"
+      "#74b9ff",
+      "#55efc4",
+      "#81ecec",
+      "#a29bfe",
+      "#ffeaa7",
+      "#fab1a0",
+      "#ff7675",
+      "#ff7675"
     ])
     // 浏览趋势折线图
     let trend = () => {
@@ -324,7 +325,7 @@ export default {
         legend: {
           data: ['预算分配', '实际开销']
         },
-        grid:{
+        grid: {
           left: '5%',
           right: '5%',
           bottom: '5%',
@@ -377,7 +378,9 @@ export default {
       article()
       note()
     });
-    return {dataCount}
+    return {
+      dataCount,
+    }
   }
 }
 </script>
