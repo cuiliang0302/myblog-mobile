@@ -262,7 +262,13 @@ export default {
         },
         xAxis: {
           type: 'category',
-          data: ['01', '03', '05', '07', '09', '11', '13', '15', '17', '19', '21', '23']
+          data: ['00:00-01:59', '02:00-03:59', '04:00-05:59', '06:00-07:59', '08:00-09:59', '10:00-11:59', '12:00-13:59',
+            '14:00-15:59', '16:00-17:59', '18:00-19:59', '20:00-21:59', '22:00-23:59'],
+          axisLabel: {
+            formatter: function (value) {
+              return value.slice(6, 8);
+            }
+          }
         },
         yAxis: {
           type: 'value'
@@ -335,7 +341,12 @@ export default {
       // 绘制图表
       myChart.setOption({
         color: color.value,
-        legend: {},
+        legend: {
+          show: false
+        },
+        tooltip: {
+          trigger: 'item'
+        },
         radar: {
           // shape: 'circle',
           radius: '60%',
@@ -345,7 +356,8 @@ export default {
           type: 'radar',
           data: [
             {
-              value: chartData.data
+              value: chartData.data,
+              name: '笔记统计'
             }
           ]
         }]
@@ -363,13 +375,6 @@ export default {
         dataCount[i] = statistics_data[i]
       }
     }
-
-    // // 获取浏览趋势图数据
-    // async function echartsData() {
-    //   trendData = await getEcharts(userId.value, 'trend')
-    //   console.log(trendData)
-    //   console.log(trendData.xAxis)
-    // }
 
     onMounted(() => {
       statisticsData()
