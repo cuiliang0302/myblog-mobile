@@ -10,3 +10,8 @@ export function getAbout() {
   return index.get('management/about/')
 }
 
+// 获取友情链接内容
+export function getLink() {
+  return index.get('management/link/')
+}
+

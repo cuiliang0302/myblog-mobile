@@ -54,7 +54,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../assets/style/variable";
+@import "~@/assets/style/variable";
 
 .v-md-editor-preview {
   padding: 0;

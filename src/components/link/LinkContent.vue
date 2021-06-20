@@ -6,7 +6,7 @@
     <div class="links">
       <van-grid :column-num="2" :gutter="10" clickable>
         <van-grid-item v-for="(item,index) in linkList" :key="index">
-          <div class="info">
+          <div class="info" @click="toLink(item.url)">
             <van-image :src="item.logo" width="30px" height="30px" round>
               <template v-slot:loading>
                 <van-loading type="spinner" size="20"/>
@@ -14,7 +14,7 @@
             </van-image>
             <h3>{{ item.name }}</h3>
           </div>
-          <div>
+          <div class="describe">
             <p>{{ item.describe }}</p>
           </div>
         </van-grid-item>
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import {Grid, GridItem, Loading, Image as VanImage} from 'vant';
+import {Grid, GridItem, Loading, Image as VanImage,Toast} from 'vant';
 
 export default {
   name: "LinkContent",
@@ -32,7 +32,8 @@ export default {
     [Grid.name]: Grid,
     [GridItem.name]: GridItem,
     [Loading.name]: Loading,
-    [VanImage.name]: VanImage
+    [VanImage.name]: VanImage,
+    Toast
   },
   props: {
     // 评论回复列表
@@ -47,10 +48,23 @@ export default {
       }
     },
   },
+  setup() {
+    const toLink = (url) => {
+      window.location.href = url
+      Toast.loading({
+        message: '第三方网站跳转中...',
+        forbidClick: true,
+      });
+    }
+    return {
+      toLink
+    }
+  }
 }
 </script>
 
 <style scoped lang="scss">
+@import "~@/assets/style/variable";
 .link-content {
   margin: 15px 0;
 
@@ -68,10 +82,19 @@ export default {
         margin-left: 10px;
       }
     }
+    .describe{
+      p{
+        line-height: 15px;
+        margin-bottom: 0;
+        color: $color-text-primary;
+      }
+    }
   }
 }
-
-.van-grid-item :first-child {
-  border-radius: 10px;
+.van-grid-item{
+  height: 150px;
+  .van-grid-item :first-child {
+    border-radius: 10px;
+  }
 }
 </style>
