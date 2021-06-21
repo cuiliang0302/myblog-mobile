@@ -1,7 +1,7 @@
 <!--申请友链-->
 <template>
   <div class="link">
-    <NavBar :title="title"></NavBar>
+    <NavBar :title="'申请友链'"></NavBar>
     <div class="ask">
       <div class="title">
         <h2>申请须知</h2>

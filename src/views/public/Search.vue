@@ -176,7 +176,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../assets/style/variable";
+@import "~@/assets/style/variable";
 
 body {
   background-color: $color-background-white !important;

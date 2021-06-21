@@ -1,6 +1,6 @@
 <template>
   <div class="info">
-    <NavBar :title="title"></NavBar>
+    <NavBar :title="'我的信息'"></NavBar>
     <div class="photo">
       <UploadImg :imgURL="userInfoForm.photo" @saveImg="saveImg"></UploadImg>
       <p>点击更换头像</p>
@@ -167,7 +167,6 @@ export default {
   setup() {
     // 引入用户信息模块
     let {userId, isLogin} = user();
-    const title = "我的信息"
     // 我的信息表单
     const userInfoForm = reactive({});
     // 上传头像完成事件
@@ -255,7 +254,6 @@ export default {
       getUserinfo(userId.value)
     })
     return {
-      title,
       userInfoForm,
       saveImg,
       oldUsername,

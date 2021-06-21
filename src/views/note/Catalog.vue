@@ -120,7 +120,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../assets/style/variable";
+@import "~@/assets/style/variable";
 
 .number {
   margin-right: 15px;

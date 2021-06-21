@@ -1,7 +1,7 @@
 <!--修改密码-->
 <template>
   <div class="password">
-    <NavBar :title="title"></NavBar>
+    <NavBar :title="'修改密码'"></NavBar>
     <van-form @submit="onSubmit">
       <van-field
           v-model="passwordForm.oldPassword"
@@ -57,7 +57,6 @@ export default {
   name: "Pay",
   setup() {
     const router = useRouter()
-    const title = '修改密码'
     // 引入用户信息模块
     let {userId} = user();
     // 修改提交密码表单
@@ -100,7 +99,6 @@ export default {
     }
 
     return {
-      title,
       passwordForm,
       Form,
       pattern,

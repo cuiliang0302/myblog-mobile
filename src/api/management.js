@@ -15,3 +15,8 @@ export function getLink() {
   return index.get('management/link/')
 }
 
+// 获取博主信息
+export function getInfo() {
+  return index.get('management/info/1/')
+}
+

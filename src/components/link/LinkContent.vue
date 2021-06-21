@@ -86,7 +86,7 @@ export default {
       p{
         line-height: 15px;
         margin-bottom: 0;
-        color: $color-text-primary;
+        color: $color-text-regular;
       }
     }
   }

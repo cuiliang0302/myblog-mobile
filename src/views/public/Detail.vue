@@ -725,7 +725,7 @@ function history(DetailID, componentName) {
 </script>
 
 <style lang="scss" scoped>
-@import "../../assets/style/variable";
+@import "~@/assets/style/variable";
 
 .detail {
   .main {

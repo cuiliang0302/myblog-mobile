@@ -1,14 +1,27 @@
 <!--赞赏支持-->
 <template>
   <div class="pay">
-    <NavBar :title="title"></NavBar>
-    <section v-for="(item,index) in info" :key="index">
+    <NavBar :title="'赞赏支持'"></NavBar>
+    <section>
       <div class="title">
-        <h2>{{ item.kind }}</h2>
+        <h2>支付宝</h2>
         <span></span>
       </div>
       <div class="pay-img">
-        <van-image :src="item.url" alt="" radius="0.4rem" lazy-load height="7.467rem" width="7.467rem">
+        <van-image :src="info.ali_pay" alt="" radius="0.4rem" lazy-load height="7.467rem" width="7.467rem">
+          <template v-slot:loading>
+            <van-loading type="spinner" size="20"/>
+          </template>
+        </van-image>
+      </div>
+    </section>
+    <section>
+      <div class="title">
+        <h2>微信</h2>
+        <span></span>
+      </div>
+      <div class="pay-img">
+        <van-image :src="info.wechat_pay" alt="" radius="0.4rem" lazy-load height="7.467rem" width="7.467rem">
           <template v-slot:loading>
             <van-loading type="spinner" size="20"/>
           </template>
@@ -21,6 +34,8 @@
 <script>
 import NavBar from "@/components/personal/NavBar";
 import {Image as VanImage, Loading} from 'vant';
+import {onMounted, reactive} from "vue";
+import {getInfo} from "@/api/management";
 
 export default {
   components: {
@@ -30,13 +45,22 @@ export default {
   },
   name: "Pay",
   setup() {
-    const title = '赞赏支持'
-    const info = [
-      {kind: '支付宝', url: 'https://cdn.cuiliangblog.cn/static/images/weixin.png'},
-      {kind: '微信', url: 'https://cdn.cuiliangblog.cn/static/images/weixin.png'}
-    ]
+    const info = reactive({
+      'wechat_pay': '',
+      'ali_pay': ''
+    })
+    // 获取博主信息数据
+    async function infoData() {
+      let info_data = await getInfo()
+      console.log(info_data)
+      info.wechat_pay = info_data.wechat_pay
+      info.ali_pay = info_data.ali_pay
+    }
+
+    onMounted(() => {
+      infoData()
+    })
     return {
-      title,
       info
     }
   }

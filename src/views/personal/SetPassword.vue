@@ -219,7 +219,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../assets/style/variable";
+@import "~@/assets/style/variable";
 
 .password {
   height: 100%;
@@ -230,7 +230,7 @@ export default {
     width: 100%;
     position: absolute;
     height: 88%;
-    background-image: url("../../assets/images/background.png");
+    background-image: url("~@/assets/images/background.png");
     background-repeat: no-repeat;
     background-size: 100%;
     padding-bottom: 2.667rem;
@@ -242,7 +242,7 @@ export default {
       position: absolute;
       bottom: 0;
       left: 0;
-      background: url("../../assets/images/wave.png");
+      background: url("~@/assets/images/wave.png");
       background-size: 26.667rem 4rem;
     }
 

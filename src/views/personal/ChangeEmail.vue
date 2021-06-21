@@ -1,7 +1,7 @@
 <!--更换邮箱-->
 <template>
   <div class="password">
-    <NavBar :title="title"></NavBar>
+    <NavBar :title="'更换邮箱'"></NavBar>
     <van-form @submit="onSubmit">
       <van-field
           v-model="emailForm.password"
@@ -61,7 +61,6 @@ export default {
   },
   name: "ChangeEmail",
   setup() {
-    const title = '更换邮箱'
     // 引入用户信息模块
     let {userName, userId} = user();
     // 更换邮箱表单
@@ -125,7 +124,6 @@ export default {
     };
 
     return {
-      title,
       emailForm,
       checkContact,
       btnDisabled,

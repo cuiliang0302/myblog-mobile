@@ -170,7 +170,7 @@ export default {
 }
 
 .van-switch {
-  background-image: url("../../../src/assets/images/dark-btn.png");
+  background-image: url("~@/assets/images/dark-btn.png");
   background-size: 1.6rem 0.8rem;
 }
 </style>

@@ -1,7 +1,7 @@
-<!--更换邮箱-->
+<!--更换手机-->
 <template>
   <div class="password">
-    <NavBar :title="title"></NavBar>
+    <NavBar :title="'更换手机'"></NavBar>
     <van-form @submit="onSubmit">
       <van-field
           v-model="phoneForm.password"
@@ -60,7 +60,6 @@ export default {
   },
   name: "ChangePhone",
   setup() {
-    const title = '更换手机'
     // 引入用户信息模块
     let {userName, userId} = user();
     // 更换手机表单
@@ -124,7 +123,6 @@ export default {
     };
 
     return {
-      title,
       phoneForm,
       checkContact,
       btnDisabled,

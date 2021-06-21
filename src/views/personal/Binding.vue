@@ -1,7 +1,7 @@
 <!--绑定第三放账号-->
 <template>
   <div>
-    <NavBar :title="title"></NavBar>
+    <NavBar :title="'绑定第三方账号'"></NavBar>
     <van-cell-group>
       <van-cell v-for="(item,index) in state" :key="index" :title="item.name" center>
         <template #right-icon>
@@ -28,7 +28,6 @@ export default {
   },
   name: "Binding",
   setup() {
-    const title = '绑定第三方账号'
     const state = reactive([
       {name: 'GitHub', is_binding: true},
       {name: 'QQ', is_binding: true},
@@ -52,7 +51,6 @@ export default {
       }
     }
     return {
-      title,
       state,
       changeBinding
     }

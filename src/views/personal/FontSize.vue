@@ -1,7 +1,7 @@
 <!--字体设置-->
 <template>
   <div>
-    <NavBar :title="title"></NavBar>
+    <NavBar :title="'字体设置'"></NavBar>
     <section>
       <div class="preview">
         <h1>拖动下面的滑块，可实现预览字体大小的变化</h1>
@@ -34,7 +34,6 @@ export default {
   },
   name: "FontSize",
   setup() {
-    const title = '字体大小设置'
     // 字体大小值
     const fontSize = computed(() => store.state.font.fontSize)
     // 字体显示种类
@@ -71,7 +70,6 @@ export default {
       store.commit('setFontType', fontType)
     }
     return {
-      title,
       fontSize,
       changeSize,
       fontShow

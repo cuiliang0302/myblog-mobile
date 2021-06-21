@@ -70,7 +70,7 @@ export function usePreventDefault() {
 }
 </script>
 <style lang="scss" scoped>
-@import "../../assets/style/variable";
+@import "~@/assets/style/variable";
 
 .bgc {
   background-color: white;
@@ -83,7 +83,7 @@ section {
   width: 100%;
   position: absolute;
   height: 9.867rem;
-  background-image: url("../../assets/images/login-bg.jpg");
+  background-image: url("~@/assets/images/login-bg.jpg");
   background-repeat: no-repeat;
   background-size: 100%;
   padding-bottom: 2.533rem;
@@ -94,7 +94,7 @@ section {
     position: absolute;
     bottom: 0;
     left: 0;
-    background: url("../../assets/images/wave.png");
+    background: url("~@/assets/images/wave.png");
     background-size: 26.667rem 2.667rem;
   }
 

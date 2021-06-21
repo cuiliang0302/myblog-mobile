@@ -223,14 +223,14 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
 }
 </script>
 <style lang="scss" scoped>
-@import "../../assets/style/variable";
+@import "~@/assets/style/variable";
 //水波纹特效和背景图
 
 section {
   position: relative;
   width: 100%;
   height: 2.64rem;
-  background-image: url("../../assets/images/personal-img.jpg");
+  background-image: url("~@/assets/images/personal-img.jpg");
   background-repeat: no-repeat;
   background-size: 100%;
   padding: 0 0 2.667rem 0;
@@ -241,7 +241,7 @@ section {
     position: absolute;
     bottom: 0;
     left: 0;
-    background: url("../../assets/images/wave.png");
+    background: url("~@/assets/images/wave.png");
     background-size: 26.667rem 2.667rem;
   }
 
