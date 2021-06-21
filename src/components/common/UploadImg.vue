@@ -1,14 +1,25 @@
 <template>
   <div class="photo">
-    <van-image
-        round
-        width="2.667rem" height="2.667rem"
-        :src="imgURL"
-    >
-      <template v-slot:loading>
-        <van-loading type="spinner" size="20"/>
-      </template>
-    </van-image>
+      <van-image
+          v-if="imgURL.length===0"
+          round
+          width="2.667rem" height="2.667rem"
+          :src="imgURL"
+      >
+        <template v-slot:loading>
+          <van-icon name="add-o" size="1.5rem" color="#C0C4CC"/>
+        </template>
+      </van-image>
+      <van-image
+          v-else
+          round
+          width="2.667rem" height="2.667rem"
+          :src="imgURL"
+      >
+        <template v-slot:loading>
+          <van-loading type="spinner" size="20"/>
+        </template>
+      </van-image>
     <input class="uploadBtn" type="file" accept="image/*" @change="onChange"/>
     <Cropper v-if="photoCrop.cropperVisible"
              :imagePath="photoCrop.imagePath"
@@ -26,7 +37,7 @@ import {reactive} from "vue";
 import {Toast} from "vant";
 import qiniuUpload from "@/utils/qiniuUpload";
 import timeFormat from "@/utils/timeFormat";
-import {Image as VanImage, Loading} from 'vant';
+import {Image as VanImage, Loading, Icon} from 'vant';
 
 const URL = window.URL || window.webkitURL;
 export default {
@@ -34,10 +45,18 @@ export default {
     Cropper,
     Toast,
     [VanImage.name]: VanImage,
-    [Loading.name]: Loading
+    [Loading.name]: Loading,
+    [Icon.name]: Icon
   },
   name: 'uploadImg',
   props: {
+    // 上传图片目录
+    dir:{
+      type: String,
+      default() {
+        return 'upload';
+      }
+    },
     // 图片地址
     imgURL: {
       type: String,
@@ -66,7 +85,7 @@ export default {
     const onSave = (res) => {
       //blob转file
       const file = new File([res], timeFile(Date.now()) + '.jpg', {type: res.type});
-      upload('photo', file).then((response) => {
+      upload(props.dir, file).then((response) => {
         console.log(response)
         emit('saveImg', response)
         Toast.success('图片上传成功！');

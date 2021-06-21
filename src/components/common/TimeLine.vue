@@ -9,7 +9,7 @@
         <div class="label">
           <p @click="toDetail(item.id)">
             {{ item.content }}
-            <br>
+            <br v-show="item.content">
             <span><van-tag round type="primary" size="medium" plain>{{ item.name }}</van-tag></span>
           </p>
         </div>

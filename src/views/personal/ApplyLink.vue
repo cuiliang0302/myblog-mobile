@@ -22,15 +22,15 @@
         </span>
       </div>
       <div class="content">
-        {{ demo.name }}<br>
-        {{ demo.domain }}<br>
-        {{ demo.describe }}<br>
-        {{ demo.logo }}<br>
+        {{ webInfo.name }}<br>
+        {{ webInfo.domain }}<br>
+        {{ webInfo.describe }}<br>
+        {{ webInfo.logo }}<br>
       </div>
     </div>
     <van-form @submit="onSubmit">
       <van-field
-          v-model="state.username"
+          v-model="linkForm.name"
           name="网站名称"
           label="网站名称"
           placeholder="请输入网站名称"
@@ -38,7 +38,7 @@
           :rules="[{ required: true, message: '请填写网站名称' }]"
       />
       <van-field
-          v-model="state.username"
+          v-model="linkForm.url"
           type="网站地址"
           name="网站地址"
           label="网站地址"
@@ -47,7 +47,7 @@
           :rules="[{ required: true, message: '请填写网站地址' }]"
       />
       <van-field
-          v-model="state.username"
+          v-model="linkForm.describe"
           type="网站简介"
           name="网站简介"
           label="网站简介"
@@ -58,7 +58,7 @@
       <van-cell center title="网站logo">
         <template #extra>
           <div class="upload">
-            <van-uploader :after-read="afterRead"/>
+            <UploadImg :imgURL="linkForm.logo" :dir="'logo'" @saveImg="saveImg"></UploadImg>
           </div>
         </template>
       </van-cell>
@@ -73,8 +73,10 @@
 
 <script>
 import NavBar from "@/components/personal/NavBar";
-import {Form, Field, Button, Uploader, Cell, CellGroup} from 'vant';
-import {reactive} from "vue";
+import {Form, Field, Button, Uploader, Cell, CellGroup, Toast} from 'vant';
+import {onMounted, reactive} from "vue";
+import UploadImg from "@/components/common/UploadImg";
+import {getSiteConfig, postLink} from "@/api/management";
 
 export default {
   components: {
@@ -84,34 +86,68 @@ export default {
     [Uploader.name]: Uploader,
     [Cell.name]: Cell,
     [CellGroup.name]: CellGroup,
-    NavBar
+    NavBar,
+    UploadImg
   },
-  name: "Pay",
+  name: "ApplyLink",
   setup() {
-    const title = '申请友链'
-    const state = reactive({
-      username: '',
-      password: '',
+    const linkForm = reactive({
+      name: '',
+      logo: '',
+      url: '',
+      describe: ''
     });
-    const demo = {
-      name: '崔亮的博客',
-      logo: 'https://cdn.cuiliangblog.cn/logo_forground.png',
-      describe: '专注devops自动化运维，传播优秀it运维技术文章',
-      domain: 'https://www.cuiliangblog.cn'
+    const webInfo = reactive({
+      name: '',
+      logo: '',
+      describe: '',
+      domain: ''
+    })
+    // 上传logo完成事件
+    const saveImg = (URL) => {
+      linkForm.logo = URL
     }
-    const afterRead = (file) => {
-      // 此时可以自行将文件上传至服务器
-      console.log(file);
+    // 表单提交
+    const onSubmit = () => {
+      console.log(linkForm);
+      if (linkForm.logo.length === 0) {
+        Toast.fail('请上传logo图片');
+        return false
+      }
+      postLink(linkForm).then((response) => {
+        console.log(response)
+        Toast.success('申请提交成功！');
+        linkForm.url = ''
+        linkForm.name = ''
+        linkForm.describe = ''
+        linkForm.logo = ''
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        for (let i in response) {
+          Toast.fail(i + response[i][0]);
+        }
+      });
     };
-    const onSubmit = (values) => {
-      console.log('submit', values);
-    };
+
+    // 获取网站配置数据
+    async function siteConfigData() {
+      let siteConfig_data = await getSiteConfig()
+      console.log(siteConfig_data)
+      webInfo.name = siteConfig_data.name
+      webInfo.logo = siteConfig_data.logo
+      webInfo.describe = siteConfig_data.title.slice(6)
+      webInfo.domain = siteConfig_data.domain
+    }
+
+    onMounted(() => {
+      siteConfigData()
+    })
     return {
-      title,
-      state,
+      webInfo,
+      linkForm,
       onSubmit,
-      afterRead,
-      demo
+      saveImg,
     }
   }
 }

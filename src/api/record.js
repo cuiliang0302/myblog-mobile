@@ -152,3 +152,4 @@ export function getUserSectionComment(userId) {
 export function getStatistics(userId) {
     return index.get('/record/statistics/?user=' + userId)
 }
+

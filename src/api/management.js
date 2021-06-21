@@ -14,9 +14,18 @@ export function getAbout() {
 export function getLink() {
   return index.get('management/link/')
 }
+// 申请友情链接
+export function postLink(params) {
+  return index.post('management/link/',params)
+}
 
 // 获取博主信息
 export function getInfo() {
   return index.get('management/info/1/')
+}
+
+// 获取用户统计数据
+export function getSiteConfig() {
+  return index.get('management/siteConfig/1/')
 }
 

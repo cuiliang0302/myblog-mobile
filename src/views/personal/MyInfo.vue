@@ -2,7 +2,7 @@
   <div class="info">
     <NavBar :title="'我的信息'"></NavBar>
     <div class="photo">
-      <UploadImg :imgURL="userInfoForm.photo" @saveImg="saveImg"></UploadImg>
+      <UploadImg :imgURL="userInfoForm.photo" :dir="'photo'" @saveImg="saveImg"></UploadImg>
       <p>点击更换头像</p>
     </div>
     <van-form @submit="onSubmit">
