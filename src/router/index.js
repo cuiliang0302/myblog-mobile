@@ -364,6 +364,12 @@ const router = createRouter({
 // 路由导航守卫
 router.beforeEach((to, from, next) => {
     // to 访问的路径 from 从哪来 next 响应路径
+    // 百度统计API跳转
+    if (to.path) {
+        if (window._hmt) {
+            window._hmt.push(['_trackPageview', '/#' + to.fullPath])
+        }
+    }
     if (to.meta.isAuth === true && JSON.stringify(store.state.userSession) === '{}') {
         Toast.fail('还未登录，即将跳转至登录页')
         return next('/login_register')
