@@ -45,6 +45,11 @@
           <van-cell title="更换邮箱" size="large" is-link @click="toView('/change-email')"/>
           <van-cell title="更换手机" size="large" is-link @click="toView('/change-phone')"/>
           <van-cell title="绑定第三方账号" size="large" is-link @click="toView('/binding')"/>
+          <van-cell title="博文更新邮件通知" size="large">
+            <template #right-icon>
+              <van-switch v-model="userInfo.is_flow" @change="changeFlow" size="0.533rem"/>
+            </template>
+          </van-cell>
         </van-cell-group>
       </div>
       <div class="cell-item">
@@ -57,11 +62,6 @@
       </div>
       <div class="cell-item">
         <van-cell-group title="系统与设置">
-          <van-cell title="博文更新邮件通知" size="large">
-            <template #right-icon>
-              <van-switch v-model="userInfo.is_flow" @change="changeFlow" size="0.533rem"/>
-            </template>
-          </van-cell>
           <van-cell title="字体大小" size="large" is-link :value="fontType" to="/fontsize"/>
           <van-cell title="深色模式" size="large">
             <template #right-icon>
@@ -184,8 +184,10 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
         console.log(response)
       });
     } else {
-      console.log("没登录了")
+      console.log("没登录呀")
+      userInfo.is_flow = false
       refLoginPopup.value.showPopup()
+      return false
     }
   }
   // 字体大小
