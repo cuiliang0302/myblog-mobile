@@ -1,65 +1,39 @@
 <template>
   <div class="search">
     <SearchBar @onSearch="onSearch"></SearchBar>
-    <div v-if="JSON.stringify(articleList)=='{}'">
-      <div>
-        <div class="history">
-          <div class="title">
-            <h2>⏱&nbsp;历史搜索</h2>
-            <span></span>
-          </div>
-          <div class="content">
-            <van-empty v-show="historyList.length===0" image="search" description="暂无搜索记录"/>
-            <van-tag round size="large" color="#ecf0f1" text-color="#2c3e50"
-                     v-for="(key,index) in historyList"
-                     :key="index"
-                     @click="clickSearch(key)"
-            >
-              {{ key }}
-            </van-tag>
-          </div>
+    <div>
+      <div class="history">
+        <div class="title">
+          <h2>⏱&nbsp;历史搜索</h2>
+          <span></span>
         </div>
-        <div class="hot">
-          <div class="title">
-            <h2>🔥&nbsp;热门搜索</h2>
-            <span></span>
-          </div>
-          <div class="content">
-            <div class="key-item"
-                 v-for="(key,index) in hotList"
-                 :key="index"
-                 @click="clickSearch(key)"
-            >
-              <van-tag size="medium">{{ index + 1 }}</van-tag>
-              <span class="key">{{ key }}</span>
-            </div>
+        <div class="content">
+          <van-empty v-show="historyList.length===0" image="search" description="暂无搜索记录"/>
+          <van-tag round size="large" color="#ecf0f1" text-color="#2c3e50"
+                   v-for="(key,index) in historyList"
+                   :key="index"
+                   @click="clickSearch(key)"
+          >
+            {{ key }}
+          </van-tag>
+        </div>
+      </div>
+      <div class="hot">
+        <div class="title">
+          <h2>🔥&nbsp;热门搜索</h2>
+          <span></span>
+        </div>
+        <div class="content">
+          <div class="key-item"
+               v-for="(key,index) in hotList"
+               :key="index"
+               @click="clickSearch(key)"
+          >
+            <van-tag size="medium">{{ index + 1 }}</van-tag>
+            <span class="key">{{ key }}</span>
           </div>
         </div>
       </div>
-    </div>
-    <div v-else>
-      <van-list>
-        <div class="list-item" v-for="(item,index) in articleList" :key="index" @click="toDetail(item.id)">
-          <div class="title">{{ item.title }}</div>
-          <div class="list-main">
-        <span class="cover">
-            <van-image :src="item.cover" alt="" radius="0.4rem" lazy-load height="3.013rem" width="4.533rem">
-              <template v-slot:loading>
-                <van-loading type="spinner" size="20"/>
-              </template>
-            </van-image>
-        </span>
-            <span class="abstract">{{ item.abstract }}</span>
-          </div>
-          <div class="info">
-            <span><img src="@/assets/icon/time.png" alt="">{{ timeAgo(item.created_time) }}</span>
-            <span><img src="@/assets/icon/view.png" alt="">{{ item.view }}</span>
-            <span><img src="@/assets/icon/like.png" alt="">{{ item.like }}</span>
-            <span><img src="@/assets/icon/comment.png" alt="">{{ item.comment }}</span>
-            <span><van-tag round :color="tagColor(item.category_id)">{{ item.category }}</van-tag></span>
-          </div>
-        </div>
-      </van-list>
     </div>
   </div>
 </template>
@@ -67,11 +41,9 @@
 <script>
 import {Tag, Empty, List, Loading, Toast} from 'vant';
 import SearchBar from "@/components/search/SearchBar";
-import {getSearchHistory, getSearchHot, getSearch} from "@/api/record";
-import {onMounted, reactive, ref} from "vue";
+import {getSearchHistory, getSearchHot} from "@/api/record";
+import {onMounted, ref} from "vue";
 import user from "@/utils/user";
-import timeFormat from "@/utils/timeFormat";
-import setColor from "@/utils/setColor";
 import {Image as VanImage} from "vant/lib/image";
 import {useRouter} from "vue-router";
 
@@ -90,58 +62,19 @@ export default {
     const router = useRouter()
     // 引入用户信息模块
     let {userId, isLogin} = user();
-    // 时间显示几天前
-    let {timeAgo} = timeFormat()
-    // 标签颜色
-    let {tagColor} = setColor()
     // 搜索历史列表
     let historyList = ref([])
     // 热门搜索列表
     let hotList = ref([])
-    // 搜索结果列表
-    let articleList = reactive({})
     // 搜索栏输入搜索
     const onSearch = (key) => {
       console.log(key)
-      searchData(key)
+      router.push({path: '/result', query: {key: key}})
     }
     // 点击标签搜索
     const clickSearch = (key) => {
       console.log(key)
-      searchData(key)
-    }
-    // 点击查看文章详情
-    const toDetail = (id) => {
-      console.log(id)
-      router.push({path: `/detail/${id}`, query: {component: 'article'}})
-    }
-
-    // 获取搜索结果列表
-    async function searchData(key) {
-      Toast.loading({
-        message: '玩命加载中...',
-        forbidClick: true,
-      });
-      let article_data
-      if (isLogin.value) {
-        try {
-          article_data = await getSearch(key, userId.value)
-        } catch (error) {
-          console.log(error)
-          Toast.fail(error.msg)
-        }
-      } else {
-        try {
-          article_data = await getSearch(key, NaN)
-        } catch (error) {
-          console.log(error)
-          Toast.fail(error.msg)
-        }
-      }
-      console.log(article_data)
-      for (let i in article_data) {
-        articleList[i] = article_data[i]
-      }
+      router.push({path: '/result', query: {key: key}})
     }
 
     // 获取搜索热词
@@ -164,12 +97,8 @@ export default {
     return {
       historyList,
       hotList,
-      articleList,
       clickSearch,
       onSearch,
-      timeAgo,
-      tagColor,
-      toDetail
     }
   }
 }

@@ -153,6 +153,18 @@ const routes = [
         }
     },
     {
+        path: '/result',
+        name: 'Result',
+        component: () => import('@/views/public/Result'),
+        meta: {
+            title: '搜索结果',
+            keepAlive: true,
+            transitionClass: 'gradually',//渐入
+            index: 1,
+            isAuth: false
+        }
+    },
+    {
         path: '/my-history',
         name: 'MyHistory',
         component: () => import('@/views/personal/MyHistory'),
