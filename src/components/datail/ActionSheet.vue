@@ -14,8 +14,8 @@
         </span>
       </div>
       <div class="font-setting">
-        <p>字体大小</p>
         <span class="slider">
+          <span class="font-title">字体大小</span>
           <span>小</span>
           <van-slider v-model="fontValue" :step="25" @change="changeSize">
           <template #button>
@@ -87,21 +87,18 @@ export default {
   }
 
   .font-setting {
-    p {
-      position: absolute;
-      font-size: 0.427rem;
-      bottom: 1.533rem;
-    }
 
     .slider {
       display: flex;
-      margin-left: 2.133rem;
       align-items: center;
 
       span:nth-child(1) {
+        font-size: 0.427rem;
+        width: 2.667rem;
+      }
+      span:nth-child(2) {
         font-size: 0.373rem;
       }
-
       span:nth-child(3) {
         font-size: 0.373rem;
       }
