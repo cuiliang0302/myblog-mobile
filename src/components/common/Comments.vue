@@ -144,6 +144,13 @@ export default {
         message: '当真要删除这条宝贵的记录吗？',
       }).then(() => {
         $bus.emit("delMessage", messageId);
+        // console.log(messageId)
+        // for (let i = 0; i < props.commentsList.length; i++) {
+        //   if (props.commentsList[i].id === messageId) {
+        //     console.log(i)
+        //     props.commentsList.splice(i, 1)
+        //   }
+        // }
       })
     }
     // 回复输入框默认状态

@@ -15,6 +15,10 @@ body {
   margin-left: 0px !important;
   margin-right: 0px !important;
 }
+// markdown字体设置样式适配
+.github-markdown-body{
+  font-size: unset!important;
+}
 
 // 多级评论回复样式
 .comment-list > .comments > ol > .reply {

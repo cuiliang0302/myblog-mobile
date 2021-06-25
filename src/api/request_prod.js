@@ -5,7 +5,7 @@ export function request(config) {
   const instance = axios.create({
     // baseURL: 'http://127.0.0.1:8000/v1/',
     baseURL: 'https://api.cuiliangblog.cn/v1/',
-    timeout: 10000
+    timeout: 20000
   })
   // 请求拦截器配置
   instance.interceptors.request.use(config => {

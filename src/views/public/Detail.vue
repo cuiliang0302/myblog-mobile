@@ -97,7 +97,7 @@ import NavBar from '@/components/datail/NavBar';
 import Tabbar from '@/components/datail/Tabbar';
 import Comments from '@/components/common/Comments'
 import {Divider, Image as VanImage, Loading, Skeleton, Toast, Field, Empty} from 'vant'
-import {getCurrentInstance, nextTick, onMounted, reactive, ref} from "vue";
+import {getCurrentInstance, nextTick, onMounted, reactive, ref, watch} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
 import timeFormat from "@/utils/timeFormat";
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
@@ -110,6 +110,8 @@ import dockerfile from 'highlight.js/lib/languages/dockerfile';
 import json from 'highlight.js/lib/languages/json';
 import yaml from 'highlight.js/lib/languages/yaml';
 import sql from 'highlight.js/lib/languages/sql';
+import fontSize from "@/utils/fontSize";
+import {onBeforeRouteLeave} from "vue-router";
 import {
   getCatalogue,
   getContext,
@@ -177,7 +179,7 @@ export default {
     // 调用公共组件模块
     let {DetailID, componentName, detail, timeDate, loading, toDetail, likeClick} = publicFn(router, sectionData)
     // markdown模块
-    let {titleList, editor, rollTo, getTitle} = markdown(titleList)
+    let {titleList, editor, rollTo, getTitle, setMDFont} = markdown(titleList)
     // 文章模块
     let {recommendList, articleData, guessLikeData} = article(detail)
     // 笔记模块
@@ -221,6 +223,7 @@ export default {
         await postSectionHistoryData(DetailID)
       }
       loading.value = false;
+      await setMDFont()
       await getTitle()
       window.scrollTo({top: 0})
     }
@@ -306,6 +309,7 @@ function publicFn(router) {
   }
   onMounted(() => {
     DetailID.value = router.currentRoute.value.params.id
+
   })
   return {
     DetailID, componentName, detail, timeDate, loading, toDetail, likeClick
@@ -314,6 +318,8 @@ function publicFn(router) {
 
 // markdown模块
 function markdown() {
+  // 引入字体设置模块
+  let {rootSize} = fontSize()
   // markdown对象
   let editor = ref(null)
   // 文章标题列表
@@ -349,8 +355,20 @@ function markdown() {
     }));
   }
 
+  // 设置markdown字体
+  async function setMDFont() {
+    await nextTick()
+    const html = document.querySelector('.main')
+    html.style.fontSize = rootSize.value + 'px'
+  }
+
+  // 调整字体大小
+  watch(rootSize, (newSize) => {
+    const html = document.querySelector('.main')
+    html.style.fontSize = newSize + 'px'
+  });
   return {
-    titleList, editor, rollTo, getTitle
+    titleList, editor, rollTo, getTitle, setMDFont
   }
 }
 
@@ -685,9 +703,9 @@ function history(DetailID, componentName) {
       CollectForm['article_id'] = DetailID
       putArticleHistory(CollectForm).then((response) => {
         console.log(response)
-        if(response.is_collect===true){
+        if (response.is_collect === true) {
           Toast.success('已添加收藏！');
-        }else {
+        } else {
           Toast.success('已取消收藏！');
         }
       }).catch(response => {
@@ -700,9 +718,9 @@ function history(DetailID, componentName) {
       CollectForm['section_id'] = DetailID
       putSectionHistory(CollectForm).then((response) => {
         console.log(response)
-        if(response.is_collect===true){
+        if (response.is_collect === true) {
           Toast.success('已添加收藏！');
-        }else {
+        } else {
           Toast.success('已取消收藏！');
         }
       }).catch(response => {
@@ -735,7 +753,7 @@ function history(DetailID, componentName) {
     .title {
       h1 {
         text-align: center;
-        font-size: 0.8rem;
+        font-size: 1.75em;
         margin: 0;
         padding: 0.4rem 0;
       }
@@ -744,6 +762,7 @@ function history(DetailID, componentName) {
         display: flex;
         justify-content: center;
         margin-bottom: 0.267rem;
+        font-size: 0.7em;
 
         .info-item {
           border-radius: 0.267rem;

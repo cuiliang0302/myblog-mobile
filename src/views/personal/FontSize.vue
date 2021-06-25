@@ -3,7 +3,7 @@
   <div>
     <NavBar :title="'字体设置'"></NavBar>
     <section>
-      <div class="preview">
+      <div class="preview" id="setFont" style="font-size: 37px">
         <h1>拖动下面的滑块，可实现预览字体大小的变化</h1>
         <p>你可以根据阅读习惯，拖动下面的滑块，设置字体大小。设置后会改变文章详情页、笔记详情页的字体大小，注销登录后恢复默认值。</p>
         <p>如果在使用过程中存在问题或意见，欢迎反馈。</p>
@@ -11,21 +11,21 @@
       <div class="slider">
         <div class="slider-scale">
         <span v-for="(item,index) in fontShow" :key="index"
-              :class="{'active': index===fontSize/25}">
+              :class="{'active': index===fontValue/25}">
           {{ item }}
         </span>
         </div>
-        <van-slider v-model="fontSize" :step="25" @change="changeSize"/>
+        <van-slider v-model="fontValue" :step="25" @change="changeSize"/>
       </div>
     </section>
   </div>
 </template>
 
 <script>
-import store from "@/store/index"
 import NavBar from "@/components/personal/NavBar";
 import {Slider, Toast} from 'vant';
-import {computed, ref} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
+import fontSize from "@/utils/fontSize";
 
 export default {
   components: {
@@ -34,45 +34,18 @@ export default {
   },
   name: "FontSize",
   setup() {
-    // 字体大小值
-    const fontSize = computed(() => store.state.font.fontSize)
-    // 字体显示种类
-    const fontShow = ['超小', '小号', '默认', '大号', '超大']
-    // 设置滑块字体大小
-    const changeSize = (fontSize) => {
-      let fontType = ''
-      switch (fontSize) {
-        case 0:
-          Toast('当前字体尺寸：超小号')
-          fontType = '超小'
-          break;
-        case 25:
-          Toast('当前字体尺寸：小号')
-          fontType = '小号'
-          break;
-        case 50:
-          Toast('当前字体尺寸：默认')
-          fontType = '默认'
-          break;
-        case 75:
-          Toast('当前字体尺寸：大号')
-          fontType = '大号'
-          break;
-        case 100:
-          Toast('当前字体尺寸：超大号')
-          fontType = '超大'
-          break;
-        default:
-          Toast('当前字体尺寸：默认')
-          fontType = '默认'
-      }
-      store.commit('setFontSize', fontSize)
-      store.commit('setFontType', fontType)
-    }
+    // 引入字体设置模块
+    let {fontShow, fontValue, changeSize, rootSize, fontType} = fontSize()
+    onMounted(() => {
+      const html = document.querySelector('#setFont')
+      html.style.fontSize = rootSize.value + 'px'
+    })
+    watch(rootSize, (newSize) => {
+      const html = document.querySelector('#setFont')
+      html.style.fontSize = newSize + 'px'
+    });
     return {
-      fontSize,
-      changeSize,
-      fontShow
+      fontShow, fontValue, changeSize, rootSize, fontType
     }
   }
 }
@@ -91,10 +64,12 @@ section {
 
   .preview {
     height: 80vh;
-
+    h1{
+      font-size: 1.5em;
+    }
     p {
-      font-size: 0.373rem;
-      line-height: 0.64rem;
+      font-size: 1em;
+      line-height: 1.5em;
     }
   }
 

@@ -4,6 +4,7 @@
       cancel-text="取消"
       close-on-click-action
       @cancel="onCancel"
+      close-on-popstate
   >
     <div class="content">
       <div class="dark">
@@ -16,7 +17,7 @@
         <p>字体大小</p>
         <span class="slider">
           <span>小</span>
-          <van-slider v-model="fontSize" :step="25" @change="changeSize">
+          <van-slider v-model="fontValue" :step="25" @change="changeSize">
           <template #button>
             <div class="custom-button">{{ fontType }}</div>
           </template>
@@ -32,7 +33,7 @@
 import {Toast, ActionSheet, Slider, Switch} from 'vant';
 import store from "@/store/index"
 import {ref, computed} from "vue";
-import {onBeforeRouteLeave} from "vue-router";
+import fontSize from "@/utils/fontSize";
 
 export default {
   components: {
@@ -61,52 +62,9 @@ export default {
         Toast('已切换为浅色模式')
       }
     }
-    // 字体大小滑块
-    const fontSize = computed(() => store.state.font.fontSize)
-    // 显示的字体尺寸
-    let fontType = computed(() => store.state.font.fontType)
-    // 设置滑块字体大小
-    const changeSize = (fontSize) => {
-      let fontType = ''
-      switch (fontSize) {
-        case 0:
-          Toast('当前字体尺寸：超小号')
-          fontType = '超小'
-          break;
-        case 25:
-          Toast('当前字体尺寸：小号')
-          fontType = '小号'
-          break;
-        case 50:
-          Toast('当前字体尺寸：默认')
-          fontType = '默认'
-          break;
-        case 75:
-          Toast('当前字体尺寸：大号')
-          fontType = '大号'
-          break;
-        case 100:
-          Toast('当前字体尺寸：超大号')
-          fontType = '超大'
-          break;
-        default:
-          Toast('当前字体尺寸：默认')
-          fontType = '默认'
-      }
-      store.commit('setFontSize', fontSize)
-      store.commit('setFontType', fontType)
-    }
-    // 退出前检查弹窗是否关闭
-    onBeforeRouteLeave((to, from, next) => {
-      if (show.value) {
-        console.log('字体设置离开检查')
-        show.value = false
-        next(false)
-      } else {
-        next(true)
-      }
-    })
-    return {show, showAction, onCancel, changePattern, isDark, fontSize, fontType, changeSize};
+    // 引入字体设置模块
+    let {fontValue, changeSize, fontType} = fontSize()
+    return {show, showAction, onCancel, changePattern, isDark, fontValue, changeSize, fontType};
   },
 }
 </script>

@@ -87,7 +87,7 @@ import {useRouter} from "vue-router";
 import router from "@/router";
 import user from "@/utils/user";
 import {getUserinfoId, putUserinfoId} from "@/api/account";
-
+import fontSize from "@/utils/fontSize";
 export default {
   components: {
     Tabbar,
@@ -167,6 +167,8 @@ function global() {
 }
 
 function setting(userId, userInfo, isLogin, refLoginPopup) {
+  // 引入字体设置模块
+  let {fontType} = fontSize()
   // 切换订阅
   const changeFlow = (value) => {
     if (isLogin.value) {
@@ -190,8 +192,6 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
       return false
     }
   }
-  // 字体大小
-  const fontType = computed(() => store.state.font.fontType)
   // 是否开启暗黑模式
   const dark = computed(() => store.state.dark)
   // 切换夜间模式
@@ -205,21 +205,22 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
   }
   // 注销
   const logout = () => {
-    Dialog.confirm({
-      title: '警告',
-      message: '真的要退出登录吗？',
-      confirmButtonText: '确认',
-      cancelButtonText: '再想想',
-    })
-        .then(() => {
-          window.sessionStorage.clear()
-          window.localStorage.clear()
-          Toast.success('成功退出，跳转至登录页')
-          router.push('/login_register')
-        })
-        .catch(() => {
-          Toast('算了吧')
-        });
+    if (isLogin.value) {
+      Dialog.confirm({
+        title: '注销',
+        message: '真的要退出登录吗？',
+        confirmButtonText: '确认',
+        cancelButtonText: '再想想',
+      }).then(() => {
+        window.sessionStorage.clear()
+        window.localStorage.clear()
+        Toast.success('成功退出，跳转至登录页')
+        router.push('/login_register')
+      })
+    } else {
+      Toast('未曾登录，何来退出？')
+      return false
+    }
   }
   return {fontType, dark, changeDark, logout, changeFlow}
 }
