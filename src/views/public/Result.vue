@@ -1,5 +1,5 @@
 <template>
-  <div class="search">
+  <div class="search" v-title="key+'-搜索结果'">
     <NavBar></NavBar>
     <van-list>
       <div class="list-item" v-for="(item,index) in articleList" :key="index" @click="toDetail(item.id)">
@@ -105,7 +105,8 @@ export default {
       articleList,
       timeAgo,
       tagColor,
-      toDetail
+      toDetail,
+      key
     }
   }
 }

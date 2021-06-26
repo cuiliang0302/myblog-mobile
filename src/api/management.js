@@ -24,7 +24,7 @@ export function getInfo() {
   return index.get('management/info/1/')
 }
 
-// 获取用户统计数据
+// 获取网站配置信息
 export function getSiteConfig() {
   return index.get('management/siteConfig/1/')
 }

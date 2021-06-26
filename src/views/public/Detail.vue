@@ -1,6 +1,6 @@
 <!--内容详情页-->
 <template>
-  <div class="detail" v-title="detail.title+'-崔亮的博客'">
+  <div class="detail" v-title="detail.title+'-'+sitename">
     <NavBar :componentName="componentName"></NavBar>
     <van-skeleton title round :row="10" :loading="loading">
       <div class="main">
@@ -111,7 +111,8 @@ import json from 'highlight.js/lib/languages/json';
 import yaml from 'highlight.js/lib/languages/yaml';
 import sql from 'highlight.js/lib/languages/sql';
 import fontSize from "@/utils/fontSize";
-import {onBeforeRouteLeave} from "vue-router";
+import {getSiteConfig} from "@/api/management";
+import store from "@/store";
 import {
   getCatalogue,
   getContext,
@@ -177,7 +178,16 @@ export default {
     const $bus = internalInstance.appContext.config.globalProperties.$bus;
     const router = useRouter();
     // 调用公共组件模块
-    let {DetailID, componentName, detail, timeDate, loading, toDetail, likeClick} = publicFn(router, sectionData)
+    let {
+      sitename,
+      DetailID,
+      componentName,
+      detail,
+      timeDate,
+      loading,
+      toDetail,
+      likeClick
+    } = publicFn(router, sectionData)
     // markdown模块
     let {titleList, editor, rollTo, getTitle, setMDFont} = markdown(titleList)
     // 文章模块
@@ -192,7 +202,7 @@ export default {
       sectionCommentData,
       clickSend,
       refLoginPopup
-    } = comment(DetailID, $bus, componentName)
+    } = comment(DetailID, $bus, componentName, router)
     // 浏览记录模块
     let {
       is_collect,
@@ -239,6 +249,7 @@ export default {
       await getDetail(to.params.id)
     });
     return {
+      sitename,
       componentName,
       detail,
       timeDate,
@@ -265,6 +276,8 @@ export default {
 
 // 通用模块
 function publicFn(router) {
+  // 站点名称
+  const sitename = ref()
   // 显示组件模块
   const componentName = ref('')
   // 文章笔记ID
@@ -307,12 +320,19 @@ function publicFn(router) {
       });
     }
   }
-  onMounted(() => {
-    DetailID.value = router.currentRoute.value.params.id
 
+  // 获取站点名称
+  async function siteConfigData() {
+    let siteConfig_data = await getSiteConfig()
+    sitename.value = siteConfig_data.name
+  }
+
+  onMounted(() => {
+    siteConfigData()
+    DetailID.value = router.currentRoute.value.params.id
   })
   return {
-    DetailID, componentName, detail, timeDate, loading, toDetail, likeClick
+    sitename, DetailID, componentName, detail, timeDate, loading, toDetail, likeClick
   }
 }
 
@@ -472,7 +492,7 @@ function note(detail, toDetail) {
 }
 
 // 评论回复模块
-function comment(DetailID, $bus, componentName) {
+function comment(DetailID, $bus, componentName, router) {
   // 引入用户信息模块
   let {userId, isLogin} = user();
   // 留言评论列表
@@ -535,6 +555,7 @@ function comment(DetailID, $bus, componentName) {
         Toast("毛都没有，发表个锤子")
       }
     } else {
+      store.commit('setNextPath', router.currentRoute.value.fullPath)
       refLoginPopup.value.showPopup()
     }
   }

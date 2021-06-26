@@ -6,18 +6,18 @@ import state from "@/store/state";
 import createVuexAlong from 'vuex-along'
 
 export default createStore({
-  state,
-  mutations,
-  action,
-  module,
-  plugins: [
-    createVuexAlong({
-      local: {
-        list: ["font", "dark", "userLocal","keepLogin"],
-      },
-      session: {
-        list: ["userSession"]
-      }
-    })
-  ]
+	state,
+	mutations,
+	action,
+	module,
+	plugins: [
+		createVuexAlong({
+			local: {
+				list: ["font", "dark", "userLocal", "keepLogin"],
+			},
+			session: {
+				list: ["userSession", "nextPath"],
+			}
+		})
+	]
 })

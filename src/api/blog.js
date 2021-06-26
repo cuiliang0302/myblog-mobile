@@ -52,6 +52,10 @@ export function getClassifyArticle(month) {
 export function getNote() {
     return index.get('blog/note/')
 }
+// 获取笔记名称详情
+export function getNoteDetail(id) {
+    return index.get('blog/note/' + id + '/')
+}
 
 // 获取笔记内容详情
 export function getSectionDetail(id) {

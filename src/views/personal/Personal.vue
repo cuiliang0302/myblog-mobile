@@ -16,7 +16,7 @@
               <van-loading type="spinner" size="20"/>
             </template>
           </van-image>
-          <van-image v-else :src="require('@/assets/images/logo.png')" width="1.867rem" height="1.867rem"
+          <van-image v-else :src="logo" width="1.867rem" height="1.867rem"
                      round
                      @click="$router.push('/login_register')"
           >
@@ -88,6 +88,8 @@ import router from "@/router";
 import user from "@/utils/user";
 import {getUserinfoId, putUserinfoId} from "@/api/account";
 import fontSize from "@/utils/fontSize";
+import {getSiteConfig} from "@/api/management";
+
 export default {
   components: {
     Tabbar,
@@ -103,7 +105,7 @@ export default {
   name: "Personal",
   setup() {
     // 引入公共方法
-    let {isLogin, userInfo, userId, toView, refLoginPopup} = global()
+    let {isLogin, userInfo, userId, toView, refLoginPopup, logo} = global()
 
     // 引入系统与设置模块
     let {changeFlow, fontType, dark, changeDark, logout} = setting(userId, userInfo, isLogin, refLoginPopup)
@@ -120,7 +122,8 @@ export default {
       fontType,
       changeDark,
       logout,
-      changeFlow
+      changeFlow,
+      logo
     }
   },
 };
@@ -139,8 +142,18 @@ function global() {
     if (isLogin.value) {
       router.push(value)
     } else {
+      console.log(value)
+      store.commit('setNextPath', value)
       refLoginPopup.value.showPopup()
     }
+  }
+  // 网站logo
+  const logo = ref()
+
+  // 获取网站logo
+  async function siteConfigData() {
+    let siteConfig_data = await getSiteConfig()
+    logo.value = siteConfig_data.logo
   }
 
   // 获取用户信息
@@ -153,11 +166,13 @@ function global() {
   }
 
   onMounted(() => {
+    siteConfigData()
     if (isLogin.value) {
       getUserinfo(userId.value)
     }
   })
   return {
+    logo,
     isLogin,
     userId,
     toView,

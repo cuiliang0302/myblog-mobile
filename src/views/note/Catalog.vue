@@ -1,6 +1,6 @@
 <!--笔记目录-->
 <template>
-  <div>
+  <div v-title="title+'-笔记目录'">
     <NavBar></NavBar>
     <van-tabs v-model:active="activeTab" color="#409EFF" animated swipeable>
       <van-tab title="目录">
@@ -35,10 +35,9 @@
 <script>
 import NavBar from "@/components/common/NavBar";
 import Tabbar from "@/components/common/Tabbar";
-import IsNull from "@/components/common/IsNull";
 import {Collapse, CollapseItem, Cell, CellGroup, Tab, Tabs, Loading, Empty} from 'vant';
-import {onMounted, reactive, ref} from "vue";
-import {getCatalogue} from "@/api/blog";
+import {onMounted, ref} from "vue";
+import {getCatalogue, getNoteDetail} from "@/api/blog";
 import {useRouter} from "vue-router";
 import {getSectionHistory} from "@/api/record";
 import user from "@/utils/user";
@@ -47,7 +46,6 @@ export default {
   components: {
     NavBar,
     Tabbar,
-    IsNull,
     [Collapse.name]: Collapse,
     [CollapseItem.name]: CollapseItem,
     [Cell.name]: Cell,
@@ -62,6 +60,8 @@ export default {
     // 引入用户信息模块
     let {userId, isLogin} = user();
     const router = useRouter();
+    // 笔记名称
+    const title = ref()
     // 当前tabbar
     const active = 2
     // 加载动画
@@ -102,19 +102,26 @@ export default {
       }
     }
 
+    // 获取笔记名称
+    async function titleData(catalogueID) {
+      let note_data = await getNoteDetail(catalogueID)
+      title.value = note_data.name
+    }
+
     // 获取笔记目录数据
-    async function catalogueData() {
-      let catalogueID = router.currentRoute.value.params.id
+    async function catalogueData(catalogueID) {
       catalogList.value = await getCatalogue(catalogueID)
       console.log(catalogList.value)
     }
 
     onMounted(async () => {
-      await catalogueData()
+      let catalogueID = router.currentRoute.value.params.id
+      await titleData(catalogueID)
+      await catalogueData(catalogueID)
       await sectionCollectData()
       load.value = false
     })
-    return {active, catalogList, activeNames, load, activeTab, collectList, toDetail};
+    return {title, active, catalogList, activeNames, load, activeTab, collectList, toDetail};
   }
 }
 </script>

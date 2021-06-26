@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-title="title">
     <NavBar></NavBar>
     <Swipe :carouselList="carouselList"></Swipe>
     <TabList :tabList="tabList" :listState="listState" @click="tabClick" @onLoad="onLoad"
@@ -13,9 +13,9 @@ import NavBar from "@/components/common/NavBar";
 import Swipe from "@/components/home/Swipe";
 import TabList from "@/components/common/TabList";
 import Tabbar from '@/components/common/Tabbar'
-import  {getCarousel} from "@/api/management";
+import {getCarousel, getSiteConfig} from "@/api/management";
 import {getArticle} from '@/api/blog'
-import {onDeactivated, onMounted, reactive, ref, watch} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {Toast} from "vant";
 
 export default {
@@ -27,6 +27,8 @@ export default {
     Tabbar,
   },
   setup() {
+    // 首页标题
+    const title = ref()
     // 加载动画
     const load = ref(true)
     // 轮播图数据
@@ -119,9 +121,16 @@ export default {
       listState.count = article_data.count
     }
 
+    // 网站标题
+    async function siteConfigData() {
+      let siteConfig_data = await getSiteConfig()
+      title.value = siteConfig_data.title
+    }
+
     onMounted(() => {
       carouselData()
       articleData()
+      siteConfigData()
     })
     return {
       tabList,
@@ -130,7 +139,8 @@ export default {
       tabClick,
       onLoad,
       onRefresh,
-      load
+      load,
+      title
     }
   }
 }

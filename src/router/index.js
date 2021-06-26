@@ -13,7 +13,7 @@ const routes = [
         name: 'Home',
         component: () => import('@/views/home/Home'),
         meta: {
-            title: '崔亮的博客',
+            title: 'blog',
             keepAlive: true,
             transitionClass: 'gradually',//渐入
             index: 1,

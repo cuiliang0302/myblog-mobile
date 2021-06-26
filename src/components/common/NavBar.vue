@@ -1,7 +1,7 @@
 <template>
   <van-nav-bar fixed placeholder>
     <template #left="props">
-      <img src="@/assets/images/logo.png" alt="">
+      <img :src="logo" alt="">
     </template>
     <template #title="props">
       <SearchInput></SearchInput>
@@ -16,9 +16,10 @@
 
 <script>
 import {NavBar, Icon, Search} from 'vant';
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import ActionSheet from "@/components/common/ActionSheet";
 import SearchInput from "@/components/common/SearchInput"
+import {getSiteConfig} from "@/api/management";
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -35,11 +36,22 @@ export default {
     const fnShowAction = () => {
       showAction.value.showAction();
     };
+    // 网站logo
+    const logo = ref()
+    // 获取网站logo
+    async function siteConfigData() {
+      let siteConfig_data = await getSiteConfig()
+      logo.value = siteConfig_data.logo
+    }
+    onMounted(()=>{
+      siteConfigData()
+    })
     return {
       key,
       active,
       showAction,
-      fnShowAction
+      fnShowAction,
+      logo
     }
   }
 }
