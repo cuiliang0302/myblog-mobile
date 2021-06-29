@@ -1,6 +1,6 @@
 const path = require('path');
 module.exports = {
-  publicPath: '/',
+  publicPath: './',
   css: {
     loaderOptions: {
       less: {
