@@ -135,14 +135,14 @@ export default {
     }
   },
   name: "Tabbar",
-  emits: ['rollTo', 'dirTab', 'toNoteDetail', 'likeClick', 'collectClick'],
+  emits: ['rollTo', 'dirTab', 'toNoteDetail', 'likeClick', 'collectClick', 'onShare'],
   setup(props, {emit}) {
     // 调用图标切换模块
     let {directory, comment, like, collection, share} = fnIcon()
     // 调用大纲模块
     let {directoryClick, showDir, activeDir, rollTo, tabChange, toDetail} = fnDirectory(props, {emit})
     // 调用分享模块
-    let {options, onSelect, showShare} = fnShare()
+    let {options, onSelect, showShare} = fnShare(props, {emit})
     // 调用点赞模块
     let {isLike, likeClick} = fnLike(props, {emit})
     // 调用收藏模块
@@ -257,7 +257,7 @@ function fnDirectory(props, {emit}) {
 }
 
 //分享功能模块
-function fnShare() {
+function fnShare(props, {emit}) {
   const showShare = ref(false);
   const options = [
     [
@@ -278,6 +278,7 @@ function fnShare() {
   const onSelect = (option) => {
     Toast(option.name + '分享功能正在开发中');
     showShare.value = false;
+    emit('onShare', option.name)
   };
 
   return {

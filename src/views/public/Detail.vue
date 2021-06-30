@@ -87,7 +87,7 @@
     <div class="bottom-margin"></div>
     <Tabbar :componentName="componentName" :titleList="titleList" :catalogList="catalogList" :is_collect="is_collect"
             @collectClick="collectClick" @rollTo="rollTo"
-            @dirTab="dirTab" @toNoteDetail="toNoteDetail" @likeClick="likeClick"></Tabbar>
+            @dirTab="dirTab" @toNoteDetail="toNoteDetail" @likeClick="likeClick" @onShare="onShare"></Tabbar>
     <LoginPopup ref="refLoginPopup"></LoginPopup>
   </div>
 </template>
@@ -120,7 +120,8 @@ import {
   getArticleDetail,
   getGuessLike,
   putArticleDetail,
-  putSectionDetail
+  putSectionDetail,
+  getQRcode
 } from "@/api/blog";
 import {getImgProxy} from "@/api/public";
 import {
@@ -143,6 +144,7 @@ import {
 } from "@/api/record";
 import user from "@/utils/user";
 import LoginPopup from "@/components/common/LoginPopup";
+import useClipboard from 'vue-clipboard3'
 
 VMdPreview.use(githubTheme, {
   codeHighlightExtensionMap: {
@@ -177,6 +179,7 @@ export default {
     const internalInstance = getCurrentInstance();  //当前组件实例
     const $bus = internalInstance.appContext.config.globalProperties.$bus;
     const router = useRouter();
+    const route = useRouter();
     // 调用公共组件模块
     let {
       sitename,
@@ -186,8 +189,9 @@ export default {
       timeDate,
       loading,
       toDetail,
-      likeClick
-    } = publicFn(router, sectionData)
+      likeClick,
+      onShare
+    } = publicFn(route, router, sectionData)
     // markdown模块
     let {titleList, editor, rollTo, getTitle, setMDFont} = markdown(titleList)
     // 文章模块
@@ -269,13 +273,15 @@ export default {
       refLoginPopup,
       likeClick,
       is_collect,
-      collectClick
+      collectClick,
+      onShare
     }
   }
 }
 
 // 通用模块
-function publicFn(router) {
+function publicFn(route, router) {
+  const {toClipboard} = useClipboard()
   // 站点名称
   const sitename = ref()
   // 显示组件模块
@@ -321,6 +327,38 @@ function publicFn(router) {
     }
   }
 
+  // 分享文章或笔记
+  const onShare = async (name) => {
+    const URL = window.location.href
+    console.log(URL)
+    console.log("爹收到了", name)
+    if (name === '复制链接') {
+      try {
+        await toClipboard(URL)
+        Toast.success('链接已复制至剪切板')
+      } catch (e) {
+        Toast.fail('剪切板调用异常！')
+        console.error(e)
+      }
+    }
+    if (name === '二维码') {
+      getQRcode(URL).then((response) => {
+        console.log(response)
+        let blob = new Blob([response], {type: 'application/octet-stream'})
+        let url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = 'QRcode.png'
+        link.click()
+        Toast.success('二维码已下载至本地')
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail('获取二维码失败');
+      });
+    }
+  }
+
   // 获取站点名称
   async function siteConfigData() {
     let siteConfig_data = await getSiteConfig()
@@ -332,7 +370,7 @@ function publicFn(router) {
     DetailID.value = router.currentRoute.value.params.id
   })
   return {
-    sitename, DetailID, componentName, detail, timeDate, loading, toDetail, likeClick
+    sitename, DetailID, componentName, detail, timeDate, loading, toDetail, likeClick, onShare
   }
 }
 
