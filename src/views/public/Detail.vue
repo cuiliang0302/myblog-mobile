@@ -350,7 +350,7 @@ function publicFn(route, router) {
         link.href = url
         link.download = 'QRcode.png'
         link.click()
-        Toast.success('二维码已下载至本地')
+        Toast.success('二维码已开始下载')
       }).catch(response => {
         //发生错误时执行的代码
         console.log(response)
