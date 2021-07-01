@@ -82,15 +82,20 @@
       </van-tabs>
     </div>
   </van-popup>
+  <van-popup v-model:show="QRcode_show">
+    <van-image width="300" height="300" :src="QRcode_url"/>
+  </van-popup>
   <LoginPopup ref="refLoginPopup"></LoginPopup>
 </template>
 
 <script>
-import {Tabbar, TabbarItem, ShareSheet, Toast, Popup, Tab, Tabs, Empty, Loading} from 'vant';
+import {Tabbar, TabbarItem, ShareSheet, Toast, Popup, Tab, Tabs, Empty, Loading, Image as VanImage} from 'vant';
 import {ref} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
 import user from "@/utils/user";
 import LoginPopup from "@/components/common/LoginPopup";
+import {getQRcode} from "@/api/blog";
+import useClipboard from "vue-clipboard3";
 
 export default {
   components: {
@@ -102,6 +107,7 @@ export default {
     [Tabs.name]: Tabs,
     [Empty.name]: Empty,
     [Loading.name]: Loading,
+    [VanImage.name]: VanImage,
     LoginPopup
   },
   props: {
@@ -142,7 +148,7 @@ export default {
     // 调用大纲模块
     let {directoryClick, showDir, activeDir, rollTo, tabChange, toDetail} = fnDirectory(props, {emit})
     // 调用分享模块
-    let {options, onSelect, showShare} = fnShare(props, {emit})
+    let {options, onSelect, showShare, QRcode_show, QRcode_url} = fnShare(props, {emit})
     // 调用点赞模块
     let {isLike, likeClick} = fnLike(props, {emit})
     // 调用收藏模块
@@ -171,7 +177,9 @@ export default {
       rollTo,
       tabChange,
       toDetail,
-      refLoginPopup
+      refLoginPopup,
+      QRcode_show,
+      QRcode_url
     };
   },
 }
@@ -258,7 +266,10 @@ function fnDirectory(props, {emit}) {
 
 //分享功能模块
 function fnShare(props, {emit}) {
+  const {toClipboard} = useClipboard()
   const showShare = ref(false);
+  const QRcode_show = ref(false)
+  const QRcode_url = ref()
   const options = [
     [
       {name: '微信', icon: 'wechat'},
@@ -275,16 +286,39 @@ function fnShare(props, {emit}) {
       {name: '小程序码', icon: 'weapp-qrcode'},
     ],
   ];
-  const onSelect = (option) => {
-    Toast(option.name + '分享功能正在开发中');
+  const onSelect = async (option) => {
+    const URL = window.location.href
+    // Toast(option.name + '分享功能正在开发中');
     showShare.value = false;
-    emit('onShare', option.name)
+    // emit('onShare', option.name)
+    if (option.name === '复制链接') {
+      try {
+        await toClipboard(URL)
+        Toast.success('链接已复制至剪切板')
+      } catch (e) {
+        Toast.fail('剪切板调用异常！')
+        console.error(e)
+      }
+    }
+    if (option.name === '二维码') {
+      QRcode_show.value = true
+      getQRcode(URL).then((response) => {
+        console.log(response)
+        QRcode_url.value = response.url
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail('获取二维码失败');
+      });
+    }
   };
 
   return {
     options,
     onSelect,
     showShare,
+    QRcode_show,
+    QRcode_url
   };
 }
 

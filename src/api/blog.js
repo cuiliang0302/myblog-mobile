@@ -81,5 +81,5 @@ export function getContext(id) {
 
 // 获取文章笔记二维码
 export function getQRcode(url) {
-	return index.getFile('blog/QRcode/?url=' + url)
+	return index.get('blog/QRcode/?url=' + url)
 }
