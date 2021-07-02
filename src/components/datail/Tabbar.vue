@@ -144,6 +144,7 @@ import user from "@/utils/user";
 import LoginPopup from "@/components/common/LoginPopup";
 import {getQRcode} from "@/api/blog";
 import useClipboard from "vue-clipboard3";
+import store from "@/store";
 
 export default {
   components: {
@@ -194,6 +195,7 @@ export default {
   name: "Tabbar",
   emits: ['rollTo', 'dirTab', 'toNoteDetail', 'likeClick', 'collectClick', 'onShare'],
   setup(props, {emit}) {
+
     // 调用图标切换模块
     let {directory, comment, like, collection, share} = fnIcon()
     // 调用大纲模块
@@ -400,7 +402,7 @@ function fnShare(props, {emit}) {
   onMounted(() => {
     const zone = document.createElement('script');
     zone.type = 'text/javascript';
-    zone.src = 'http://qzonestyle.gtimg.cn/qzone/app/qzlike/qzopensl.js#jsdate=20111201';
+    zone.src = 'https://qzonestyle.gtimg.cn/qzone/app/qzlike/qzopensl.js#jsdate=20111201';
     document.body.appendChild(zone);
   })
   return {
@@ -435,6 +437,7 @@ function fnLike(props, {emit}) {
 
 // 收藏功能模块
 function fnCollection(props, {emit}) {
+  const router = useRouter()
   // 提示登录组件对象
   const refLoginPopup = ref()
   let {userId, isLogin} = user();
@@ -444,6 +447,7 @@ function fnCollection(props, {emit}) {
       console.log("登录了")
       emit('collectClick')
     } else {
+      store.commit('setNextPath', router.currentRoute.value.fullPath)
       refLoginPopup.value.showPopup()
     }
   };

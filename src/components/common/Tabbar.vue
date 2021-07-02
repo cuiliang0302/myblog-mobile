@@ -1,6 +1,6 @@
 <template>
   <van-tabbar v-model="activeBar" placeholder safe-area-inset-bottom>
-    <van-tabbar-item to="/home">
+    <van-tabbar-item to="/">
       <span>首页</span>
       <template #icon="props">
         <img :src="props.active ? home.active : home.inactive"/>
