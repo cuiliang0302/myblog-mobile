@@ -83,14 +83,62 @@
     </div>
   </van-popup>
   <van-popup v-model:show="QRcode_show">
-    <van-image width="300" height="300" :src="QRcode_url"/>
+    <van-image width="9.333rem" height="9.333rem" :src="QRcode_url">
+      <template v-slot:loading>
+        <van-loading type="spinner" size="20"/>
+      </template>
+    </van-image>
   </van-popup>
   <LoginPopup ref="refLoginPopup"></LoginPopup>
+  <van-config-provider :theme-vars="themeVars">
+    <van-overlay :show="overlay_show">
+      <div class="wrapper" @click.stop @click="overlay_show=false">
+        <div v-if="isWeChat()" class="wechat">
+          <span>
+            <img :src="require('@/assets/icon/share-point.png')" alt="">
+          </span>
+          <span>
+            点击右上角"
+          <van-icon name="ellipsis"/>
+          "
+          <br>分享给朋友吧！
+          </span>
+        </div>
+        <div v-else class="browser">
+            <span>
+              当前浏览器暂不支持直接分享
+              <br>请打开浏览器的菜单
+              <br>点击"
+              <van-icon name="wap-nav"/>
+              "或"
+              <van-icon name="share"/>
+              "
+              分享
+            </span>
+        </div>
+
+      </div>
+    </van-overlay>
+  </van-config-provider>
 </template>
 
 <script>
-import {Tabbar, TabbarItem, ShareSheet, Toast, Popup, Tab, Tabs, Empty, Loading, Image as VanImage} from 'vant';
-import {ref} from "vue";
+import {
+  Tabbar,
+  TabbarItem,
+  ShareSheet,
+  Toast,
+  Popup,
+  Tab,
+  Tabs,
+  Empty,
+  Loading,
+  Image as VanImage,
+  Overlay,
+  Icon,
+  ConfigProvider
+} from 'vant';
+import {onMounted, ref} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
 import user from "@/utils/user";
 import LoginPopup from "@/components/common/LoginPopup";
@@ -108,6 +156,9 @@ export default {
     [Empty.name]: Empty,
     [Loading.name]: Loading,
     [VanImage.name]: VanImage,
+    [Overlay.name]: Overlay,
+    [Icon.name]: Icon,
+    [ConfigProvider.name]: ConfigProvider,
     LoginPopup
   },
   props: {
@@ -148,7 +199,16 @@ export default {
     // 调用大纲模块
     let {directoryClick, showDir, activeDir, rollTo, tabChange, toDetail} = fnDirectory(props, {emit})
     // 调用分享模块
-    let {options, onSelect, showShare, QRcode_show, QRcode_url} = fnShare(props, {emit})
+    let {
+      options,
+      onSelect,
+      showShare,
+      QRcode_show,
+      QRcode_url,
+      isWeChat,
+      overlay_show,
+      themeVars
+    } = fnShare(props, {emit})
     // 调用点赞模块
     let {isLike, likeClick} = fnLike(props, {emit})
     // 调用收藏模块
@@ -179,7 +239,10 @@ export default {
       toDetail,
       refLoginPopup,
       QRcode_show,
-      QRcode_url
+      QRcode_url,
+      isWeChat,
+      overlay_show,
+      themeVars
     };
   },
 }
@@ -269,28 +332,33 @@ function fnShare(props, {emit}) {
   const {toClipboard} = useClipboard()
   const showShare = ref(false);
   const QRcode_show = ref(false)
+  const overlay_show = ref(false);
   const QRcode_url = ref()
   const options = [
     [
-      {name: '微信', icon: 'wechat'},
-      {name: '朋友圈', icon: 'wechat-moments'},
+      {name: 'QQ空间', icon: require('@/assets/icon/qq-zone.png')},
       {name: '微博', icon: 'weibo'},
       {name: 'QQ', icon: 'qq'},
-      {name: 'QQ空间', icon: require('@/assets/icon/qq-zone.png')},
+      {name: '微信', icon: 'wechat'},
+      {name: '朋友圈', icon: 'wechat-moments'},
     ],
     [
       {name: '复制链接', icon: 'link'},
-      {name: '系统分享', icon: require('@/assets/icon/share-system.png')},
-      {name: '二维码', icon: 'qrcode'},
-      {name: '分享海报', icon: 'poster'},
-      {name: '小程序码', icon: 'weapp-qrcode'},
+      {name: '二维码', icon: 'qrcode'}
     ],
   ];
+  const isWeChat = () => {
+    let ua = window.navigator.userAgent.toLowerCase();
+    //通过正则表达式匹配ua中是否含有MicroMessenger字符串
+    if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+      return true;
+    } else {
+      return false;
+    }
+  }
   const onSelect = async (option) => {
     const URL = window.location.href
-    // Toast(option.name + '分享功能正在开发中');
     showShare.value = false;
-    // emit('onShare', option.name)
     if (option.name === '复制链接') {
       try {
         await toClipboard(URL)
@@ -311,14 +379,39 @@ function fnShare(props, {emit}) {
         Toast.fail('获取二维码失败');
       });
     }
-  };
-
+    if (option.name === '微博') {
+      let title = document.title; // 分享出去得文章得标题
+      window.open('http://service.weibo.com/share/share.php?appkey=&title=' + title +
+          '&url=' + encodeURIComponent(document.location) + '&searchPic=false&style=simple"');
+    }
+    if (option.name === 'QQ' || option.name === '微信' || option.name === '朋友圈') {
+      overlay_show.value = true
+    }
+    if (option.name === 'QQ空间') {
+      let title = document.title; // 分享出去得文章得标题
+      let logo = 'https://oss.cuiliangblog.cn/images/logo.png'; // 分享出去logo
+      window.open('https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' +
+          encodeURIComponent(document.location) + '?sharesource=qzone&title=' + title + '&pics=' + logo + '&summary=' + '');
+    }
+  }
+  const themeVars = {
+    overlayZIndex: '2'
+  }
+  onMounted(() => {
+    const zone = document.createElement('script');
+    zone.type = 'text/javascript';
+    zone.src = 'http://qzonestyle.gtimg.cn/qzone/app/qzlike/qzopensl.js#jsdate=20111201';
+    document.body.appendChild(zone);
+  })
   return {
     options,
     onSelect,
     showShare,
     QRcode_show,
-    QRcode_url
+    QRcode_url,
+    isWeChat,
+    overlay_show,
+    themeVars
   };
 }
 
@@ -400,6 +493,32 @@ function fnComment() {
 
     p {
       text-indent: 1em;
+    }
+  }
+}
+
+.wrapper {
+  color: white;
+  font-size: 20px;
+  text-align: center;
+  line-height: 40px;
+  height: 100%;
+
+  .browser {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .wechat {
+    margin-right: 30px;
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+
+    img {
+      width: 70px;
     }
   }
 }

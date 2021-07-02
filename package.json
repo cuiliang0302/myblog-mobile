@@ -18,7 +18,7 @@
     "lodash": "^4.17.21",
     "mitt": "^2.1.0",
     "qiniu-js": "^3.2.0",
-    "vant": "^3.0.17",
+    "vant": "^3.1.1",
     "vue": "^3.1.1",
     "vue-clipboard3": "^1.0.0",
     "vue-mocropper": "^2.0.0",
