@@ -68,7 +68,7 @@ import {reactive, ref} from "vue";
 import {Form, Button, Field, Icon, Toast} from 'vant';
 import {useRouter} from "vue-router";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn";
-import {getRegister, postCode, postRegister} from '@/api/account'
+import {getRegister, postCode, postLogin, postRegister} from '@/api/account'
 import store from "@/store";
 
 export default {
@@ -88,6 +88,11 @@ export default {
       username: '',
       contact: '',
       code: '',
+      password: '',
+    });
+    // 注册完成自动登录表单
+    const loginForm = reactive({
+      username: '',
       password: '',
     });
     // 密码正则校验
@@ -152,11 +157,19 @@ export default {
       console.log('submit', values);
       postRegister(registerForm).then((response) => {
         console.log(response)
-        Toast.success('注册成功，即将跳转至登录页');
-        setTimeout(function () {
-          router.push({path: '/login_register', query: {component: 'Login'}})
-          router.go(0);
-        }, 1500);
+        Toast.success('注册成功');
+        loginForm.username = registerForm.username
+        loginForm.password = registerForm.password
+        postLogin(loginForm).then((response) => {
+          console.log(response)
+          store.commit('setKeepLogin', false)
+          store.commit('setUserSession', response)
+          router.push(store.state.nextPath)
+        }).catch(response => {
+          //发生错误时执行的代码
+          console.log(response)
+          Toast.fail('登录异常！');
+        });
       }).catch(response => {
         //发生错误时执行的代码
         console.log(response)

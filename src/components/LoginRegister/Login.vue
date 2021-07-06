@@ -59,9 +59,9 @@
         <img src="https://img.yzcdn.cn/vant/share-sheet-qq.png">
         <p>QQ</p>
       </span>
-        <span @click="vxLogin">
-        <img src="https://img.yzcdn.cn/vant/share-sheet-wechat.png">
-        <p>微信</p>
+        <span @click="githubLogin">
+        <img :src="require('@/assets/icon/github.png')">
+        <p>GitHub</p>
       </span>
         <span @click="wbLogin">
         <img src="https://img.yzcdn.cn/vant/share-sheet-weibo.png">
@@ -142,8 +142,13 @@ export default {
     const qqLogin = () => {
       Toast('QQ登录正在开发中！')
     }
-    const vxLogin = () => {
-      Toast('微信登录正在开发中！')
+    const githubLogin = () => {
+      // Toast('GitHub登录正在开发中！')
+      Toast.loading({
+        message: '登录跳转中...',
+        forbidClick: true,
+      });
+      window.location.href = 'http://127.0.0.1:8000/auth/login/github/'
     }
     const wbLogin = () => {
       Toast('微博登录正在开发中！')
@@ -156,7 +161,7 @@ export default {
       pass,
       btnType,
       qqLogin,
-      vxLogin,
+      githubLogin,
       wbLogin
     };
   },
