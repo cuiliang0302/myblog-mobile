@@ -9,11 +9,11 @@
   >
     <div class="content">
       <div class="menu">
-        <span @click="toTag"><img src="@/assets/icon/tag.png" alt=""><p>标签</p></span>
-        <span @click="toClassify"><img src="@/assets/icon/timer-shaft.png" alt=""><p>归档</p></span>
-        <span @click="toMessage"><img src="@/assets/icon/message.png" alt=""><p>留言板</p></span>
-        <span @click="toAbout"><img src="@/assets/icon/about.png" alt=""><p>关于</p></span>
-        <span @click="toLink"><img src="@/assets/icon/link.png" alt=""><p>友链</p></span>
+        <span @click="toTag"><img src="@/assets/images/tag.png" alt=""><p>标签</p></span>
+        <span @click="toClassify"><img src="@/assets/images/timer-shaft.png" alt=""><p>归档</p></span>
+        <span @click="toMessage"><img src="@/assets/images/message.png" alt=""><p>留言板</p></span>
+        <span @click="toAbout"><img src="@/assets/images/about.png" alt=""><p>关于</p></span>
+        <span @click="toLink"><img src="@/assets/images/link.png" alt=""><p>友链</p></span>
       </div>
     </div>
   </van-action-sheet>

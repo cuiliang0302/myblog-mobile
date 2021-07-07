@@ -4,25 +4,35 @@
     <NavBar :title="'联系博主'"></NavBar>
     <van-grid :column-num="2" :gutter="20" clickable>
       <van-grid-item @click="copy('QQ',contact.qq)">
-        <van-image :src="require('@/assets/icon/qq.png')" width="0.8rem"/>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#img-qq"></use>
+        </svg>
         <p>QQ</p>
       </van-grid-item>
       <van-grid-item @click="copy('微信',contact.wechat)">
-        <van-image :src="require('@/assets/icon/wechat.png')" width="0.8rem"/>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#img-weixin"></use>
+        </svg>
         <p>微信</p>
       </van-grid-item>
       <van-grid-item @click="toURL(contact.github)">
-        <van-image :src="require('@/assets/icon/github.png')" width="0.8rem"/>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#img-github"></use>
+        </svg>
         <p>GitHub</p>
       </van-grid-item>
       <van-grid-item @click="toURL(contact.gitee)">
-        <van-image :src="require('@/assets/icon/gitee.png')" width="0.8rem"/>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#img-gitee"></use>
+        </svg>
         <p>码云</p>
       </van-grid-item>
     </van-grid>
     <van-grid :column-num="1" :gutter="20" clickable>
       <van-grid-item @click="copy('Email',contact.email)">
-        <van-image :src="require('@/assets/icon/Email-marketing.png')" width="0.8rem"/>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#img-email"></use>
+        </svg>
         <p>E-Mail</p>
       </van-grid-item>
     </van-grid>
@@ -48,7 +58,7 @@ export default {
   setup() {
     const {toClipboard} = useClipboard()
     const contact = {
-      qq:'',
+      qq: '',
       wechat: '',
       github: '',
       gitee: '',
@@ -72,6 +82,7 @@ export default {
         forbidClick: true,
       });
     }
+
     // 获取博主信息数据
     async function infoData() {
       let info_data = await getInfo()
@@ -102,5 +113,9 @@ body {
 
 .van-grid {
   margin-top: 0.533rem;
+  .icon{
+    width: 1.067rem;
+    height: 1.067rem;
+  }
 }
 </style>

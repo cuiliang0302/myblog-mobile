@@ -11,7 +11,9 @@
             :rules="[{ validator: checkUsername, message: '请填写正确的用户名' }]"
         >
           <template #label>
-            <img :src="require('@/assets/icon/user.png')" alt="">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-username"></use>
+            </svg>
           </template>
         </van-field>
         <van-field
@@ -23,7 +25,9 @@
             :rules="[{ validator: checkContact, message: '请填写正确的邮箱号/手机号' }]"
         >
           <template #label>
-            <img :src="require('@/assets/icon/email.png')" alt="">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-email"></use>
+            </svg>
           </template>
         </van-field>
         <van-field
@@ -35,7 +39,9 @@
             :rules="[{ required: true, message: '请填写验证码' }]"
         >
           <template #label>
-            <img :src="require('@/assets/icon/code.png')" alt="">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-code"></use>
+            </svg>
           </template>
           <template #right-icon>
             <VerifyCodeBtn @pass="pass" :btnDisabled="btnDisabled"></VerifyCodeBtn>
@@ -51,7 +57,9 @@
             :rules="[{ pattern, message: '请填写密码' }]"
         >
           <template #label>
-            <img :src="require('@/assets/icon/password.png')" alt="">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-password"></use>
+            </svg>
           </template>
         </van-field>
         <div class="submit">
@@ -208,15 +216,6 @@ export default {
       button {
         margin-top: 1.067rem;
         font-size: 0.533rem;
-      }
-    }
-
-    .van-field__label {
-      img {
-        width: 0.533rem;
-        height: 0.533rem;
-        opacity: 0.6;
-        vertical-align: -0.133rem
       }
     }
   }

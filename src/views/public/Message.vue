@@ -11,9 +11,14 @@
           placeholder="既然来了，留下点东西再走吧……"
           show-word-limit
           clearable
-          :right-icon="require('@/assets/icon/send.png')"
           @click-right-icon="clickSend"
-      />
+      >
+        <template #right-icon>
+          <svg class="icon click-send" aria-hidden="true">
+            <use xlink:href="#icon-send"></use>
+          </svg>
+        </template>
+      </van-field>
       <div class="comment-list">
         <Comments :commentsList="messageList"></Comments>
       </div>
@@ -157,5 +162,14 @@ export default {
 .comment-list {
   padding: 0.267rem;
   background-color: white;
+}
+
+.click-send {
+  color: $color-primary;
+  width: 0.933rem;
+  height: 0.933rem;
+  position: absolute;
+  right: 0;
+  top: 0.267rem;
 }
 </style>

@@ -11,7 +11,9 @@
             :rules="[{ required: true, message: '请填写用户名/邮箱号/手机号' }]"
         >
           <template #label>
-            <img :src="require('@/assets/icon/user.png')" alt="">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-username"></use>
+            </svg>
           </template>
         </van-field>
         <van-field
@@ -24,14 +26,18 @@
             :rules="[{ required: true, message: '请填写密码' }]"
         >
           <template #label>
-            <img :src="require('@/assets/icon/password.png')" alt="">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-password"></use>
+            </svg>
           </template>
         </van-field>
         <van-field
             label-width="20"
         >
           <template #label>
-            <img :src="require('@/assets/icon/code.png')" alt="">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-code"></use>
+            </svg>
           </template>
           <template #input>
             <VerifyImgBtn :isPassing="isPassing" :btnType="btnType" @pass="pass" class="verify-btn"></VerifyImgBtn>
@@ -56,15 +62,21 @@
       <van-divider>第三方账号登录</van-divider>
       <div class="other-logo">
         <span @click="qqLogin">
-        <img src="https://img.yzcdn.cn/vant/share-sheet-qq.png">
+        <svg class="icon qq-logo" aria-hidden="true">
+            <use xlink:href="#icon-qq"></use>
+          </svg>
         <p>QQ</p>
       </span>
         <span @click="githubLogin">
-        <img :src="require('@/assets/icon/github.png')">
+          <svg class="icon github-logo" aria-hidden="true">
+            <use xlink:href="#icon-github"></use>
+          </svg>
         <p>GitHub</p>
       </span>
         <span @click="wbLogin">
-        <img src="https://img.yzcdn.cn/vant/share-sheet-weibo.png">
+        <svg class="icon weibo-logo" aria-hidden="true">
+            <use xlink:href="#icon-weibo"></use>
+          </svg>
         <p>微博</p>
       </span>
       </div>
@@ -210,14 +222,6 @@ export default {
     }
 
 
-    .van-field__label {
-      img {
-        width: 0.533rem;
-        height: 0.533rem;
-        opacity: 0.6;
-        vertical-align: -0.133rem
-      }
-    }
   }
 
   .other {
@@ -231,9 +235,21 @@ export default {
       span {
         width: 2.133rem;
 
-        img {
+        .icon {
           width: 1.067rem;
           height: 1.067rem;
+        }
+
+        .qq-logo {
+          color: #00b6f6;
+        }
+
+        .github-logo {
+          color: #0f0f0f
+        }
+
+        .weibo-logo {
+          color: #f7575e
         }
 
         p {

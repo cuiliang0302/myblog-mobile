@@ -3,8 +3,9 @@
   <div>
     <h1>这是分享页1</h1>
     <van-button type="primary" @click="share">主要按钮</van-button>
-    {{ isWeChat() }}
-
+    <svg class="icon search" aria-hidden="true" color="red">
+      <use xlink:href="#icon-sousuo"></use>
+    </svg>
   </div>
 </template>
 
@@ -46,29 +47,9 @@ export default {
 
 <style lang="scss">
 
-.wrapper {
-  color: white;
-  font-size: 20px;
-  text-align: center;
-  line-height: 40px;
-  height: 100%;
-
-  .browser {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-
-  .wechat {
-    margin-right: 30px;
-    display: flex;
-    align-items: center;
-    flex-direction: row-reverse;
-
-    img {
-      width: 70px;
-    }
-  }
+.search {
+  font-size: 30px;
+  fill: currentColor;
+  color: red;
 }
 </style>

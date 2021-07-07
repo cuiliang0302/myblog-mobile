@@ -3,25 +3,33 @@
     <van-tabbar-item to="/">
       <span>首页</span>
       <template #icon="props">
-        <img :src="props.active ? home.active : home.inactive"/>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-home-solid"></use>
+        </svg>
       </template>
     </van-tabbar-item>
     <van-tabbar-item to="/article">
       <span>文章</span>
       <template #icon="props">
-        <img :src="props.active ? article.active : article.inactive"/>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-article-solid"></use>
+        </svg>
       </template>
     </van-tabbar-item>
     <van-tabbar-item to="/note">
       <span>笔记</span>
       <template #icon="props">
-        <img :src="props.active ? note.active : note.inactive"/>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-note-solid"></use>
+        </svg>
       </template>
     </van-tabbar-item>
     <van-tabbar-item to="/personal">
       <span>我的</span>
       <template #icon="props">
-        <img :src="props.active ? user.active : user.inactive"/>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-my-solid"></use>
+        </svg>
       </template>
     </van-tabbar-item>
   </van-tabbar>
@@ -48,27 +56,7 @@ export default {
   },
   setup() {
     const active = ref(0);
-    const home = {
-      active: require('@/assets/icon/home-active.png'),
-      inactive: require('@/assets/icon/home.png'),
-    }
-    const article = {
-      active: require('@/assets/icon/article-active.png'),
-      inactive: require('@/assets/icon/article.png'),
-    }
-    const note = {
-      active: require('@/assets/icon/note-active.png'),
-      inactive: require('@/assets/icon/note.png'),
-    }
-    const user = {
-      active: require('@/assets/icon/user-active.png'),
-      inactive: require('@/assets/icon/user.png'),
-    }
     return {
-      home,
-      article,
-      note,
-      user,
       active,
     };
   },
@@ -76,9 +64,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.van-tabbar{
-  img {
-opacity: 0.7;
-  }
-}
 </style>

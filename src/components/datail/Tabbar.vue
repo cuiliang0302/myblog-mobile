@@ -3,31 +3,41 @@
     <van-tabbar-item>
       <span>目录</span>
       <template #icon="props">
-        <img :src="props.active ? directory.active : directory.inactive" @click="directoryClick"/>
+        <svg class="icon" aria-hidden="true" @click="directoryClick">
+          <use xlink:href="#icon-directory"></use>
+        </svg>
       </template>
     </van-tabbar-item>
     <van-tabbar-item>
       <span>评论</span>
       <template #icon="props">
-        <img :src="props.active ? comment.active : comment.inactive" @click="commentClick"/>
+        <svg class="icon" aria-hidden="true" @click="commentClick">
+          <use xlink:href="#icon-comment"></use>
+        </svg>
       </template>
     </van-tabbar-item>
     <van-tabbar-item>
       <span>{{ isLike === true ? '已点赞' : '点赞' }}</span>
       <template #icon="props">
-        <img :src="props.active ? like.active : like.inactive" @click="likeClick"/>
+        <svg :class="isLike === true ? 'icon active' : 'icon'" aria-hidden="true" @click="likeClick">
+          <use xlink:href="#icon-like"></use>
+        </svg>
       </template>
     </van-tabbar-item>
     <van-tabbar-item>
       <span>{{ is_collect === true ? '已收藏' : '收藏' }}</span>
       <template #icon="props">
-        <img :src="props.active ? collection.active : collection.inactive" @click="collectionClick"/>
+        <svg :class="is_collect === true ? 'icon active' : 'icon'" aria-hidden="true" @click="collectionClick">
+          <use xlink:href="#icon-collection"></use>
+        </svg>
       </template>
     </van-tabbar-item>
     <van-tabbar-item>
       <span>分享</span>
       <template #icon="props">
-        <img :src="props.active ? share.active : share.inactive" @click="showShare = true"/>
+        <svg class="icon" aria-hidden="true" @click="showShare = true">
+          <use xlink:href="#icon-share"></use>
+        </svg>
       </template>
     </van-tabbar-item>
   </van-tabbar>
@@ -95,25 +105,30 @@
       <div class="wrapper" @click.stop @click="overlay_show=false">
         <div v-if="isWeChat()" class="wechat">
           <span>
-            <img :src="require('@/assets/icon/share-point.png')" alt="">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-share-point"></use>
+            </svg>
           </span>
           <span>
             点击右上角"
           <van-icon name="ellipsis"/>
-          "
+          "按钮
           <br>分享给朋友吧！
           </span>
         </div>
         <div v-else class="browser">
             <span>
               当前浏览器暂不支持直接分享
-              <br>请打开浏览器的菜单
-              <br>点击"
-              <van-icon name="wap-nav"/>
-              "或"
-              <van-icon name="share"/>
+              <br>请打开浏览器菜单按钮"
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-menu"></use>
+              </svg>
+              "<br>然后点击分享按钮"
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-system-share"></use>
+              </svg>
               "
-              分享
+              完成操作
             </span>
         </div>
 
@@ -195,9 +210,6 @@ export default {
   name: "Tabbar",
   emits: ['rollTo', 'dirTab', 'toNoteDetail', 'likeClick', 'collectClick', 'onShare'],
   setup(props, {emit}) {
-
-    // 调用图标切换模块
-    let {directory, comment, like, collection, share} = fnIcon()
     // 调用大纲模块
     let {directoryClick, showDir, activeDir, rollTo, tabChange, toDetail} = fnDirectory(props, {emit})
     // 调用分享模块
@@ -221,11 +233,6 @@ export default {
     let {active} = fnPublic(isLike)
     return {
       active,
-      directory,
-      comment,
-      like,
-      collection,
-      share,
       options,
       onSelect,
       showShare,
@@ -260,38 +267,6 @@ function fnPublic(isLike) {
   });
   return {
     active
-  }
-}
-
-// 图标切换功能模块
-function fnIcon() {
-  // 目录图标切换效果
-  const directory = {
-    active: require('@/assets/icon/directory-active.png'),
-    inactive: require('@/assets/icon/directory.png'),
-  }
-  // 评论图标切换效果
-  const comment = {
-    active: require('@/assets/icon/comment-active.png'),
-    inactive: require('@/assets/icon/comment.png'),
-  }
-  // 点赞图标切换效果
-  const like = {
-    active: require('@/assets/icon/like-active.png'),
-    inactive: require('@/assets/icon/like.png'),
-  }
-  // 收藏图标切换效果
-  const collection = {
-    active: require('@/assets/icon/collection-active.png'),
-    inactive: require('@/assets/icon/collection.png'),
-  }
-  // 分享图标切换效果
-  const share = {
-    active: require('@/assets/icon/share-active.png'),
-    inactive: require('@/assets/icon/share.png'),
-  }
-  return {
-    directory, comment, like, collection, share
   }
 }
 
@@ -338,7 +313,7 @@ function fnShare(props, {emit}) {
   const QRcode_url = ref()
   const options = [
     [
-      {name: 'QQ空间', icon: require('@/assets/icon/qq-zone.png')},
+      {name: 'QQ空间', icon: require('@/assets/images/qq-zone.png')},
       {name: '微博', icon: 'weibo'},
       {name: 'QQ', icon: 'qq'},
       {name: '微信', icon: 'wechat'},
@@ -476,6 +451,12 @@ function fnComment() {
 </script>
 
 <style lang="scss" scoped>
+@import "~@/assets/style/variable";
+
+.active {
+  color: $color-primary
+}
+
 .directory {
   padding: 0.267rem 0.533rem;
 
@@ -521,8 +502,9 @@ function fnComment() {
     align-items: center;
     flex-direction: row-reverse;
 
-    img {
+    .icon {
       width: 70px;
+      height: 70px;
     }
   }
 }

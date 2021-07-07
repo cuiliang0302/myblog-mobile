@@ -3,11 +3,15 @@
   <div class="main">
     <div>
       <van-button v-if="!isPassing" :type="btnType" @click="showPopup" block plain>
-        <img :src="require('@/assets/icon/click.png')"/>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-verify"></use>
+        </svg>
         <b>点击按钮进行验证</b>
       </van-button>
       <van-button v-else plain type="success" block>
-        <img :src="require('@/assets/icon/success.png')"/>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-success"></use>
+        </svg>
         <b>验证成功</b>
       </van-button>
     </div>
@@ -103,17 +107,18 @@ export default {
 @import "src/assets/style/variable";
 
 .verify {
-  padding: 20px
+  padding: 0.533rem
 }
 
 .van-button__text {
-  img {
-    width: 25px;
+  .icon {
+    width: 0.667rem;
+    height: 0.667rem;
   }
 
   b {
-    vertical-align: 6px;
-    margin-left: 10px;
+    vertical-align: 0.16rem;
+    margin-left: 0.267rem;
     font-weight: normal;
   }
 }

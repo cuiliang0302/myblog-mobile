@@ -81,11 +81,21 @@ export default {
   margin: 0 auto;
   -webkit-overflow-scrolling: touch;
   animation-timing-function: linear;
+
+}
+
+.icon {
+  width: 0.48rem;
+  height: 0.48rem;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
 }
 
 .animate__animated {
   animation-duration: 0.4s;
 }
+
 .animate__fadeInRight, .animate__fadeOutLef, .animate__fadeInLeft, .animate__fadeOutRight {
   animation-duration: 0.3s;
 }

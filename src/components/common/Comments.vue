@@ -10,40 +10,54 @@
             <p>{{ item.father_name }}</p>
           </span>
         <span>
-            <span v-if="isLike(item.id)===true">
-              <img :src="require('@/assets/icon/like-colour.png')" alt="">
-            </span>
-            <span v-else @click="likeMessage(item.id)">
-              <img :src="require('@/assets/icon/like-article.png')" alt="">
-            </span>
-            <p>{{ item.like }}</p>
+              <span v-if="isLike(item.id)===true" class="comment-like">
+                <svg class="icon" aria-hidden="true" @click="showShare = true">
+                  <use xlink:href="#icon-like-solid"></use>
+                </svg>
+              </span>
+              <span v-else @click="likeMessage(item.id)" class="comment-like">
+                <svg class="icon" aria-hidden="true" @click="showShare = true">
+                  <use xlink:href="#icon-like"></use>
+                </svg>
+              </span>
+              <p>{{ item.like }}</p>
           </span>
       </div>
       <div class="comment-content">
         <p>{{ item.content }}</p>
       </div>
       <div class="comment-action">
-          <span>
-            <van-icon name="underway-o"/>
+          <span class="comment-btn">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-time"></use>
+            </svg>
             <p>{{ timeAgo(item.time) }}</p>
           </span>
-        <span>
+        <span class="comment-btn">
           <span v-if="isReply(item.user)===true" @click="replyMessage(item.id)">
-            <img :src="require('@/assets/icon/comment-color.png')" alt="">
+            <svg class="icon click-btn" aria-hidden="true">
+              <use xlink:href="#icon-comment"></use>
+            </svg>
             <p>回复</p>
           </span>
           <span v-else style="opacity: 0.5">
-            <img :src="require('@/assets/icon/comment-color.png')" alt="">
+            <svg class="icon click-btn" aria-hidden="true">
+              <use xlink:href="#icon-comment"></use>
+            </svg>
             <p>回复</p>
           </span>
         </span>
-        <span>
+        <span class="comment-btn">
           <span v-if="isDelete(item.user)" @click="delMessage(item.id)">
-              <img :src="require('@/assets/icon/delete-color.png')" alt="">
+            <svg class="icon click-btn" aria-hidden="true">
+              <use xlink:href="#icon-delete"></use>
+            </svg>
               <p>删除</p>
           </span>
           <span v-else style="opacity: 0.5">
-              <img :src="require('@/assets/icon/delete-color.png')" alt="">
+              <svg class="icon click-btn" aria-hidden="true">
+              <use xlink:href="#icon-delete"></use>
+            </svg>
               <p>删除</p>
           </span>
         </span>
@@ -68,12 +82,17 @@
           maxlength="50"
           label-width="0"
           placeholder="请输入留言"
-          :right-icon="require('@/assets/icon/send.png')"
           show-word-limit
           @focus="focus"
           @blur="blur"
           @click-right-icon="replySend"
-      />
+      >
+        <template #right-icon>
+          <svg class="icon click-send" aria-hidden="true">
+            <use xlink:href="#icon-send"></use>
+          </svg>
+        </template>
+      </van-field>
     </van-popup>
   </div>
 </template>
@@ -144,13 +163,6 @@ export default {
         message: '当真要删除这条宝贵的记录吗？',
       }).then(() => {
         $bus.emit("delMessage", messageId);
-        // console.log(messageId)
-        // for (let i = 0; i < props.commentsList.length; i++) {
-        //   if (props.commentsList[i].id === messageId) {
-        //     console.log(i)
-        //     props.commentsList.splice(i, 1)
-        //   }
-        // }
       })
     }
     // 回复输入框默认状态
@@ -260,10 +272,8 @@ export default {
         }
       }
 
-      img {
-        width: 0.4rem;
-        height: 0.4rem;
-        opacity: 1;
+      .comment-like {
+        color: #f1c40f;
       }
 
       .comment-user {
@@ -292,18 +302,35 @@ export default {
       margin: 0 auto;
       color: $color-text-regular;
 
+      .comment-btn {
+        display: flex;
+        align-items: center;
+
+        .icon {
+          height: 0.347rem;
+        }
+
+        .click-btn {
+          color: $color-primary
+        }
+      }
+
       p {
         display: inline;
         margin-left: 0.133rem;
         vertical-align: 0.027rem;
       }
-
-      img {
-        width: 0.267rem;
-        height: 0.267rem;
-      }
     }
   }
+}
+
+.click-send {
+  color: $color-primary;
+  height: 0.933rem;
+  width: 0.933rem;
+  position: absolute;
+  right: 0;
+  top: 40px;
 }
 
 .textarea > .van-popup--bottom {

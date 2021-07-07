@@ -15,10 +15,26 @@
           <span class="abstract">{{ item.abstract }}</span>
         </div>
         <div class="info">
-          <span><img src="@/assets/icon/time.png" alt="">{{ timeAgo(item.created_time) }}</span>
-          <span><img src="@/assets/icon/view.png" alt="">{{ item.view }}</span>
-          <span><img src="@/assets/icon/like.png" alt="">{{ item.like }}</span>
-          <span><img src="@/assets/icon/comment.png" alt="">{{ item.comment }}</span>
+          <span>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-time"></use>
+            </svg>{{ timeAgo(item.created_time) }}
+          </span>
+          <span>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-view"></use>
+            </svg>{{ item.view }}
+          </span>
+          <span>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-like"></use>
+            </svg>{{ item.like }}
+          </span>
+          <span>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-comment"></use>
+            </svg>{{ item.comment }}
+          </span>
           <span><van-tag round :color="tagColor(item.category_id)">{{ item.category }}</van-tag></span>
         </div>
       </div>
@@ -259,11 +275,10 @@ body {
         text-align: center;
         color: $color-text-secondary;
 
-        img {
-          opacity: 0.6;
+        .icon {
+          width: 0.32rem;
+          height: 0.32rem;
           margin-right: 0.08rem;
-          width: 0.267rem;
-          height: 0.267rem;
           vertical-align: -1px;
         }
       }

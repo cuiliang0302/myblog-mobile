@@ -7,8 +7,9 @@
       <SearchInput></SearchInput>
     </template>
     <template #right="props">
-      <van-icon name="wap-nav" />
-      <img src="@/assets/icon/more.png" alt="" @click="fnShowAction">
+      <svg class="icon" aria-hidden="true" @click="fnShowAction">
+        <use xlink:href="#icon-menu"></use>
+      </svg>
     </template>
   </van-nav-bar>
   <ActionSheet ref="showAction"></ActionSheet>
@@ -69,9 +70,9 @@ export default {
 
 
 .van-nav-bar__right {
-  img {
-    width: 0.667rem;
-    height: 0.667rem;
+  .icon {
+    width: 0.933rem;
+    height: 0.933rem;
   }
 }
 </style>

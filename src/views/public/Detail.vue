@@ -8,24 +8,44 @@
           <h1>{{ detail.title }}</h1>
           <div class="info">
       <span class="info-item">
-        <span><img src="@/assets/icon/folder-info.png" alt=""></span>
+        <span class="info-icon">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-category-solid"></use>
+          </svg>
+        </span>
         <span v-if="componentName==='article'">{{ detail.category }}</span>
         <span v-else>{{ detail.note }}</span>
       </span>
             <span class="info-item">
-        <span><img src="@/assets/icon/time-info.png" alt=""></span>
+        <span class="info-icon">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-time-solid"></use>
+          </svg>
+        </span>
         <span>{{ timeDate(detail.created_time) }}</span>
       </span>
             <span class="info-item">
-        <span><img src="@/assets/icon/view-info.png" alt=""></span>
+        <span class="info-icon">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-view-solid"></use>
+          </svg>
+        </span>
         <span>{{ detail.view }}</span>
       </span>
             <span class="info-item">
-        <span><img src="@/assets/icon/like-info.png" alt=""></span>
+        <span class="info-icon">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-like-solid"></use>
+          </svg>
+        </span>
         <span>{{ detail.like }}</span>
       </span>
             <span class="info-item">
-        <span><img src="@/assets/icon/comment-info.png" alt=""></span>
+        <span class="info-icon">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-comment-solid"></use>
+          </svg>
+        </span>
         <span>{{ detail.comment }}</span>
       </span>
           </div>
@@ -51,14 +71,22 @@
     </div>
     <div class="context" v-show="componentName==='note'">
       <div class="last">
-        <span><van-image width="20" height="20" :src="require('@/assets/icon/last.png')"/></span>
+        <span>
+          <svg class="icon context-icon" aria-hidden="true">
+            <use xlink:href="#icon-last-solid"></use>
+          </svg>
+        </span>
         <span v-if="context.last && context.last.title" @click="toDetail('note',context.last.id)">
           {{ context.last.title }}
         </span>
         <span v-else>已是第一篇</span>
       </div>
       <div class="next">
-        <span><van-image width="20" height="20" :src="require('@/assets/icon/next.png')"/></span>
+        <span>
+          <svg class="icon context-icon" aria-hidden="true">
+            <use xlink:href="#icon-next-solid"></use>
+          </svg>
+        </span>
         <span v-if="context.next && context.next.title" @click="toDetail('note',context.next.id)">
           {{ context.next.title }}
         </span>
@@ -76,9 +104,14 @@
           placeholder="元芳，你怎么看？"
           show-word-limit
           clearable
-          :right-icon="require('@/assets/icon/send.png')"
           @click-right-icon="clickSend"
-      />
+      >
+        <template #right-icon>
+          <svg class="icon click-send" aria-hidden="true">
+            <use xlink:href="#icon-send"></use>
+          </svg>
+        </template>
+      </van-field>
       <div class="comment-list">
         <van-empty v-show="commentsList.length === 0" description="暂无评论，快来抢沙发吧！"/>
         <Comments :commentsList="commentsList"></Comments>
@@ -590,7 +623,7 @@ function comment(DetailID, $bus, componentName, router) {
           });
         }
       } else {
-        Toast("毛都没有，发表个锤子")
+        Toast("一言不发，发个寂寞")
       }
     } else {
       store.commit('setNextPath', router.currentRoute.value.fullPath)
@@ -826,17 +859,22 @@ function history(DetailID, componentName) {
         .info-item {
           border-radius: 0.267rem;
           margin: 0 0.08rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
-          span:nth-child(1) {
+          .info-icon {
+            padding-left: 0.133rem;
+            color: white;
             width: 0.533rem;
+            height: 0.533rem;
             display: inline-block;
             border-radius: 0.133rem 0 0 0.133rem;
 
-            img {
-              margin: 0 0.08rem;
+            .icon {
               width: 0.4rem;
               height: 0.4rem;
-              vertical-align: -0.107rem;
+              vertical-align: -0.187rem;
             }
           }
 
@@ -971,11 +1009,24 @@ function history(DetailID, componentName) {
       align-items: center;
       flex-direction: row-reverse;
     }
+    .context-icon {
+      color: $color-primary;
+      margin: 0 0.267rem;
+    }
   }
 
   .comment {
     background-color: $color-background-white;
     padding: 0 0.267rem 1.867rem 0.267rem;
+
+    .click-send {
+      color: $color-primary;
+      width: 0.933rem;
+      height: 0.933rem;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
   }
 }
 

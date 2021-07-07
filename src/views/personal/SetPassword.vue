@@ -27,7 +27,9 @@
             :rules="[{ validator: checkContact, message: '填写正确的邮箱/手机号' }]"
         >
           <template #label>
-            <img :src="require('@/assets/icon/email.png')" alt="">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-email"></use>
+            </svg>
           </template>
         </van-field>
         <van-field
@@ -40,7 +42,9 @@
             :rules="[{ required: true, message: '请填写验证码' }]"
         >
           <template #label>
-            <img :src="require('@/assets/icon/code.png')" alt="">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-code"></use>
+            </svg>
           </template>
           <template #right-icon>
             <VerifyCodeBtn @pass="pass" :btnDisabled="btnDisabled"></VerifyCodeBtn>
@@ -64,7 +68,9 @@
             :rules="[{ pattern, message: '请填写密码' }]"
         >
           <template #label>
-            <img :src="require('@/assets/icon/password.png')" alt="">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-password"></use>
+            </svg>
           </template>
         </van-field>
         <van-field
@@ -78,7 +84,9 @@
             :rules="[{ validator: checkPassword, message: '请再次填写密码' }]"
         >
           <template #label>
-            <img :src="require('@/assets/icon/password.png')" alt="">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-password"></use>
+            </svg>
           </template>
         </van-field>
         <div style="margin: 16px;" v-show="active===1">
@@ -88,7 +96,11 @@
         </div>
       </van-form>
       <div v-show="active===2" class="success">
-        恭喜，密码重置成功 😊
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-success-solid"></use>
+        </svg>
+        <br>
+        恭喜，密码重置成功
       </div>
       <div class="btn">
         <van-button v-show="active===2" round block type="primary" native-type="submit"
@@ -340,8 +352,14 @@ export default {
     .success {
       font-size: 0.427rem;
       text-align: center;
-      margin: 1.6rem 0;
+      margin: 1.067rem 0;
       color: $color-text-primary;
+      .icon{
+        width: 1.333rem;
+        height: 1.333rem;
+        margin-bottom: 0.533rem;
+        color: $color-other-emerald;
+      }
     }
   }
 }
