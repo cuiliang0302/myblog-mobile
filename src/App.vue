@@ -1,17 +1,19 @@
 <template>
   <div id="app">
-    <router-view class="router-view" v-slot="{ Component }">
-      <transition :enter-active-class="enterClass"
-                  :leave-active-class="leaveClass">
-        <!--        &lt;!&ndash;需要缓存的视图&ndash;&gt;-->
-        <!--        <keep-alive v-if="$route.meta.keepAlive" :key="1">-->
-        <!--          <component :is="Component"/>-->
-        <!--        </keep-alive>-->
-        <!--        &lt;!&ndash;不需要缓存的视图&ndash;&gt;-->
-        <!--        <component v-else :is="Component" :key="2"/>-->
-        <component :is="Component"/>
-      </transition>
-    </router-view>
+    <van-config-provider :theme-vars="themeVars">
+      <router-view class="router-view" v-slot="{ Component }">
+        <transition :enter-active-class="enterClass"
+                    :leave-active-class="leaveClass">
+          <!--        &lt;!&ndash;需要缓存的视图&ndash;&gt;-->
+          <!--        <keep-alive v-if="$route.meta.keepAlive" :key="1">-->
+          <!--          <component :is="Component"/>-->
+          <!--        </keep-alive>-->
+          <!--        &lt;!&ndash;不需要缓存的视图&ndash;&gt;-->
+          <!--        <component v-else :is="Component" :key="2"/>-->
+          <component :is="Component"/>
+        </transition>
+      </router-view>
+    </van-config-provider>
   </div>
   <!--  <router-view></router-view>-->
 </template>
@@ -20,13 +22,19 @@
 import {onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import animate from "animate.css";
+import {ConfigProvider} from "vant";
+import dark from "@/utils/dark";
 
 export default {
   name: "App",
+  components: {
+    [ConfigProvider.name]: ConfigProvider
+  },
   setup() {
     let enterClass = ref('');
     let leaveClass = ref('');
     const route = useRoute();
+    let {themeVars, setDark} = dark()
     // 首屏加载动画
     onMounted(() => {
       try {
@@ -66,15 +74,23 @@ export default {
           }
         }
     );
-    return {enterClass, leaveClass};
+    return {enterClass, leaveClass, themeVars};
   },
 };
 </script>
 
-<style>
+<style lang="scss">
+@import "~@/assets/style/index.scss";
+
 .router-view {
+  //在此使用了背景颜色变量
+  @include background_color("background-color");
+  //再次使用了文字颜色变量
+  @include text_color("text-color");
+  transition: background 1s, color 0.6s;
   width: 100%;
-  height: auto;
+  height: max-content;
+  min-height: 100vh;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -82,6 +98,10 @@ export default {
   -webkit-overflow-scrolling: touch;
   animation-timing-function: linear;
 
+}
+
+:root {
+  transition: background 1s, color 3s;
 }
 
 .icon {

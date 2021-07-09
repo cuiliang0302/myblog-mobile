@@ -1,55 +1,41 @@
-<!--字体设置-->
 <template>
-  <div>
-    <h1>这是分享页1</h1>
-    <van-button type="primary" @click="share">主要按钮</van-button>
-    <svg class="icon search" aria-hidden="true" color="red">
-      <use xlink:href="#icon-sousuo"></use>
-    </svg>
-  </div>
+  <van-config-provider :theme-vars="themeVars">
+    <div>
+      <h1>这是dark页</h1>
+      <a @click="setDark">模式切换</a>
+      <br>
+      <router-link to="/">去首页</router-link>
+      <van-grid>
+        <van-grid-item icon="photo-o" text="文字"/>
+        <van-grid-item icon="photo-o" text="文字"/>
+        <van-grid-item icon="photo-o" text="文字"/>
+        <van-grid-item icon="photo-o" text="文字"/>
+      </van-grid>
+    </div>
+  </van-config-provider>
 </template>
 
 <script>
-import NavBar from "@/components/personal/NavBar";
-import {Button, Toast, Overlay, Icon} from 'vant';
-import {computed, onMounted, ref} from "vue";
+import {Grid, GridItem, ConfigProvider} from 'vant';
+import dark from "@/utils/dark";
 
 export default {
+  name: "DarkModelPage",
   components: {
-    [Button.name]: Button,
-    [Overlay.name]: Overlay,
-    [Icon.name]: Icon
+    [Grid.name]: Grid,
+    [GridItem.name]: GridItem,
+    [ConfigProvider.name]: ConfigProvider
   },
-  name: "Test",
   setup() {
-    const share = () => {
-      show.value = true
-    }
-    const show = ref(false);
-    const isWeChat = () => {
-      let ua = window.navigator.userAgent.toLowerCase();
-      //通过正则表达式匹配ua中是否含有MicroMessenger字符串
-      if (ua.match(/MicroMessenger/i) == 'micromessenger') {
-        return true;
-      } else {
-        return false;
-      }
-    }
-    onMounted(() => {
-
-    })
+    let {themeVars, setDark} = dark()
     return {
-      share, show, isWeChat
+      setDark, themeVars
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
+@import "~@/assets/style/index.scss";
 
-.search {
-  font-size: 30px;
-  fill: currentColor;
-  color: red;
-}
 </style>
