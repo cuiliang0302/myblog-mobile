@@ -3,32 +3,44 @@
     <van-tabbar-item to="/">
       <span>首页</span>
       <template #icon="props">
-        <svg class="icon" aria-hidden="true">
+        <svg v-if="props.active" class="icon" aria-hidden="true">
           <use xlink:href="#icon-home-solid"></use>
+        </svg>
+        <svg v-else class="icon" aria-hidden="true">
+          <use xlink:href="#icon-home"></use>
         </svg>
       </template>
     </van-tabbar-item>
     <van-tabbar-item to="/article">
       <span>文章</span>
       <template #icon="props">
-        <svg class="icon" aria-hidden="true">
+        <svg v-if="props.active" class="icon" aria-hidden="true">
           <use xlink:href="#icon-article-solid"></use>
+        </svg>
+        <svg v-else class="icon" aria-hidden="true">
+          <use xlink:href="#icon-article"></use>
         </svg>
       </template>
     </van-tabbar-item>
     <van-tabbar-item to="/note">
       <span>笔记</span>
       <template #icon="props">
-        <svg class="icon" aria-hidden="true">
+        <svg v-if="props.active" class="icon" aria-hidden="true">
           <use xlink:href="#icon-note-solid"></use>
+        </svg>
+        <svg v-else class="icon" aria-hidden="true">
+          <use xlink:href="#icon-note"></use>
         </svg>
       </template>
     </van-tabbar-item>
     <van-tabbar-item to="/personal">
       <span>我的</span>
       <template #icon="props">
-        <svg class="icon" aria-hidden="true">
+        <svg v-if="props.active" class="icon" aria-hidden="true">
           <use xlink:href="#icon-my-solid"></use>
+        </svg>
+        <svg v-else class="icon" aria-hidden="true">
+          <use xlink:href="#icon-my"></use>
         </svg>
       </template>
     </van-tabbar-item>

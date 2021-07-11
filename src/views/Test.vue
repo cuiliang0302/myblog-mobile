@@ -1,18 +1,16 @@
 <template>
-  <van-config-provider :theme-vars="themeVars">
-    <div>
-      <h1>这是dark页</h1>
-      <a @click="setDark">模式切换</a>
-      <br>
-      <router-link to="/">去首页</router-link>
-      <van-grid>
-        <van-grid-item icon="photo-o" text="文字"/>
-        <van-grid-item icon="photo-o" text="文字"/>
-        <van-grid-item icon="photo-o" text="文字"/>
-        <van-grid-item icon="photo-o" text="文字"/>
-      </van-grid>
-    </div>
-  </van-config-provider>
+  <div>
+    <h1>这是dark页</h1>
+    <a @click="setDark">模式切换</a>
+    <br>
+    <router-link to="/">去首页</router-link>
+    <van-grid>
+      <van-grid-item icon="photo-o" text="文字"/>
+      <van-grid-item icon="photo-o" text="文字"/>
+      <van-grid-item icon="photo-o" text="文字"/>
+      <van-grid-item icon="photo-o" text="文字"/>
+    </van-grid>
+  </div>
 </template>
 
 <script>
@@ -35,7 +33,11 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import "~@/assets/style/index.scss";
 
+:root {
+  --van-grid-item-content-background-color: red;
+  //@include grid_color("background_color4");
+}
 </style>

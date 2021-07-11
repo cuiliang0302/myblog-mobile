@@ -19,7 +19,10 @@
     <van-tabbar-item>
       <span>{{ isLike === true ? '已点赞' : '点赞' }}</span>
       <template #icon="props">
-        <svg :class="isLike === true ? 'icon active' : 'icon'" aria-hidden="true" @click="likeClick">
+        <svg v-if="isLike === true" class="icon active" aria-hidden="true" @click="likeClick">
+          <use xlink:href="#icon-like-solid"></use>
+        </svg>
+        <svg v-else class="icon" aria-hidden="true" @click="likeClick">
           <use xlink:href="#icon-like"></use>
         </svg>
       </template>
@@ -27,7 +30,10 @@
     <van-tabbar-item>
       <span>{{ is_collect === true ? '已收藏' : '收藏' }}</span>
       <template #icon="props">
-        <svg :class="is_collect === true ? 'icon active' : 'icon'" aria-hidden="true" @click="collectionClick">
+        <svg v-if="is_collect === true" class="icon active" @click="collectionClick">
+          <use xlink:href="#icon-collection-solid"></use>
+        </svg>
+        <svg v-else class="icon" aria-hidden="true" @click="collectionClick">
           <use xlink:href="#icon-collection"></use>
         </svg>
       </template>

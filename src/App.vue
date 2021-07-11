@@ -84,9 +84,8 @@ export default {
 
 .router-view {
   //在此使用了背景颜色变量
-  @include background_color("background-color");
-  //再次使用了文字颜色变量
-  @include text_color("text-color");
+  @include font_color("font_color1");
+  @include background_color("background_color1");
   transition: background 1s, color 0.6s;
   width: 100%;
   height: max-content;
@@ -98,10 +97,6 @@ export default {
   -webkit-overflow-scrolling: touch;
   animation-timing-function: linear;
 
-}
-
-:root {
-  transition: background 1s, color 3s;
 }
 
 .icon {

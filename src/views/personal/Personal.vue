@@ -65,7 +65,7 @@
           <van-cell title="字体大小" size="large" is-link :value="fontType" to="/fontsize"/>
           <van-cell title="深色模式" size="large">
             <template #right-icon>
-              <van-switch v-model="dark" @change="changeDark" size="0.533rem"/>
+              <van-switch v-model="isDark" @change="changeDark" size="0.533rem"/>
             </template>
           </van-cell>
           <van-cell title="退出登录" size="large" is-link @click="logout"/>
@@ -89,6 +89,7 @@ import user from "@/utils/user";
 import {getUserinfoId, putUserinfoId} from "@/api/account";
 import fontSize from "@/utils/fontSize";
 import {getSiteConfig} from "@/api/management";
+import dark from "@/utils/dark";
 
 export default {
   components: {
@@ -108,7 +109,7 @@ export default {
     let {isLogin, userInfo, userId, toView, refLoginPopup, logo} = global()
 
     // 引入系统与设置模块
-    let {changeFlow, fontType, dark, changeDark, logout} = setting(userId, userInfo, isLogin, refLoginPopup)
+    let {changeFlow, fontType, isDark, changeDark, logout} = setting(userId, userInfo, isLogin, refLoginPopup)
 
     onMounted(() => {
 
@@ -116,7 +117,7 @@ export default {
     return {
       isLogin,
       userInfo,
-      dark,
+      isDark,
       toView,
       refLoginPopup,
       fontType,
@@ -182,6 +183,8 @@ function global() {
 }
 
 function setting(userId, userInfo, isLogin, refLoginPopup) {
+  // 引入暗黑模块
+  let {themeVars, setDark} = dark()
   // 引入字体设置模块
   let {fontType} = fontSize()
   // 切换订阅
@@ -208,10 +211,11 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
     }
   }
   // 是否开启暗黑模式
-  const dark = computed(() => store.state.dark)
+  const isDark = computed(() => store.state.dark)
   // 切换夜间模式
   const changeDark = (value) => {
-    store.commit('setDark')
+    // store.commit('setDark')
+    setDark()
     if (value) {
       Toast('已开启深色模式')
     } else {
@@ -237,11 +241,11 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
       return false
     }
   }
-  return {fontType, dark, changeDark, logout, changeFlow}
+  return {fontType, isDark, changeDark, logout, changeFlow}
 }
 </script>
-<style lang="scss" scoped>
-@import "~@/assets/style/variable";
+<style lang="scss">
+@import "~@/assets/style/index.scss";
 //水波纹特效和背景图
 
 section {
@@ -364,8 +368,10 @@ section {
 
   .cell-item {
     margin: 0.267rem;
-    background-color: white;
+    @include background-color("cell-item-color");
     box-shadow: 0 0.027rem 0.107rem rgb(0 0 0 / 10%);
   }
 }
+
+
 </style>
