@@ -29,15 +29,15 @@ function dark() {
 	const lightStyle = {
 		// cellLabelColor: '#c8c8c8'
 	};
-	// onMounted(() => {
-	// 	if (isDark) {
-	// 		window.document.documentElement.setAttribute("data-theme", 'dark');
-	// 		Object.assign(themeVars, darkStyle);
-	// 	} else {
-	// 		window.document.documentElement.setAttribute("data-theme", 'light');
-	// 		Object.assign(themeVars, lightStyle);
-	// 	}
-	// })
+	onMounted(() => {
+		if (isDark) {
+			window.document.documentElement.setAttribute("data-theme", 'dark');
+			// Object.assign(themeVars, darkStyle);
+		} else {
+			window.document.documentElement.setAttribute("data-theme", 'light');
+			// Object.assign(themeVars, lightStyle);
+		}
+	})
 	return {
 		setDark,
 		themeVars,

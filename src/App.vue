@@ -83,7 +83,6 @@ export default {
 @import "~@/assets/style/index.scss";
 
 .router-view {
-  //在此使用了背景颜色变量
   @include font_color("font_color1");
   @include background_color("background_color1");
   transition: background 1s, color 0.6s;
@@ -96,7 +95,6 @@ export default {
   margin: 0 auto;
   -webkit-overflow-scrolling: touch;
   animation-timing-function: linear;
-
 }
 
 .icon {

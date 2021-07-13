@@ -10,6 +10,9 @@
       <van-grid-item icon="photo-o" text="文字"/>
       <van-grid-item icon="photo-o" text="文字"/>
     </van-grid>
+    <div class="box">
+      这是盒子
+    </div>
   </div>
 </template>
 
@@ -35,6 +38,11 @@ export default {
 
 <style lang="scss">
 @import "~@/assets/style/index.scss";
+
+.box {
+  background-color: gray;
+  @include font_color("font_color2");
+}
 
 :root {
   --van-grid-item-content-background-color: red;

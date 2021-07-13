@@ -217,9 +217,9 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
     // store.commit('setDark')
     setDark()
     if (value) {
-      Toast('已开启深色模式')
+      Toast('深色模式正在开发中')
     } else {
-      Toast('已关闭深色模式')
+      Toast('深色模式正在开发中')
     }
   }
   // 注销
@@ -244,7 +244,7 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
   return {fontType, isDark, changeDark, logout, changeFlow}
 }
 </script>
-<style lang="scss">
+<style scoped lang="scss">
 @import "~@/assets/style/index.scss";
 //水波纹特效和背景图
 

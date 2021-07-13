@@ -2,7 +2,7 @@
 <template>
   <div>
     <NavBar :title="'字体设置'"></NavBar>
-    <section>
+    <div class="font">
       <div class="preview" id="setFont" style="font-size: 37px">
         <h1>拖动下面的滑块，可实现预览字体大小的变化</h1>
         <p>你可以根据阅读习惯，拖动下面的滑块，设置字体大小。设置后会改变文章详情页、笔记详情页的字体大小，注销登录后恢复默认值。</p>
@@ -17,7 +17,7 @@
         </div>
         <van-slider v-model="fontValue" :step="25" @change="changeSize"/>
       </div>
-    </section>
+    </div>
   </div>
 </template>
 
@@ -58,7 +58,7 @@ body {
   background-color: $color-background-white;
 }
 
-section {
+.font {
   background-color: $color-background-white;
   padding: 0 0.267rem;
 
