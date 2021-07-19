@@ -161,7 +161,7 @@ export default {
 
 .comment-list {
   padding: 0.267rem;
-  @include background_color("background_color4");
+  @include background_color("background_color3");
 }
 
 .click-send {

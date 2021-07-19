@@ -76,7 +76,11 @@ function dark() {
 		// 按钮
 		buttonPlainBackgroundColor: '#d6d6d6',
 		// 标签
-		tagPlainBackgroundColor: '#d6d6d6'
+		tagPlainBackgroundColor: '#d6d6d6',
+		// 分享菜单
+		shareSheetCancelButtonBackground: '#4f4f4f',
+		shareSheetTitleColor: '#d6d6d6',
+		shareSheetOptionNameColor: '#a3a3a3',
 	};
 	const lightStyle = {
 		cellBackgroundColor: 'transparent'

@@ -13,6 +13,7 @@ $themes: (
           //边框
                 border_color1: #DCDFE6,
                 border_color2: #8bb9f3,
+                border_color3: #fafafb,
           //背景图
                 background_img1: url("~@/assets/images/wave-light.png")
         ),
@@ -26,10 +27,11 @@ $themes: (
                 background_color3: #1F1F1F,
                 background_color4: #000000,
                 background_color5: #bfbfbf,
-                background_color6: #595959,
+                background_color6: #262626,
           //边框
                 border_color1: #3d414a,
                 border_color2: #3d414a,
+                border_color3: #595959,
           //背景图
                 background_img1: url("~@/assets/images/wave-dark.png")
         )
@@ -89,8 +91,14 @@ $themes: (
 }
 
 //时间轴边框伪元素
-@mixin label_after($url) {
+@mixin label_after($color) {
   @include themeify {
-    border-right-color: themed($url) !important;
+    border-right-color: themed($color) !important;
+  }
+}
+//评论组件下边框
+@mixin border_bottom($color) {
+  @include themeify {
+    border-bottom: 1px solid themed($color) !important;
   }
 }

@@ -839,7 +839,7 @@ function history(DetailID, componentName) {
 
 .detail {
   .main {
-    @include background_color("background_color4");
+    @include background_color("background_color3");
     padding: 0.267rem 0.133rem;
 
     .title {
@@ -953,7 +953,7 @@ function history(DetailID, componentName) {
 
   .recommend {
     margin: 0.133rem 0;
-    @include background_color("background_color4");
+    @include background_color("background_color3");
     padding: 0.267rem 0.133rem;
 
     .recommend-list {
@@ -1017,7 +1017,7 @@ function history(DetailID, componentName) {
   }
 
   .comment {
-    @include background_color("background_color4");
+    @include background_color("background_color3");
     padding: 0 0.267rem 1.867rem 0.267rem;
 
     .click-send {

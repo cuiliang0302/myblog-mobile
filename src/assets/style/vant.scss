@@ -63,7 +63,13 @@
 .van-tabbar {
   z-index: 2 !important;
 }
+
 // 步骤条暗黑模式适配
-.van-step--horizontal .van-step__circle-container{
+.van-step--horizontal .van-step__circle-container {
   @include background_color('background_color2')
+}
+
+// 分享菜单适配暗黑模式
+.van-share-sheet__cancel::before {
+  @include background_color('background_color4')
 }

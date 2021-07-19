@@ -36,7 +36,7 @@ body {
 // 多级评论回复样式
 .comment-list > .comments > ol > .reply {
   margin-left: 0.933rem;
-  @include background_color("background_color2");
+  @include background_color("background_color6");
   border-radius: .133rem;
   padding: 0.267rem;
 }
@@ -46,7 +46,7 @@ body {
 }
 
 .comment-list > .comments {
-  border-bottom: 1px solid #fafafb;
+  @include border_bottom('border_color3')
 }
 
 .comment-list > .comments:last-child {
