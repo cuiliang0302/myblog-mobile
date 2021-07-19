@@ -96,9 +96,7 @@ import {Grid, GridItem, Tag, Toast} from 'vant';
 import * as echarts from 'echarts'
 import {getStatistics} from '@/api/record'
 import user from "@/utils/user";
-import {getCarousel} from "@/api/management";
 import {getEcharts} from "@/api/public";
-import {postLogin} from "@/api/account";
 import store from "@/store";
 
 export default {
@@ -126,6 +124,8 @@ export default {
       "#ff7675",
       "#b2bec3"
     ])
+    // 是否开启暗黑模式
+    const isDark = store.state.dark
 
     // 浏览趋势折线图
     async function trend() {
@@ -134,7 +134,12 @@ export default {
       for (let i in chartData.xAxis) {
         chartData.xAxis[i] = chartData.xAxis[i].slice(5)
       }
-      let myChart = echarts.init(document.getElementById("trend"));
+      let myChart;
+      if (isDark) {
+        myChart = echarts.init(document.getElementById("trend"), 'dark');
+      } else {
+        myChart = echarts.init(document.getElementById("trend"));
+      }
       // 绘制图表
       myChart.setOption({
         color: color.value,
@@ -240,8 +245,12 @@ export default {
     // 浏览时间柱形图
     async function time() {
       let chartData = await getEcharts(userId.value, 'time')
-      console.log(chartData)
-      let myChart = echarts.init(document.getElementById("time"));
+      let myChart;
+      if (isDark) {
+        myChart = echarts.init(document.getElementById("time"), 'dark');
+      } else {
+        myChart = echarts.init(document.getElementById("time"));
+      }
       // 绘制图表
       myChart.setOption({
         color: color.value,
@@ -303,8 +312,12 @@ export default {
     // 浏览文章饼图
     async function article() {
       let chartData = await getEcharts(userId.value, 'article')
-      console.log(chartData)
-      let myChart = echarts.init(document.getElementById("article"));
+      let myChart;
+      if (isDark) {
+        myChart = echarts.init(document.getElementById("article"), 'dark');
+      } else {
+        myChart = echarts.init(document.getElementById("article"));
+      }
       // 绘制图表
       myChart.setOption({
         color: color.value,
@@ -336,8 +349,12 @@ export default {
     // 浏览笔记雷达图
     async function note() {
       let chartData = await getEcharts(userId.value, 'note')
-      console.log(chartData)
-      let myChart = echarts.init(document.getElementById("note"));
+      let myChart;
+      if (isDark) {
+        myChart = echarts.init(document.getElementById("note"), 'dark');
+      } else {
+        myChart = echarts.init(document.getElementById("note"));
+      }
       // 绘制图表
       myChart.setOption({
         color: color.value,
@@ -391,8 +408,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "~@/assets/style/index.scss";
 section {
-  background-color: white;
+  @include background_color('background_color3');
   margin: 0.267rem;
   border-radius: 0.267rem;
 

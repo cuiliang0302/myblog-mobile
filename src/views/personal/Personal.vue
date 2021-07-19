@@ -184,7 +184,7 @@ function global() {
 
 function setting(userId, userInfo, isLogin, refLoginPopup) {
   // 引入暗黑模块
-  let {themeVars, setDark} = dark()
+  let {setDark} = dark()
   // 引入字体设置模块
   let {fontType} = fontSize()
   // 切换订阅
@@ -214,12 +214,11 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
   const isDark = computed(() => store.state.dark)
   // 切换夜间模式
   const changeDark = (value) => {
-    // store.commit('setDark')
     setDark()
     if (value) {
-      Toast('深色模式正在开发中')
+      Toast('已开启深色模式')
     } else {
-      Toast('深色模式正在开发中')
+      Toast('已关闭深色模式')
     }
   }
   // 注销
@@ -263,7 +262,7 @@ section {
     position: absolute;
     bottom: 0;
     left: 0;
-    background: url("~@/assets/images/wave.png");
+    @include background_img('background_img1');
     background-size: 26.667rem 2.667rem;
   }
 
@@ -301,7 +300,7 @@ section {
 
   .history {
     display: flex;
-    background-color: white;
+    @include background_color("background_color3");
     padding: 0.8rem 0 0.267rem 0;
     border-radius: 0.4rem;
     position: absolute;
@@ -310,7 +309,7 @@ section {
     left: 50%;
     bottom: -22.5%;
     z-index: 4;
-    box-shadow: #8bb9f3 0rem 0.027rem 0.133rem 0.053rem;
+    @include border_shadow("border_color2");
 
     span {
       flex: 1;
@@ -339,7 +338,7 @@ section {
     }
 
     .van-image {
-      box-shadow: grey 0rem 0.053rem 0.133rem 0.053rem
+      @include border_shadow("border_color1");
     }
   }
 

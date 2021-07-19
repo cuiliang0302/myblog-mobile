@@ -58,7 +58,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "src/assets/style/variable";
+@import "src/assets/style/index";
 
 section {
   width: 250px;
@@ -76,30 +76,30 @@ section {
   }
 
   .tip-content {
-    padding-top: 95px;
+    padding-top: 2.533rem;
 
     h3 {
-      color: $color-text-regular;
-      font-size: 18px;
+      @include font_color('font_color1');
+      font-size: 0.48rem;
       margin: 0;
       font-weight: normal;
     }
 
     p {
-      color: $color-text-secondary;
+      @include font_color('font_color2');
     }
   }
 
   .tip-btn {
-    margin-top: 35px;
+    margin-top: 0.933rem;
 
     button {
-      padding: 0 65px;
+      padding: 0 1.733rem;
     }
 
     p {
       color: #ffb061;
-      font-size: 14px;
+      font-size: 0.373rem;
     }
   }
 }

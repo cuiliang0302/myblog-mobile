@@ -131,18 +131,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "src/assets/style/variable";
+@import "src/assets/style/index";
 
 .list-item {
-  background-color: $color-background-white;
+  @include background_color("background_color3");
   padding: 0.267rem;
-  box-shadow: 0 0.133rem 0.133rem $color-border-base;
+  @include border_shadow("border_color1");
   margin: 0 0.133rem 0.267rem 0.133rem;
   border-radius: 0.267rem;
 
   .title {
     font-size: 0.533rem;
-    color: $color-text-primary;
+    @include font_color("font_color1");
   }
 
   .list-main {
@@ -162,7 +162,7 @@ export default {
       font-size: 0.373rem;
       margin-left: 0.133rem;
       font-weight: normal;
-      color: $color-text-regular;
+      @include font_color("font_color2");
       display: -webkit-box;
       -webkit-line-clamp: 6;
       -webkit-box-orient: vertical;

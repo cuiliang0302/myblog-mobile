@@ -199,13 +199,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "src/assets/style/variable";
+@import "src/assets/style/index";
 
 .main {
 
   .form {
     padding: 0.533rem;
-    background-color: white;
+    @include background_color('background_color2');
     border-radius: 0.267rem;
     height: 9.333rem;
     z-index: 4;

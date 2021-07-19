@@ -34,6 +34,7 @@ import {Toast, ActionSheet, Slider, Switch} from 'vant';
 import store from "@/store/index"
 import {ref, computed} from "vue";
 import fontSize from "@/utils/fontSize";
+import dark from "@/utils/dark";
 
 export default {
   components: {
@@ -43,6 +44,8 @@ export default {
   },
   name: "ActionSheet",
   setup() {
+    // 引入暗黑模块
+    let {setDark} = dark()
     // 动作菜单默认状态
     const show = ref(false)
     // 动作菜单点击取消
@@ -54,12 +57,12 @@ export default {
     // 是否开启深色模式
     const isDark = computed(() => store.state.dark)
     // 点击切换深色浅色按钮
-    const changePattern = () => {
-      store.commit('setDark')
-      if (store.state.dark) {
-        Toast('已切换为深色模式')
+    const changePattern = (value) => {
+      setDark()
+      if (value) {
+        Toast('已开启深色模式')
       } else {
-        Toast('已切换为浅色模式')
+        Toast('已关闭深色模式')
       }
     }
     // 引入字体设置模块
@@ -70,7 +73,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "src/assets/style/variable";
+@import "src/assets/style/index";
 
 .content {
   padding: 0.533rem;

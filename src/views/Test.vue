@@ -43,9 +43,4 @@ export default {
   background-color: gray;
   @include font_color("font_color2");
 }
-
-:root {
-  --van-grid-item-content-background-color: red;
-  //@include grid_color("background_color4");
-}
 </style>

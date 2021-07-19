@@ -64,12 +64,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "~@/assets/style/variable";
+@import "~@/assets/style/index.scss";
 .link-content {
-  margin: 15px 0;
+  margin: 0.4rem 0;
 
   .title {
-    margin: 0 0 10px 10px;
+    margin: 0 0 0.267rem 0.267rem;
     font-size: 0.533rem;
   }
 
@@ -86,7 +86,7 @@ export default {
       p{
         line-height: 15px;
         margin-bottom: 0;
-        color: $color-text-regular;
+        @include font_color('font_color2');
       }
     }
   }

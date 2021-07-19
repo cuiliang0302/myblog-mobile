@@ -4,9 +4,11 @@
     <NavBar :title="'联系博主'"></NavBar>
     <van-grid :column-num="2" :gutter="20" clickable>
       <van-grid-item @click="copy('QQ',contact.qq)">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#img-qq"></use>
-        </svg>
+        <van-image
+            width="1.067rem"
+            height="1.067rem"
+            :src="require('@/assets/images/qq-round.png')"
+        />
         <p>QQ</p>
       </van-grid-item>
       <van-grid-item @click="copy('微信',contact.wechat)">
@@ -17,7 +19,7 @@
       </van-grid-item>
       <van-grid-item @click="toURL(contact.github)">
         <svg class="icon" aria-hidden="true">
-          <use xlink:href="#img-github"></use>
+          <use xlink:href="#img-github-blue"></use>
         </svg>
         <p>GitHub</p>
       </van-grid-item>
@@ -113,7 +115,8 @@ body {
 
 .van-grid {
   margin-top: 0.533rem;
-  .icon{
+
+  .icon {
     width: 1.067rem;
     height: 1.067rem;
   }

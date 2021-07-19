@@ -11,8 +11,11 @@ const mutations = {
 	setDark(state) {
 		state.dark = !state.dark
 	},
-	setNextPath(state,path) {
+	setNextPath(state, path) {
 		state.nextPath = path
+	},
+	setThemeStyle(state, value) {
+		state.themeStyle = value
 	},
 	setKeepLogin(state, value) {
 		state.keepLogin = value

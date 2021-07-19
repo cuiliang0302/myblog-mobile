@@ -70,10 +70,10 @@ export function usePreventDefault() {
 }
 </script>
 <style lang="scss" scoped>
-@import "~@/assets/style/variable";
+@import "~@/assets/style/index.scss";
 
 .bgc {
-  background-color: white;
+  @include background_color('background_color4');
   height: 100vh;
   position: relative;
   overflow: hidden;
@@ -94,7 +94,7 @@ section {
     position: absolute;
     bottom: 0;
     left: 0;
-    background: url("~@/assets/images/wave.png");
+    @include background_img('background_img1');
     background-size: 26.667rem 2.667rem;
   }
 
@@ -178,7 +178,10 @@ section {
     }
   }
 }
-.animated{
-  animation-duration: 1s!important;
+
+.animated {
+  animation-duration: 1s !important;
 }
+
+
 </style>

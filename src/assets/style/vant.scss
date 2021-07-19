@@ -1,4 +1,5 @@
 @import "variable";
+@import "theme";
 //顶部导航栏最大宽度限制
 .van-nav-bar--fixed {
   z-index: 2 !important;
@@ -11,11 +12,6 @@
   z-index: 2;
   position: -webkit-sticky;
   border-bottom: 1px solid $color-border-base;
-}
-
-//搜索框样式
-.van-search__content {
-  border-radius: 0.533rem !important;
 }
 
 //导航栏最大宽度限制
@@ -31,7 +27,7 @@
 
 //导航栏左侧图标颜色和大小
 .van-nav-bar .van-icon {
-  color: $color-text-primary !important;
+  @include font_color('font_color1');
   font-size: 25px !important;
 }
 
@@ -66,4 +62,8 @@
 // 底部tab层级
 .van-tabbar {
   z-index: 2 !important;
+}
+// 步骤条暗黑模式适配
+.van-step--horizontal .van-step__circle-container{
+  @include background_color('background_color2')
 }

@@ -104,12 +104,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-@import "~@/assets/style/variable";
-
-body {
-  background-color: $color-background-white !important;
-}
+<style lang="scss">
+@import "~@/assets/style/index.scss";
 
 .search {
   .history {
@@ -207,9 +203,9 @@ body {
   }
 
   .list-item {
-    background-color: $color-background-white;
+    @include background_color('background_color3');
     padding: 0.267rem;
-    box-shadow: 0 0.133rem 0.133rem $color-border-base;
+    @include border_shadow("border_color1");
     margin: 0 0.133rem 0.267rem 0.133rem;
     border-radius: 0.267rem;
 

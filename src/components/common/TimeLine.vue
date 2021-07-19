@@ -63,11 +63,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "src/assets/style/variable";
+@import "src/assets/style/index";
 
 .timeline {
   padding: 10px 20px;
-  background-color: white;
+  @include background_color('background_color2');
 
   ul {
     position: relative;
@@ -110,8 +110,8 @@ export default {
 
       .label {
         margin: 0 0 30px 35%;
-        background: $color-background-base;
-        color: $color-text-primary;
+        @include background_color('background_color3');
+        @include font_color('font_color1');
         padding: 10px;
         font-weight: 300;
         line-height: 1.4;
@@ -140,7 +140,7 @@ export default {
         width: 0;
         position: absolute;
         pointer-events: none;
-        border-right-color: $color-background-base;
+        @include label_after('background_color3');
         border-width: 10px;
         top: 4px;
       }

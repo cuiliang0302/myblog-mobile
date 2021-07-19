@@ -835,11 +835,11 @@ function history(DetailID, componentName) {
 </script>
 
 <style lang="scss" scoped>
-@import "~@/assets/style/variable";
+@import "~@/assets/style/index.scss";
 
 .detail {
   .main {
-    background-color: $color-background-white;
+    @include background_color("background_color4");
     padding: 0.267rem 0.133rem;
 
     .title {
@@ -953,7 +953,7 @@ function history(DetailID, componentName) {
 
   .recommend {
     margin: 0.133rem 0;
-    background-color: $color-background-white;
+    @include background_color("background_color4");
     padding: 0.267rem 0.133rem;
 
     .recommend-list {
@@ -986,7 +986,7 @@ function history(DetailID, componentName) {
 
   .context {
     display: flex;
-    background-color: $color-background-white;
+    @include background_color("background_color4");
     font-size: 16px;
     color: $color-text-primary;
 
@@ -1009,6 +1009,7 @@ function history(DetailID, componentName) {
       align-items: center;
       flex-direction: row-reverse;
     }
+
     .context-icon {
       color: $color-primary;
       margin: 0 0.267rem;
@@ -1016,7 +1017,7 @@ function history(DetailID, componentName) {
   }
 
   .comment {
-    background-color: $color-background-white;
+    @include background_color("background_color4");
     padding: 0 0.267rem 1.867rem 0.267rem;
 
     .click-send {

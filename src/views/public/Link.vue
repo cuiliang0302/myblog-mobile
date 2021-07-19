@@ -1,8 +1,8 @@
 <template>
   <div>
     <NavBar></NavBar>
-        <LinkContent :title="recommend.title" :linkList="recommend.link_list"></LinkContent>
-        <LinkContent :title="link.title" :linkList="link.link_list"></LinkContent>
+    <LinkContent :title="recommend.title" :linkList="recommend.link_list"></LinkContent>
+    <LinkContent :title="link.title" :linkList="link.link_list"></LinkContent>
     <Tabbar></Tabbar>
   </div>
 </template>
@@ -39,7 +39,7 @@ export default {
       for (let i in link_data) {
         if (link_data[i].type === "2") {
           recommend.link_list.push(link_data[i])
-        }else {
+        } else {
           link.link_list.push(link_data[i])
         }
       }
@@ -57,7 +57,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "~@/assets/style/variable";
+@import "~@/assets/style/index.scss";
 
 .message {
 }

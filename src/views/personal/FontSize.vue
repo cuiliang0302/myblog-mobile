@@ -52,14 +52,10 @@ export default {
 </script>
 
 <style lang="scss">
-@import "src/assets/style/variable";
-
-body {
-  background-color: $color-background-white;
-}
+@import "src/assets/style/index";
 
 .font {
-  background-color: $color-background-white;
+  @include background_color('background_color3');
   padding: 0 0.267rem;
 
   .preview {

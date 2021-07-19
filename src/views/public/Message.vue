@@ -157,11 +157,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "~@/assets/style/variable";
+@import "~@/assets/style/index.scss";
 
 .comment-list {
   padding: 0.267rem;
-  background-color: white;
+  @include background_color("background_color4");
 }
 
 .click-send {

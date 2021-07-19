@@ -35,57 +35,36 @@ export default {
     const router = useRouter()
     // 动作菜单默认状态
     const show = ref(false)
-    // // 离开前检查弹窗
-    // const leaveCheck = ref(false)
     // 动作菜单点击取消
-    const onCancel = () =>{
+    const onCancel = () => {
       console.log('取消')
     }
     // 父组件点击动作菜单调用
     const showAction = () => {
       show.value = true
-      // leaveCheck.value = true
     }
-    // 退出前检查弹窗是否关闭
-    // onBeforeRouteLeave((to, from, next) => {
-    //   if (leaveCheck.value) {
-    //     console.log('更多菜单离开检查')
-    //     if (show.value) {
-    //       show.value = false
-    //       leaveCheck.value = false
-    //       next(false)
-    //     }
-    //   } else {
-    //     next(true)
-    //   }
-    // })
     // 跳转标签页
     const toTag = () => {
-      // leaveCheck.value = false
       show.value = false
       router.push('/tag')
     }
     // 跳转归档页
     const toClassify = () => {
-      // leaveCheck.value = false
       show.value = false
       router.push('/classify')
     }
     // 跳转留言板页
     const toMessage = () => {
-      // leaveCheck.value = false
       show.value = false
       router.push('/message')
     }
     // 跳转关于页
     const toAbout = () => {
-      // leaveCheck.value = false
       show.value = false
       router.push('/about')
     }
     // 跳转友情链接页
     const toLink = () => {
-      // leaveCheck.value = false
       show.value = false
       router.push('/link')
     }
@@ -95,7 +74,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "src/assets/style/variable";
+@import "src/assets/style/index";
 
 .content {
   padding: 0.533rem;
@@ -116,7 +95,7 @@ export default {
 
       p {
         font-size: 0.373rem;
-        color: $color-text-regular;
+        @include font_color("font_color2");
       }
     }
   }

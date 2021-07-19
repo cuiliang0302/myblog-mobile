@@ -245,7 +245,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "src/assets/style/variable";
+@import "src/assets/style/index";
 
 .comments {
 
@@ -300,7 +300,7 @@ export default {
       justify-content: space-between;
       padding: 0 1.067rem 0.267rem 1.067rem;
       margin: 0 auto;
-      color: $color-text-regular;
+      @include font_color('font_color2');
 
       .comment-btn {
         display: flex;

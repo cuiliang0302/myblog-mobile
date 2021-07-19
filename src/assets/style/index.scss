@@ -2,26 +2,41 @@
 @import "./variable.scss";
 @import "./vant.scss";
 @import "./theme.scss";
+
 body {
   margin: 0 !important;
   padding: 0 !important;
   box-sizing: border-box;
+  @include background_color('background_color1')
 }
 
 //markdown样式
 .github-markdown-body blockquote {
-  margin-left: 0px !important;
-  margin-right: 0px !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
+
 // markdown字体设置样式适配
-.github-markdown-body{
-  font-size: unset!important;
+.github-markdown-body {
+  font-size: unset !important;
+
+  .extra-class {
+    @include background_color('background_color5');
+  }
+
+  table tr {
+    @include background_color('background_color3');
+  }
+
+  table tr:nth-child(2n) {
+    @include background_color('background_color6');
+  }
 }
 
 // 多级评论回复样式
 .comment-list > .comments > ol > .reply {
   margin-left: 0.933rem;
-  background-color: #f5f7fa;
+  @include background_color("background_color2");
   border-radius: .133rem;
   padding: 0.267rem;
 }
@@ -42,7 +57,8 @@ body {
 .van-field__clear {
   padding-right: 25px !important;
 }
+
 // 自定义遮罩样式
-.my-overlay{
+.my-overlay {
   background-color: rgba(0, 0, 0, 0.3);
 }

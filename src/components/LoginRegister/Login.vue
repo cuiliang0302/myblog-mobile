@@ -63,21 +63,21 @@
       <div class="other-logo">
         <span @click="qqLogin">
         <svg class="icon qq-logo" aria-hidden="true">
-            <use xlink:href="#icon-qq"></use>
+            <use xlink:href="#img-qq-round"></use>
           </svg>
         <p>QQ</p>
       </span>
-        <span @click="githubLogin">
-          <svg class="icon github-logo" aria-hidden="true">
-            <use xlink:href="#icon-github"></use>
-          </svg>
-        <p>GitHub</p>
-      </span>
         <span @click="wbLogin">
         <svg class="icon weibo-logo" aria-hidden="true">
-            <use xlink:href="#icon-weibo"></use>
+            <use xlink:href="#img-weibo-round"></use>
           </svg>
         <p>微博</p>
+      </span>
+        <span @click="githubLogin">
+          <svg class="icon github-logo" aria-hidden="true">
+            <use xlink:href="#img-github-blue"></use>
+          </svg>
+        <p>GitHub</p>
       </span>
       </div>
     </div>
@@ -155,12 +155,12 @@ export default {
       Toast('QQ登录正在开发中！')
     }
     const githubLogin = () => {
-      // Toast('GitHub登录正在开发中！')
-      Toast.loading({
-        message: '登录跳转中...',
-        forbidClick: true,
-      });
-      window.location.href = 'http://127.0.0.1:8000/auth/login/github/'
+      Toast('GitHub登录正在开发中！')
+      // Toast.loading({
+      //   message: '登录跳转中...',
+      //   forbidClick: true,
+      // });
+      // window.location.href = 'http://127.0.0.1:8000/auth/login/github/'
     }
     const wbLogin = () => {
       Toast('微博登录正在开发中！')
@@ -181,13 +181,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "src/assets/style/variable";
+@import "src/assets/style/index";
 
 .main {
 
   .form {
     padding: 0.533rem;
-    background-color: white;
+    @include background_color('background_color2');
     border-radius: 0.267rem;
     height: 9.333rem;
     z-index: 4;
@@ -204,7 +204,7 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #323233;
+      @include font_color('font_color1');
       padding: 0 0.8rem;
 
       .remember {
@@ -240,20 +240,8 @@ export default {
           height: 1.067rem;
         }
 
-        .qq-logo {
-          color: #00b6f6;
-        }
-
-        .github-logo {
-          color: #0f0f0f
-        }
-
-        .weibo-logo {
-          color: #f7575e
-        }
-
         p {
-          color: $color-text-regular;
+          @include font_color('font_color2');
         }
       }
     }
@@ -266,4 +254,6 @@ export default {
     align-items: center;
   }
 }
+
+
 </style>

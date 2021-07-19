@@ -1,27 +1,37 @@
 $themes: (
         light: (
           //字体
-                font_color1: #414141,
-                font_color2: white,
+                font_color1: #303133,
+                font_color2: #606266,
           //背景
-                background_color1: #f5f7fa,
-                background_color2: #f0f2f5,
-                background_color3: red,
-                background_color4: #2674e7,
+                background_color1: #f3f6f9,
+                background_color2: #f6f7f9,
+                background_color3: #ffffff,
+                background_color4: #ffffff,
+                background_color5: #f6f8fa,
+                background_color6: #f6f8fa,
           //边框
-                border_color1: #3d414a,
+                border_color1: #DCDFE6,
+                border_color2: #8bb9f3,
+          //背景图
+                background_img1: url("~@/assets/images/wave-light.png")
         ),
         dark: (
           //字体
-                font_color1: #a7a7a7,
-                font_color2: black,
+                font_color1: #d6d6d6,
+                font_color2: #a3a3a3,
           //背景
-                background_color1: #1b2531,
-                background_color2: #283142,
-                background_color3: #1e6ceb,
-                background_color4: #323e4e,
+                background_color1: #000000,
+                background_color2: #141414,
+                background_color3: #1F1F1F,
+                background_color4: #000000,
+                background_color5: #bfbfbf,
+                background_color6: #595959,
           //边框
                 border_color1: #3d414a,
+                border_color2: #3d414a,
+          //背景图
+                background_img1: url("~@/assets/images/wave-dark.png")
         )
 );
 
@@ -64,9 +74,23 @@ $themes: (
   }
 }
 
-//获取宫格颜色
-@mixin grid_color($color) {
+//边框阴影
+@mixin border_shadow($color) {
   @include themeify {
-    --van-grid-item-content-background-color: themed($color) !important;
+    box-shadow: 0 0.133rem 0.133rem themed($color) !important;
+  }
+}
+
+//背景图片
+@mixin background_img($url) {
+  @include themeify {
+    background-image: themed($url) !important;
+  }
+}
+
+//时间轴边框伪元素
+@mixin label_after($url) {
+  @include themeify {
+    border-right-color: themed($url) !important;
   }
 }

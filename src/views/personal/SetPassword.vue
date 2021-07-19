@@ -205,7 +205,6 @@ export default {
       try {
         let response = await postSetPassword(verifyForm)
         console.log(response)
-        Toast.success('重置成功！');
         active.value = 2
       } catch (error) {
         console.log(error)
@@ -231,7 +230,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "~@/assets/style/variable";
+@import "~@/assets/style/index";
 
 .password {
   height: 100%;
@@ -254,7 +253,7 @@ export default {
       position: absolute;
       bottom: 0;
       left: 0;
-      background: url("~@/assets/images/wave.png");
+      @include background_img('background_img1');
       background-size: 26.667rem 4rem;
     }
 
@@ -313,7 +312,7 @@ export default {
     position: absolute;
     width: 75%;
     height: 10rem;
-    background-color: white;
+    @include background_color('background_color2');
     box-shadow: 0 0.08rem 0.133rem rgb(0 0 0 / 35%);
     border-radius: 0.267rem;
     left: 50%;
@@ -353,8 +352,9 @@ export default {
       font-size: 0.427rem;
       text-align: center;
       margin: 1.067rem 0;
-      color: $color-text-primary;
-      .icon{
+      @include font_color('font_color1');
+
+      .icon {
         width: 1.333rem;
         height: 1.333rem;
         margin-bottom: 0.533rem;

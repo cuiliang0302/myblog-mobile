@@ -19,11 +19,12 @@
 </template>
 
 <script>
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import animate from "animate.css";
 import {ConfigProvider} from "vant";
 import dark from "@/utils/dark";
+import store from "@/store";
 
 export default {
   name: "App",
@@ -34,7 +35,9 @@ export default {
     let enterClass = ref('');
     let leaveClass = ref('');
     const route = useRoute();
-    let {themeVars, setDark} = dark()
+    let {isDark} = dark()
+    // 暗黑模式切换主题变量
+    const themeVars = computed(() => store.state.themeStyle)
     // 首屏加载动画
     onMounted(() => {
       try {
@@ -74,7 +77,7 @@ export default {
           }
         }
     );
-    return {enterClass, leaveClass, themeVars};
+    return {enterClass, leaveClass, themeVars, isDark};
   },
 };
 </script>

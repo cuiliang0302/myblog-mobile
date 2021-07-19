@@ -274,18 +274,18 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "src/assets/style/variable";
+@import "src/assets/style/index";
 
 .photo {
   text-align: center;
   padding-top: 0.533rem;
-  background-color: $color-background-white;
+  @include background_color('background_color3');;
 
   p {
     font-size: 0.373rem;
     margin: 0;
     padding: 0.267rem 0;
-    color: $color-text-regular;
+    @include font_color('font_color1')
   }
 }
 </style>

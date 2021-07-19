@@ -10,6 +10,8 @@ const state = {
 	},
 	// 是否开启暗黑模式
 	dark: false,
+	// vant样式变量
+	themeStyle: {},
 	// 登录后跳转页
 	nextPath: '/personal',
 	// 是否保持登录

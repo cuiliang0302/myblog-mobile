@@ -127,10 +127,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "~@/assets/style/variable";
+@import "~@/assets/style/index";
 
 .number {
   margin-right: 15px;
-  color: $color-text-regular;
+  @include font_color('font_color2');
 }
 </style>
