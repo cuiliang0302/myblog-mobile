@@ -35,7 +35,7 @@
           </span>
               <span><svg class="icon" aria-hidden="true">
               <use xlink:href="#icon-like"></use>
-            </svg>{{ item.like }}{{ item.like }}
+            </svg>{{ item.like }}
           </span>
               <span><svg class="icon" aria-hidden="true">
               <use xlink:href="#icon-comment"></use>
