@@ -133,4 +133,8 @@ export default {
   margin-right: 15px;
   @include font_color('font_color2');
 }
+
+.van-tab__pane, .van-tab__pane-wrapper {
+  @include background_color('background_color2')
+}
 </style>

@@ -151,13 +151,12 @@ section {
 
 .content {
   position: absolute;
-  //width: 85%;
-  //left: 50%;
-  //transform: translateX(-50%);
-  //top: 10%;
   z-index: 4;
   opacity: 0.95;
-  padding: 80px 40px;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  height: 16.693rem;
 
   .title {
     color: white;

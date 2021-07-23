@@ -52,7 +52,7 @@ function dark() {
 		// 图片
 		imagePlaceholderBackgroundColor: '#4f4f4f',
 		// 标签页
-		tabsNavBackgroundColor: '#141414',
+		tabsNavBackgroundColor: 'transparent',
 		tabActiveTextColor: '#d6d6d6',
 		// 弹出层
 		popupBackgroundColor: '#4f4f4f',
@@ -92,6 +92,9 @@ function dark() {
 		} else {
 			window.document.documentElement.setAttribute("data-theme", 'light');
 			themeVars = {...lightStyle}
+			// for (let key in themeVars) {
+			// 	delete themeVars[key];
+			// }
 		}
 	})
 	return {
