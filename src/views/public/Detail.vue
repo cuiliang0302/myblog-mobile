@@ -51,7 +51,7 @@
           </div>
         </div>
         <div class="body" ref="editor">
-          <v-md-preview :text="detail.body"></v-md-preview>
+          <v-md-preview :text="detail.body" @image-click="showImg"></v-md-preview>
         </div>
       </div>
     </van-skeleton>
@@ -129,7 +129,7 @@
 import NavBar from '@/components/datail/NavBar';
 import Tabbar from '@/components/datail/Tabbar';
 import Comments from '@/components/common/Comments'
-import {Divider, Image as VanImage, Loading, Skeleton, Toast, Field, Empty} from 'vant'
+import {Divider, Image as VanImage, Loading, Skeleton, Toast, Field, Empty, ImagePreview} from 'vant'
 import {getCurrentInstance, nextTick, onMounted, reactive, ref, watch} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
 import timeFormat from "@/utils/timeFormat";
@@ -137,6 +137,7 @@ import VMdPreview from '@kangc/v-md-editor/lib/preview';
 import '@kangc/v-md-editor/lib/style/preview.css';
 import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
 import '@kangc/v-md-editor/lib/theme/style/github.css';
+import hljs from 'highlight.js/lib/core';
 import python from 'highlight.js/lib/languages/python';
 import bash from 'highlight.js/lib/languages/bash';
 import dockerfile from 'highlight.js/lib/languages/dockerfile';
@@ -179,18 +180,17 @@ import user from "@/utils/user";
 import LoginPopup from "@/components/common/LoginPopup";
 import useClipboard from 'vue-clipboard3'
 
+hljs.registerLanguage('json', json);
+hljs.registerLanguage('python', python);
+hljs.registerLanguage('bash', bash);
+hljs.registerLanguage('dockerfile', dockerfile);
+hljs.registerLanguage('yaml', yaml);
+hljs.registerLanguage('sql', sql);
 VMdPreview.use(githubTheme, {
   codeHighlightExtensionMap: {
     vue: 'xml',
   },
-  extend(md, hljs) {
-    hljs.registerLanguage('python', python);
-    hljs.registerLanguage('bash', bash);
-    hljs.registerLanguage('dockerfile', dockerfile);
-    hljs.registerLanguage('json', json);
-    hljs.registerLanguage('yaml', yaml);
-    hljs.registerLanguage('sql', sql);
-  },
+  Hljs: hljs,
 });
 export default {
   components: {
@@ -200,6 +200,7 @@ export default {
     [Skeleton.name]: Skeleton,
     [Field.name]: Field,
     [Empty.name]: Empty,
+    [ImagePreview.Component.name]: ImagePreview.Component,
     NavBar,
     Tabbar,
     Comments,
@@ -226,7 +227,7 @@ export default {
       onShare
     } = publicFn(route, router, sectionData)
     // markdown模块
-    let {titleList, editor, rollTo, getTitle, setMDFont} = markdown(titleList)
+    let {titleList, editor, rollTo, getTitle, setMDFont, showImg} = markdown(titleList)
     // 文章模块
     let {recommendList, articleData, guessLikeData} = article(detail)
     // 笔记模块
@@ -307,7 +308,8 @@ export default {
       likeClick,
       is_collect,
       collectClick,
-      onShare
+      onShare,
+      showImg
     }
   }
 }
@@ -458,8 +460,15 @@ function markdown() {
     const html = document.querySelector('.main')
     html.style.fontSize = newSize + 'px'
   });
+  // 图片预览
+  const showImg = (MDimages, currentIndex) => {
+    ImagePreview({
+      images: MDimages,
+      startPosition: currentIndex,
+    });
+  }
   return {
-    titleList, editor, rollTo, getTitle, setMDFont
+    titleList, editor, rollTo, getTitle, setMDFont, showImg
   }
 }
 

@@ -10,15 +10,11 @@ body {
   @include background_color('background_color1')
 }
 
-//markdown样式
-.github-markdown-body blockquote {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-}
-
 // markdown字体设置样式适配
 .github-markdown-body {
   font-size: unset !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 
   .extra-class {
     @include background_color('background_color5');
