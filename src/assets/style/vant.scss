@@ -73,3 +73,8 @@
 .van-share-sheet__cancel::before {
   @include background_color('background_color4')
 }
+
+// 弹窗菜单适配暗黑模式
+.van-popup .van-tabs__wrap .van-tabs__nav {
+  background-color: transparent !important;
+}

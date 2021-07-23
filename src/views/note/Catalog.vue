@@ -134,7 +134,7 @@ export default {
   @include font_color('font_color2');
 }
 
-.van-tab__pane, .van-tab__pane-wrapper {
-  @include background_color('background_color2')
+.van-collapse {
+  @include background_color('background_color3')
 }
 </style>

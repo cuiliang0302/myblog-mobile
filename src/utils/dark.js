@@ -52,7 +52,7 @@ function dark() {
 		// 图片
 		imagePlaceholderBackgroundColor: '#4f4f4f',
 		// 标签页
-		tabsNavBackgroundColor: 'transparent',
+		tabsNavBackgroundColor: '#1F1F1F',
 		tabActiveTextColor: '#d6d6d6',
 		// 弹出层
 		popupBackgroundColor: '#4f4f4f',
