@@ -16,6 +16,11 @@ body {
   padding-left: 0 !important;
   padding-right: 0 !important;
 
+  blockquote {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
   .extra-class {
     @include background_color('background_color5');
   }

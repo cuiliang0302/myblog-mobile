@@ -144,6 +144,10 @@ import dockerfile from 'highlight.js/lib/languages/dockerfile';
 import json from 'highlight.js/lib/languages/json';
 import yaml from 'highlight.js/lib/languages/yaml';
 import sql from 'highlight.js/lib/languages/sql';
+import javascript from 'highlight.js/lib/languages/javascript';
+import css from 'highlight.js/lib/languages/css';
+import scss from 'highlight.js/lib/languages/scss';
+import xml from 'highlight.js/lib/languages/xml';
 import fontSize from "@/utils/fontSize";
 import {getSiteConfig} from "@/api/management";
 import store from "@/store";
@@ -186,9 +190,14 @@ hljs.registerLanguage('bash', bash);
 hljs.registerLanguage('dockerfile', dockerfile);
 hljs.registerLanguage('yaml', yaml);
 hljs.registerLanguage('sql', sql);
+hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('scss', scss);
+hljs.registerLanguage('css', css);
+hljs.registerLanguage('xml', xml);
 VMdPreview.use(githubTheme, {
   codeHighlightExtensionMap: {
     vue: 'xml',
+    less: 'scss',
   },
   Hljs: hljs,
 });
@@ -465,6 +474,7 @@ function markdown() {
     ImagePreview({
       images: MDimages,
       startPosition: currentIndex,
+      closeable: true,
     });
   }
   return {
