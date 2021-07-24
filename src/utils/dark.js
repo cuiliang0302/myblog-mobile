@@ -81,6 +81,9 @@ function dark() {
 		shareSheetCancelButtonBackground: '#4f4f4f',
 		shareSheetTitleColor: '#d6d6d6',
 		shareSheetOptionNameColor: '#a3a3a3',
+		// 下拉菜单
+		dropdownMenuBackgroundColor: '#1F1F1F',
+		dropdownMenuTitleTextColor: '#d6d6d6',
 	};
 	const lightStyle = {
 		cellBackgroundColor: 'transparent'

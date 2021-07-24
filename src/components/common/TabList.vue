@@ -16,7 +16,7 @@
             <div class="title">{{ item.title }}</div>
             <div class="list-main">
         <span class="cover">
-            <van-image :src="item.cover" alt="" radius="0.4rem" lazy-load height="3.013rem" width="4.533rem">
+            <van-image :src="item.cover" alt="" radius="0.4rem" lazy-load height="3.013rem" width="100%">
               <template v-slot:loading>
                 <van-loading type="spinner" size="20"/>
               </template>

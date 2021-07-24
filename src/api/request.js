@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { createApp } from 'vue';
+import {Toast} from "vant";
 export function request(config) {
   // 创建axios的实例
   const instance = axios.create({
@@ -26,12 +26,13 @@ export function request(config) {
         return Promise.reject(error.response.data)
       case 401:
         console.log("无权访问")
+        Toast.fail('无权访问此接口')
         break
       case 403:
-        console.log("token过期啦")
         break
       case 404:
         console.log("404啦")
+        Toast.fail('接口请求地址错误')
         break
       default:
         return Promise.reject(error)

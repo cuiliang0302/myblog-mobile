@@ -304,7 +304,7 @@ section {
     padding: 0.8rem 0 0.267rem 0;
     border-radius: 0.4rem;
     position: absolute;
-    width: 8.533rem;
+    width: 95%;
     transform: translateX(-50%);
     left: 50%;
     bottom: -22.5%;

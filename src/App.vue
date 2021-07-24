@@ -22,14 +22,15 @@
 import {computed, onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import animate from "animate.css";
-import {ConfigProvider} from "vant";
+import {ConfigProvider, Dialog} from "vant";
 import dark from "@/utils/dark";
 import store from "@/store";
 
 export default {
   name: "App",
   components: {
-    [ConfigProvider.name]: ConfigProvider
+    [ConfigProvider.name]: ConfigProvider,
+    Dialog
   },
   setup() {
     let enterClass = ref('');
@@ -40,6 +41,13 @@ export default {
     const themeVars = computed(() => store.state.themeStyle)
     // 首屏加载动画
     onMounted(() => {
+      if (document.body.clientWidth >= 1024) {
+        Dialog.alert({
+          message: '检测到您使用PC设备访问，点击确定后跳转至PC版网站',
+        }).then(() => {
+          location.href = "https://www.cuiliangblog.cn"
+        });
+      }
       try {
         document.body.removeChild(document.getElementById('Loading'))
         setTimeout(function () {

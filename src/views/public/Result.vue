@@ -1,18 +1,18 @@
 <template>
-  <div class="search" v-title="key+'-搜索结果'">
+  <div class="search" v-title="searchForm.key+'-搜索结果'">
     <NavBar></NavBar>
     <van-list>
       <div class="list-item" v-for="(item,index) in articleList" :key="index" @click="toDetail(item.id)">
         <div class="title">{{ item.title }}</div>
         <div class="list-main">
-        <span class="cover">
+        <span class="cover" v-show="searchForm.kind==='article'">
             <van-image :src="item.cover" alt="" radius="0.4rem" lazy-load height="3.013rem" width="4.533rem">
               <template v-slot:loading>
                 <van-loading type="spinner" size="20"/>
               </template>
             </van-image>
         </span>
-          <span class="abstract">{{ item.abstract }}</span>
+          <span class="abstract" v-show="searchForm.kind==='article'">{{ item.abstract }}</span>
         </div>
         <div class="info">
           <span>
@@ -35,7 +35,12 @@
               <use xlink:href="#icon-comment"></use>
             </svg>{{ item.comment }}
           </span>
-          <span><van-tag round :color="tagColor(item.category_id)">{{ item.category }}</van-tag></span>
+          <span v-if="searchForm.kind==='article'">
+            <van-tag round :color="tagColor(item.category_id)">{{ item.category }}</van-tag>
+          </span>
+          <span v-else>
+            <van-tag round :color="tagColor(item.note_id)">{{ item.note }}</van-tag>
+          </span>
         </div>
       </div>
     </van-list>
@@ -76,7 +81,7 @@ export default {
     // 标签颜色
     let {tagColor} = setColor()
     // 搜索关键词
-    const key = ref()
+    const searchForm = reactive({})
     // 搜索结果列表
     const articleList = reactive({})
     // 点击查看文章详情
@@ -86,7 +91,7 @@ export default {
     }
 
     // 获取搜索结果列表
-    async function searchData(key) {
+    async function searchData(key, kind, order) {
       Toast.loading({
         message: '玩命加载中...',
         forbidClick: true,
@@ -94,14 +99,14 @@ export default {
       let article_data
       if (isLogin.value) {
         try {
-          article_data = await getSearch(key, userId.value)
+          article_data = await getSearch(key, kind, order, userId.value)
         } catch (error) {
           console.log(error)
           Toast.fail(error.msg)
         }
       } else {
         try {
-          article_data = await getSearch(key, NaN)
+          article_data = await getSearch(key, kind, order, NaN)
         } catch (error) {
           console.log(error)
           Toast.fail(error.msg)
@@ -114,15 +119,17 @@ export default {
     }
 
     onMounted(() => {
-      key.value = router.currentRoute.value.query.key
-      searchData(key.value)
+      searchForm.key = router.currentRoute.value.query.key
+      searchForm.kind = router.currentRoute.value.query.kind
+      searchForm.order = router.currentRoute.value.query.order
+      searchData(searchForm.key, searchForm.kind, searchForm.order)
     })
     return {
       articleList,
       timeAgo,
       tagColor,
       toDetail,
-      key
+      searchForm
     }
   }
 }

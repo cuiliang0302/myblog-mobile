@@ -983,7 +983,7 @@ function history(DetailID, componentName) {
       .recommend-item {
         position: relative;
         margin: 0.133rem;
-        width: 4.533rem;
+        width: 45%;
 
         span {
           position: absolute;
