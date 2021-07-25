@@ -41,7 +41,7 @@ export default {
     const themeVars = computed(() => store.state.themeStyle)
     // 首屏加载动画
     onMounted(() => {
-      if (document.body.clientWidth >= 1024) {
+      if (document.body.clientWidth >= 1200) {
         Dialog.alert({
           message: '检测到您使用PC设备访问，点击确定后跳转至PC版网站',
         }).then(() => {
