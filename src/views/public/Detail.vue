@@ -550,18 +550,18 @@ function note(detail, toDetail) {
       if (i === 'body') {
         // 图片防盗链处理
         detail.body = detail_data.body
-        // const pattern = /!\[(.*?)\]\((.*?)\)/gm;
-        // let matcher;
-        // let imgArr = [];
-        // while ((matcher = pattern.exec(detail.body)) !== null) {
-        //   imgArr.push(matcher[2]);
-        // }
-        // for (let i = 0; i < imgArr.length; i++) {
-        //   detail.body = detail.body.replace(
-        //       imgArr[i],
-        //       "https://images.weserv.nl/?url=" + imgArr[i]
-        //   );
-        // }
+        const pattern = /!\[(.*?)\]\((https:\/\/cdn.nlark.com.*?)\)/gm;
+        let matcher;
+        let imgArr = [];
+        while ((matcher = pattern.exec(detail.body)) !== null) {
+          imgArr.push(matcher[2]);
+        }
+        for (let i = 0; i < imgArr.length; i++) {
+          detail.body = detail.body.replace(
+              imgArr[i],
+              getImgProxy(imgArr[i])
+          );
+        }
       } else {
         detail[i] = detail_data[i]
       }
