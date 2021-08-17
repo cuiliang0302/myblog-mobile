@@ -91,7 +91,7 @@ section {
   }
 
   .tip-btn {
-    margin-top: 0.933rem;
+    margin-top: 0.667rem;
 
     button {
       padding: 0 1.733rem;

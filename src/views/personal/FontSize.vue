@@ -55,14 +55,17 @@ export default {
 @import "src/assets/style/index";
 
 .font {
-  @include background_color('background_color3');
   padding: 0 0.267rem;
 
   .preview {
     height: 80vh;
-    h1{
+
+    h1 {
       font-size: 1.5em;
+      padding: 0.533rem 0;
+      margin: 0;
     }
+
     p {
       font-size: 1em;
       line-height: 1.5em;
