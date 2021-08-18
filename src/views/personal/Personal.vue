@@ -214,7 +214,7 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
   const isDark = computed(() => store.state.dark)
   // 切换夜间模式
   const changeDark = (value) => {
-    setDark()
+    setDark(value)
     if (value) {
       Toast('已开启深色模式')
     } else {

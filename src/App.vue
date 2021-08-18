@@ -36,11 +36,20 @@ export default {
     let enterClass = ref('');
     let leaveClass = ref('');
     const route = useRoute();
-    let {isDark} = dark()
+    let {isDark, setDark} = dark()
     // 暗黑模式切换主题变量
     const themeVars = computed(() => store.state.themeStyle)
     // 首屏加载动画
     onMounted(() => {
+      const now = new Date()
+      console.log(now.getHours())
+      if (now.getHours() >= 21 || now.getHours() <= 7) {
+        console.log("这是夜间模式")
+        setDark(true)
+      } else {
+        console.log("这是白天模式")
+        setDark(false)
+      }
       if (document.body.clientWidth >= 1200) {
         Dialog.alert({
           message: '检测到您使用PC设备访问，点击确定后跳转至PC版网站',

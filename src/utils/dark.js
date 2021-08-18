@@ -7,8 +7,8 @@ import store from "@/store";
 function dark() {
 	let isDark = store.state.dark
 	let themeVars = reactive({})
-	const setDark = () => setTimeout(() => {
-		isDark = !isDark
+	const setDark = (value) => setTimeout(() => {
+		isDark = value
 		store.commit('setDark', isDark)
 		if (isDark) {
 			window.document.documentElement.setAttribute("data-theme", 'dark');

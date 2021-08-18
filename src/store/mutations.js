@@ -8,8 +8,8 @@ const mutations = {
 	setFontType(state, type) {
 		state.font.fontType = type
 	},
-	setDark(state) {
-		state.dark = !state.dark
+	setDark(state, value) {
+		state.dark = value
 	},
 	setNextPath(state, path) {
 		state.nextPath = path

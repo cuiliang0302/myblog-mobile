@@ -58,7 +58,7 @@ export default {
     const isDark = computed(() => store.state.dark)
     // 点击切换深色浅色按钮
     const changePattern = (value) => {
-      setDark()
+      setDark(value)
       if (value) {
         Toast('已开启深色模式')
       } else {
