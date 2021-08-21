@@ -115,7 +115,7 @@ export default {
     };
     // 点击查看文章详情
     const toDetail = (id) => {
-      router.push({path: `/detail/${id}`, query: {component: 'article'}})
+      router.push({path: `/detail/article/${id}`})
     }
     return {
       activeTab,

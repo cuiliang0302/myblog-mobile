@@ -80,9 +80,9 @@ export default {
     const toDetail = (detailID) => {
       console.log(detailID)
       if (active.value === 0) {
-        router.push({path: `/detail/${detailID}`, query: {component: 'article'}})
+        router.push({path: `/detail/article/${detailID}`})
       } else {
-        router.push({path: `/detail/${detailID}`, query: {component: 'note'}})
+        router.push({path: `/detail/note/${detailID}`})
       }
     }
     onMounted(() => {
