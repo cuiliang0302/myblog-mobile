@@ -76,7 +76,7 @@ export function getCatalogue(id) {
 
 // 获取笔记上下篇
 export function getContext(id) {
-	return index.get('blog/context/' + id + '/')
+	return index.get('blog/context/' + id + '/?kind=section')
 }
 
 // 获取文章笔记二维码
