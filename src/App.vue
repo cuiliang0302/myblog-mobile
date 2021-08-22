@@ -43,7 +43,7 @@ export default {
     onMounted(() => {
       const now = new Date()
       console.log(now.getHours())
-      if (now.getHours() >= 21 || now.getHours() <= 7) {
+      if (now.getHours() >= 21 || now.getHours() <= 6) {
         console.log("这是夜间模式")
         setDark(true)
       } else {
