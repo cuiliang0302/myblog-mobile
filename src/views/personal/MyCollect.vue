@@ -94,7 +94,7 @@ export default {
       if (active.value === 0) {
         router.push({path: `/detail/article/${detailID}`})
       } else {
-        router.push({path: `/detail/note/${detailID}`})
+        router.push({path: `/detail/section/${detailID}`})
       }
     }
     onMounted(() => {

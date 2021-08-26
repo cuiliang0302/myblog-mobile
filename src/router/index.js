@@ -66,7 +66,7 @@ const routes = [
 	},
 	{
 		path: '/detail/article/:id',
-		name: 'articleDetail',
+		name: 'ArticleDetail',
 		component: () => import('@/views/article/ArticleDetail'),
 		meta: {
 			title: '文章正文',
@@ -77,9 +77,9 @@ const routes = [
 		}
 	},
 	{
-		path: '/detail/note/:id',
-		name: 'noteDetail',
-		component: () => import('@/views/note/NoteDetail'),
+		path: '/detail/section/:id',
+		name: 'SectionDetail',
+		component: () => import('@/views/note/SectionDetail'),
 		meta: {
 			title: '笔记正文',
 			keepAlive: false,

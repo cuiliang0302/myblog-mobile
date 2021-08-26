@@ -295,7 +295,7 @@ function publicFn(route, router) {
   // 切换新的文章或笔记
   const toDetail = (detailId) => {
     DetailID.value = detailId
-    router.push({path: `/detail/note/${detailId}`})
+    router.push({path: `/detail/section/${detailId}`})
   }
   // 点赞文章或笔记
   const likeClick = () => {
@@ -770,7 +770,7 @@ function history(DetailID) {
     div {
       flex: 1;
       margin: 10px;
-      background-color: $color-background-base;
+      @include background_color("background_color5");
       border-radius: 5px;
     }
 

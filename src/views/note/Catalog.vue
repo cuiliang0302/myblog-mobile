@@ -12,7 +12,7 @@
                              :title="'第'+(index+1)+'章：'+chapter.name"
                              :name="chapter.id">
             <van-cell v-for="(title,index) in chapter.child" :key="index" :title="title.name"
-                      @click="$router.push({path:`/detail/note/${title.section_id}`})">
+                      @click="$router.push({path:`/detail/section/${title.section_id}`})">
               <template #icon>
                 <span class="number">{{ index + 1 }}.</span>
               </template>
@@ -76,7 +76,7 @@ export default {
     const collectList = ref([])
     // 跳转至笔记详情页
     const toDetail = (detailId) => {
-      router.push({path: `/detail/note/${detailId}`})
+      router.push({path: `/detail/section/${detailId}`})
     }
 
     // 获取笔记收藏数据
