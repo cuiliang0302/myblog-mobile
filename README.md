@@ -1,5 +1,7 @@
 # myblog_mobile
 
+博客网站手机版，项目目前正在持续开发中
+
 ## Project setup
 ```
 npm install

@@ -50,7 +50,7 @@ export default {
         console.log("这是白天模式")
         setDark(false)
       }
-      if (document.body.clientWidth >= 1200) {
+      if (document.body.clientWidth > 1200) {
         Dialog.alert({
           message: '检测到您使用PC设备访问，点击确定后跳转至PC版网站',
         }).then(() => {
