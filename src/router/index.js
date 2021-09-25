@@ -374,7 +374,23 @@ const routes = [
 			index: 2,
 			isAuth: false
 		}
-	}
+	},
+	{
+		path: '/404',
+		name: '404',
+		component: () => import('@/views/404.vue'),
+		meta: {
+			title: '404-页面找不到',
+			keepAlive: true,
+			transitionClass: 'back',//前进后退
+			index: 2,
+			isAuth: false
+		}
+	},
+	{
+		path: '/:pathMatch(.*)',
+		redirect: '/404'
+	},
 ]
 
 const router = createRouter({
