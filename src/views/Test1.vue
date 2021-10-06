@@ -155,7 +155,7 @@ import {
   putSectionHistory
 } from "@/api/record";
 import user from "@/utils/user";
-import LoginPopup from "@/components/common/LoginPopup";
+import LoginPopup from "@/components/common/LoginPopup.vue";
 import useClipboard from 'vue-clipboard3'
 
 hljs.registerLanguage('json', json);
