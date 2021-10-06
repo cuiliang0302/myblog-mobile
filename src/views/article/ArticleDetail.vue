@@ -1,7 +1,7 @@
 <!--内容详情页-->
 <template>
   <div class="detail" v-title="detail.title+'-'+sitename">
-    <NavBar :componentName="'article'"></NavBar>
+    <DetailNavBar :componentName="'article'"></DetailNavBar>
     <van-skeleton title round :row="10" :loading="loading">
       <div class="main">
         <div class="title">
@@ -54,10 +54,10 @@
         </div>
       </div>
     </van-skeleton>
-    <div class="recommend">
+    <div class="guessLike">
       <van-divider content-position="left">💖 猜你喜欢</van-divider>
-      <div class="recommend-list">
-        <div class="recommend-item" v-for="(item,index) in recommendList" :key="index"
+      <div class="guessLike-list">
+        <div class="guessLike-item" v-for="(item,index) in guessLike" :key="index"
              @click="toDetail(item.id)">
           <van-image :src="item.cover" radius="0.4rem" width="100%" height="3.2rem" lazy-load>
             <template v-slot:loading>
@@ -93,21 +93,24 @@
       </div>
     </div>
     <div class="bottom-margin"></div>
-    <Tabbar :componentName="'article'" :titleList="titleList" :is_collect="is_collect"
-            @collectClick="collectClick" @rollTo="rollTo"
-            @likeClick="likeClick" @onShare="onShare"></Tabbar>
-    <LoginPopup ref="refLoginPopup"></LoginPopup>
+    <DetailTabbar :componentName="'article'" :titleList="titleList" :is_collect="is_collect"
+                  @collectClick="collectClick" @rollTo="rollTo"
+                  @likeClick="likeClick" @onShare="onShare"></DetailTabbar>
+    <LoginPopup ref="loginPopupRef"></LoginPopup>
   </div>
 </template>
 
-<script>
-import NavBar from '@/components/datail/NavBar';
-import Tabbar from '@/components/datail/Tabbar';
-import Comments from '@/components/common/Comments'
-import {Divider, Image as VanImage, Loading, Skeleton, Toast, Field, Empty, ImagePreview} from 'vant'
+<script setup>
+import DetailNavBar from '@/components/detail/DetailNavBar.vue';
+import DetailTabbar from "@/components/detail/DetailTabbar.vue";
+import LoginPopup from "@/components/common/LoginPopup.vue";
+import {getSiteConfig} from "@/api/management";
+import {getArticleDetail, getGuessLike, getQRcode, putArticleDetail} from "@/api/blog";
 import {getCurrentInstance, nextTick, onMounted, reactive, ref, watch} from "vue";
-import {useRouter, onBeforeRouteUpdate} from "vue-router";
 import timeFormat from "@/utils/timeFormat";
+import {ImagePreview, Toast} from "vant";
+import {onBeforeRouteUpdate, useRouter} from "vue-router";
+import {getImgProxy} from "@/api/public";
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
 import '@kangc/v-md-editor/lib/style/preview.css';
 import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
@@ -123,29 +126,16 @@ import javascript from 'highlight.js/lib/languages/javascript';
 import css from 'highlight.js/lib/languages/css';
 import scss from 'highlight.js/lib/languages/scss';
 import xml from 'highlight.js/lib/languages/xml';
-import fontSize from "@/utils/fontSize";
-import {getSiteConfig} from "@/api/management";
-import store from "@/store";
 import {
-  getArticleDetail,
-  getGuessLike,
-  putArticleDetail,
-  getQRcode
-} from "@/api/blog";
-import {getImgProxy} from "@/api/public";
-import {
-  getArticleComment,
-  postArticleComment,
   deleteArticleComment,
-  putArticleComment,
+  getArticleComment, getArticleHistory,
+  postArticleComment, postArticleHistory,
   postReplyArticleComment,
-  postArticleHistory,
-  putArticleHistory,
-  getArticleHistory,
+  putArticleComment, putArticleHistory
 } from "@/api/record";
+import store from "@/store";
+import fontSize from "@/utils/fontSize";
 import user from "@/utils/user";
-import LoginPopup from "@/components/common/LoginPopup";
-import useClipboard from 'vue-clipboard3'
 
 hljs.registerLanguage('json', json);
 hljs.registerLanguage('python', python);
@@ -164,113 +154,358 @@ VMdPreview.use(githubTheme, {
   },
   Hljs: hljs,
 });
-export default {
-  components: {
-    [Divider.name]: Divider,
-    [VanImage.name]: VanImage,
-    [Loading.name]: Loading,
-    [Skeleton.name]: Skeleton,
-    [Field.name]: Field,
-    [Empty.name]: Empty,
-    [ImagePreview.Component.name]: ImagePreview.Component,
-    NavBar,
-    Tabbar,
-    Comments,
-    VMdPreview,
-    LoginPopup
-  },
-  name: "Detail",
-  setup() {
-    // 事件总线
-    const internalInstance = getCurrentInstance();  //当前组件实例
-    const $bus = internalInstance.appContext.config.globalProperties.$bus;
-    const router = useRouter();
-    const route = useRouter();
-    // 调用公共组件模块
-    let {
-      sitename,
-      DetailID,
-      detail,
-      timeDate,
-      loading,
-      toDetail,
-      likeClick,
-      onShare
-    } = publicFn(route, router)
-    // markdown模块
-    let {titleList, editor, rollTo, getTitle, setMDFont, showImg} = markdown(titleList)
-    // 文章模块
-    let {recommendList, articleData, guessLikeData} = article(detail)
-    // 评论回复模块
-    let {messageForm, commentsList, articleCommentData, clickSend, refLoginPopup} = comment(DetailID, $bus, router)
-    // 浏览记录模块
-    let {is_collect, getArticleHistoryData, postArticleHistoryData, collectClick} = history(DetailID)
+// 调用公共组件模块
+let {
+  sitename,
+  DetailID,
+  timeDate,
+  loading,
+  toDetail,
+  router
+} = publicFn()
 
-    // 获取文章内容详情
-    async function getDetail(DetailID) {
-      Toast.loading({
-        message: '加载中...',
-        forbidClick: true,
-      });
-      await articleData(DetailID)
-      await guessLikeData(DetailID)
-      await articleCommentData(DetailID)
-      await getArticleHistoryData(DetailID)
-      await postArticleHistoryData(DetailID)
-      loading.value = false;
-      await setMDFont()
-      await getTitle()
-      window.scrollTo({top: 0})
-    }
+// 调用文章模块
+let {detail, getDetail, guessLike, getGuessLikeData} = article(DetailID)
+// 调用markdown模块
+let {editor, showImg, setMDFont} = markdown()
+// 调用评论回复模块
+let {messageForm, commentsList, clickSend, articleCommentData, loginPopupRef} = comment(DetailID, router)
+// 调用tabbar模块
+let {
+  titleList,
+  getTitle,
+  rollTo,
+  is_collect,
+  collectClick,
+  likeClick,
+  onShare,
+  getArticleHistoryData,
+  postArticleHistoryData
+} = tabbarFn(editor, DetailID)
+onMounted(async () => {
+  await getDetail(DetailID.value)
+  await setMDFont()
+  await getTitle()
+  await postArticleHistoryData(DetailID.value)
+})
+onBeforeRouteUpdate(async (to) => {
+  DetailID.value = to.params.id
+  await getDetail(DetailID.value)
+  await setMDFont()
+  await getTitle()
+  await getGuessLikeData(DetailID.value)
+  await articleCommentData(DetailID.value)
+  await getArticleHistoryData(DetailID.value)
+  await postArticleHistoryData(DetailID.value)
+  window.scrollTo({top: 0})
+});
 
-    onMounted(async () => {
-      let DetailID = router.currentRoute.value.params.id
-      await getDetail(DetailID)
-    })
-    onBeforeRouteUpdate(async (to) => {
-      console.log(to)
-      await getDetail(to.params.id)
-    });
-    return {
-      sitename,
-      detail,
-      timeDate,
-      toDetail,
-      titleList,
-      editor,
-      recommendList,
-      commentsList,
-      rollTo,
-      loading,
-      messageForm,
-      clickSend,
-      refLoginPopup,
-      likeClick,
-      is_collect,
-      collectClick,
-      onShare,
-      showImg
-    }
-  }
-}
-
-// 通用模块
-function publicFn(route, router) {
-  const {toClipboard} = useClipboard()
+// 公共组件模块
+function publicFn() {
+  const router = useRouter();
   // 站点名称
   const sitename = ref()
   // 文章ID
   const DetailID = ref()
-  // 内容详情
-  let detail = reactive({})
   // 文章发布日期只保留天
   let {timeDate} = timeFormat()
   // 骨架屏默认显示
   const loading = ref(true);
+
+  // 获取站点名称
+  async function siteConfigData() {
+    let siteConfig_data = await getSiteConfig()
+    sitename.value = siteConfig_data.name
+  }
+
   // 切换新的文章
   const toDetail = (detailId) => {
     DetailID.value = detailId
     router.push({path: `/detail/article/${detailId}`})
+  }
+  onMounted(() => {
+    siteConfigData()
+    DetailID.value = router.currentRoute.value.params.id
+    loading.value = false
+  })
+  return {
+    sitename, DetailID, timeDate, loading, toDetail, router
+  }
+}
+
+// 文章模块
+function article(DetailID) {
+  // 文章详情
+  const detail = reactive({})
+
+  // 获取文章内容详情
+  async function getDetail(DetailID) {
+    Toast.loading({
+      message: '加载中...',
+      forbidClick: true,
+    });
+    let detail_data = await getArticleDetail(DetailID)
+    for (let i in detail_data) {
+      if (i === 'body') {
+        // 图片防盗链处理
+        detail.body = detail_data.body
+        const pattern = /!\[(.*?)\]\((https:\/\/cdn.nlark.com.*?)\)/gm;
+        let matcher;
+        let imgArr = [];
+        while ((matcher = pattern.exec(detail.body)) !== null) {
+          imgArr.push(matcher[2]);
+        }
+        for (let i = 0; i < imgArr.length; i++) {
+          detail.body = detail.body.replace(
+              imgArr[i],
+              getImgProxy(imgArr[i])
+          );
+        }
+      } else {
+        detail[i] = detail_data[i]
+      }
+    }
+  }
+
+  // 猜你喜欢列表
+  const guessLike = ref()
+
+  // 获取猜你喜欢
+  async function getGuessLikeData(DetailID) {
+    guessLike.value = await getGuessLike(DetailID)
+  }
+
+  onMounted(() => {
+    getGuessLikeData(DetailID.value)
+  })
+  return {detail, getDetail, guessLike, getGuessLikeData}
+}
+
+// markdown模块
+function markdown() {
+  // markdown对象
+  let editor = ref(null)
+  // 引入字体设置模块
+  let {rootSize} = fontSize()
+  // 图片预览
+  const showImg = (MDimages, currentIndex) => {
+    ImagePreview({
+      images: MDimages,
+      startPosition: currentIndex,
+      closeable: true,
+    });
+  }
+
+  // 设置markdown字体
+  async function setMDFont() {
+    await nextTick()
+    const html = document.querySelector('.main')
+    html.style.fontSize = rootSize.value + 'px'
+  }
+
+  // 调整字体大小
+  watch(rootSize, (newSize) => {
+    const html = document.querySelector('.main')
+    html.style.fontSize = newSize + 'px'
+  });
+  return {editor, showImg, setMDFont}
+}
+
+// 评论回复模块
+function comment(DetailID, router) {
+  // 事件总线
+  const internalInstance = getCurrentInstance();  //当前组件实例
+  const $bus = internalInstance.appContext.config.globalProperties.$bus;
+  // 引入用户信息模块
+  let {userId, isLogin} = user();
+  // 留言评论列表
+  const commentsList = ref([])
+
+  // 获取文章评论数据
+  async function articleCommentData() {
+    commentsList.value = await getArticleComment(DetailID.value)
+    console.log(commentsList.value)
+  }
+
+  // 提示登录组件对象
+  const loginPopupRef = ref(null)
+  // 评论表单
+  const messageForm = reactive({
+    content: '',
+    user: '',
+  })
+  // 点击发表评论事件
+  const clickSend = () => {
+    if (isLogin.value) {
+      if (messageForm.content) {
+        messageForm.user = userId.value
+        messageForm['article_id'] = DetailID.value
+        console.log(messageForm)
+        postArticleComment(messageForm).then((response) => {
+          console.log(response)
+          Toast.success('留言成功！');
+          messageForm.content = ''
+          articleCommentData(DetailID.value)
+        }).catch(response => {
+          //发生错误时执行的代码
+          console.log(response)
+          for (let i in response) {
+            Toast.fail(i + response[i][0]);
+          }
+        });
+      } else {
+        Toast("一言不发，发个寂寞")
+      }
+    } else {
+      store.commit('setNextPath', router.currentRoute.value.fullPath)
+      loginPopupRef.value.showPopup()
+    }
+  }
+  // 评论点赞事件
+  if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", messageId => {
+    putArticleComment(messageId).then((response) => {
+      console.log(response)
+      Toast.success('点赞成功！');
+      articleCommentData(DetailID.value)
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      Toast.fail(response.msg);
+    });
+  });
+  // 评论删除事件
+  if (!$bus.all.get("delMessage")) $bus.on("delMessage", messageId => {
+    deleteArticleComment(messageId).then((response) => {
+      console.log(response)
+      Toast.success('留言删除成功！');
+      articleCommentData(DetailID.value)
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      Toast.fail(response.msg);
+    });
+  });
+  // 留言回复事件
+  if (!$bus.all.get("replySend")) $bus.on("replySend", replyForm => {
+    replyForm['article_id'] = DetailID.value
+    console.log(replyForm)
+    postReplyArticleComment(replyForm).then((response) => {
+      console.log(response)
+      Toast.success('回复成功！');
+      articleCommentData(DetailID.value)
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      for (let i in response) {
+        Toast.fail(i + response[i][0]);
+      }
+    });
+  });
+  onMounted(() => {
+    articleCommentData()
+  })
+  return {
+    commentsList,
+    articleCommentData,
+    messageForm,
+    clickSend,
+    loginPopupRef,
+  }
+}
+
+// tabbar模块
+function tabbarFn(editor, DetailID) {
+  // 引入用户信息模块
+  let {userId, isLogin} = user();
+  // 文章标题列表
+  let titleList = ref([])
+
+  // 获取markdown标题
+  async function getTitle() {
+    await nextTick()
+    const anchors = editor.value.querySelectorAll(
+        '.v-md-editor-preview h1,h2,h3'
+    )
+    const titles = Array.from(anchors).filter((title) => !!title.innerText.trim());
+    if (!titles.length) {
+      titleList.value = [];
+      return;
+    }
+    const hTags = Array.from(new Set(titles.map((title) => title.tagName))).sort();
+    titleList.value = titles.map((el) => ({
+      title: el.innerText,
+      lineIndex: el.getAttribute('data-v-md-line'),
+      indent: hTags.indexOf(el.tagName),
+    }));
+  }
+
+  // markdown标题跳转
+  const rollTo = (anchor) => {
+    console.log('收到跳转请求')
+    const {lineIndex} = anchor;
+    const heading = editor.value.querySelector(
+        `.v-md-editor-preview [data-v-md-line="${lineIndex}"]`
+    );
+    if (heading) {
+      heading.scrollIntoView({behavior: "smooth", block: "center"})
+    }
+  }
+  // 文章收藏状态
+  const is_collect = ref(false)
+
+  // 获取文章浏览记录（是否已收藏）
+  async function getArticleHistoryData() {
+    if (isLogin.value === true) {
+      let res = await getArticleHistory(DetailID.value, userId.value)
+      console.log(res)
+      is_collect.value = res.is_collect
+      console.log(is_collect.value)
+    }
+  }
+
+  // 添加文章浏览记录表单
+  const articleHistoryForm = reactive({
+    article_id: '',
+    user: ''
+  })
+
+  // 添加文章浏览记录
+  async function postArticleHistoryData(DetailID) {
+    if (isLogin.value === true) {
+      articleHistoryForm.article_id = DetailID
+      articleHistoryForm.user = userId.value
+      console.log(articleHistoryForm)
+      let res = await postArticleHistory(articleHistoryForm)
+      console.log(res)
+    }
+  }
+
+
+  // 添加/取消收藏表单
+  const CollectForm = reactive({
+    user: '',
+    is_collect: ''
+  })
+  // 子组件添加/取消收藏事件
+  const collectClick = () => {
+    console.log("添加/取消收藏")
+    console.log("当前收藏状态是", is_collect.value)
+    is_collect.value = !is_collect.value
+    CollectForm.user = userId.value
+    CollectForm.is_collect = is_collect.value
+    CollectForm['article_id'] = DetailID
+    putArticleHistory(CollectForm).then((response) => {
+      console.log(response)
+      if (response.is_collect === true) {
+        Toast.success('已添加收藏！');
+      } else {
+        Toast.success('已取消收藏！');
+      }
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      Toast.fail(response.msg);
+    });
   }
   // 点赞文章
   const likeClick = () => {
@@ -317,292 +552,25 @@ function publicFn(route, router) {
       });
     }
   }
-
-  // 获取站点名称
-  async function siteConfigData() {
-    let siteConfig_data = await getSiteConfig()
-    sitename.value = siteConfig_data.name
-  }
-
   onMounted(() => {
-    siteConfigData()
-    DetailID.value = router.currentRoute.value.params.id
+    getArticleHistoryData()
   })
   return {
-    sitename, DetailID, detail, timeDate, loading, toDetail, likeClick, onShare
-  }
-}
-
-// markdown模块
-function markdown() {
-  // 引入字体设置模块
-  let {rootSize} = fontSize()
-  // markdown对象
-  let editor = ref(null)
-  // 文章标题列表
-  let titleList = ref([])
-  // markdown标题跳转
-  const rollTo = (anchor) => {
-    console.log('收到跳转请求')
-    const {lineIndex} = anchor;
-    const heading = editor.value.querySelector(
-        `.v-md-editor-preview [data-v-md-line="${lineIndex}"]`
-    );
-    if (heading) {
-      heading.scrollIntoView({behavior: "smooth", block: "center"})
-    }
-  }
-
-  // 获取markdown标题
-  async function getTitle() {
-    await nextTick()
-    const anchors = editor.value.querySelectorAll(
-        '.v-md-editor-preview h1,h2,h3'
-    )
-    const titles = Array.from(anchors).filter((title) => !!title.innerText.trim());
-    if (!titles.length) {
-      titleList.value = [];
-      return;
-    }
-    const hTags = Array.from(new Set(titles.map((title) => title.tagName))).sort();
-    titleList.value = titles.map((el) => ({
-      title: el.innerText,
-      lineIndex: el.getAttribute('data-v-md-line'),
-      indent: hTags.indexOf(el.tagName),
-    }));
-  }
-
-  // 设置markdown字体
-  async function setMDFont() {
-    await nextTick()
-    const html = document.querySelector('.main')
-    html.style.fontSize = rootSize.value + 'px'
-  }
-
-  // 调整字体大小
-  watch(rootSize, (newSize) => {
-    const html = document.querySelector('.main')
-    html.style.fontSize = newSize + 'px'
-  });
-  // 图片预览
-  const showImg = (MDimages, currentIndex) => {
-    ImagePreview({
-      images: MDimages,
-      startPosition: currentIndex,
-      closeable: true,
-    });
-  }
-  return {
-    titleList, editor, rollTo, getTitle, setMDFont, showImg
-  }
-}
-
-// 文章模块
-function article(detail) {
-  // 猜你喜欢列表
-  const recommendList = ref([])
-
-  // 获取文章详情
-  async function articleData(DetailID) {
-    const detail_data = await getArticleDetail(DetailID)
-    for (let i in detail_data) {
-      if (i === 'body') {
-        // 图片防盗链处理
-        detail.body = detail_data.body
-        const pattern = /!\[(.*?)\]\((https:\/\/cdn.nlark.com.*?)\)/gm;
-        let matcher;
-        let imgArr = [];
-        while ((matcher = pattern.exec(detail.body)) !== null) {
-          imgArr.push(matcher[2]);
-        }
-        for (let i = 0; i < imgArr.length; i++) {
-          detail.body = detail.body.replace(
-              imgArr[i],
-              getImgProxy(imgArr[i])
-          );
-        }
-      } else {
-        detail[i] = detail_data[i]
-      }
-    }
-  }
-
-  // 获取猜你喜欢
-  async function guessLikeData(DetailID) {
-    recommendList.value = await getGuessLike(DetailID)
-  }
-
-  return {
-    recommendList, articleData, guessLikeData,
-  }
-}
-
-// 评论回复模块
-function comment(DetailID, $bus, router) {
-  // 引入用户信息模块
-  let {userId, isLogin} = user();
-  // 留言评论列表
-  const commentsList = ref([])
-
-  // 获取文章评论数据
-  async function articleCommentData(DetailID) {
-    commentsList.value = await getArticleComment(DetailID)
-  }
-
-  // 提示登录组件对象
-  const refLoginPopup = ref()
-  // 评论表单
-  const messageForm = reactive({
-    content: '',
-    user: '',
-  })
-  // 点击发表评论事件
-  const clickSend = () => {
-    if (isLogin.value) {
-      if (messageForm.content) {
-        messageForm.user = userId.value
-        messageForm['article_id'] = DetailID.value
-        console.log(messageForm)
-        postArticleComment(messageForm).then((response) => {
-          console.log(response)
-          Toast.success('留言成功！');
-          messageForm.content = ''
-          articleCommentData(DetailID.value)
-        }).catch(response => {
-          //发生错误时执行的代码
-          console.log(response)
-          for (let i in response) {
-            Toast.fail(i + response[i][0]);
-          }
-        });
-      } else {
-        Toast("一言不发，发个寂寞")
-      }
-    } else {
-      store.commit('setNextPath', router.currentRoute.value.fullPath)
-      refLoginPopup.value.showPopup()
-    }
-  }
-  // 评论点赞事件
-  if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", messageId => {
-    putArticleComment(messageId).then((response) => {
-      console.log(response)
-      Toast.success('点赞成功！');
-      articleCommentData(DetailID.value)
-    }).catch(response => {
-      //发生错误时执行的代码
-      console.log(response)
-      Toast.fail(response.msg);
-    });
-  });
-  // 评论删除事件
-  if (!$bus.all.get("delMessage")) $bus.on("delMessage", messageId => {
-    deleteArticleComment(messageId).then((response) => {
-      console.log(response)
-      Toast.success('留言删除成功！');
-      articleCommentData(DetailID.value)
-    }).catch(response => {
-      //发生错误时执行的代码
-      console.log(response)
-      Toast.fail(response.msg);
-    });
-  });
-  // 留言回复事件
-  if (!$bus.all.get("replySend")) $bus.on("replySend", replyForm => {
-    replyForm['article_id'] = DetailID.value
-    console.log(replyForm)
-    postReplyArticleComment(replyForm).then((response) => {
-      console.log(response)
-      Toast.success('回复成功！');
-      articleCommentData(DetailID.value)
-    }).catch(response => {
-      //发生错误时执行的代码
-      console.log(response)
-      for (let i in response) {
-        Toast.fail(i + response[i][0]);
-      }
-    });
-  });
-  return {
-    commentsList,
-    articleCommentData,
-    messageForm,
-    clickSend,
-    refLoginPopup,
-  }
-}
-
-// 浏览记录模块
-function history(DetailID) {
-  // 引入用户信息模块
-  let {userId, isLogin} = user();
-  // 文章收藏状态
-  const is_collect = ref(false)
-
-  // 获取文章浏览记录（是否已收藏）
-  async function getArticleHistoryData(DetailID) {
-    if (isLogin.value === true) {
-      let res = await getArticleHistory(DetailID, userId.value)
-      console.log(res)
-      is_collect.value = res.is_collect
-    }
-  }
-
-  // 添加文章浏览记录表单
-  const articleHistoryForm = reactive({
-    article_id: '',
-    user: ''
-  })
-
-  // 添加文章浏览记录
-  async function postArticleHistoryData(DetailID) {
-    if (isLogin.value === true) {
-      articleHistoryForm.article_id = DetailID
-      articleHistoryForm.user = userId.value
-      console.log(articleHistoryForm)
-      let res = await postArticleHistory(articleHistoryForm)
-      console.log(res)
-    }
-  }
-
-
-  // 添加/取消收藏表单
-  const CollectForm = reactive({
-    user: '',
-    is_collect: ''
-  })
-  // 子组件添加/取消收藏事件
-  const collectClick = () => {
-    console.log("爹收到了")
-    is_collect.value = !is_collect.value
-    CollectForm.user = userId.value
-    CollectForm.is_collect = is_collect.value
-    CollectForm['article_id'] = DetailID
-    putArticleHistory(CollectForm).then((response) => {
-      console.log(response)
-      if (response.is_collect === true) {
-        Toast.success('已添加收藏！');
-      } else {
-        Toast.success('已取消收藏！');
-      }
-    }).catch(response => {
-      //发生错误时执行的代码
-      console.log(response)
-      Toast.fail(response.msg);
-    });
-  }
-
-  return {
-    is_collect,
-    getArticleHistoryData,
+    titleList,
+    getTitle,
+    rollTo,
     postArticleHistoryData,
+    getArticleHistoryData,
+    is_collect,
     collectClick,
+    likeClick,
+    onShare
   }
 }
 </script>
 
 <style lang="scss" scoped>
-@import "~@/assets/style/index.scss";
+@import "src/assets/style/index.scss";
 
 .detail {
   .main {
@@ -718,17 +686,17 @@ function history(DetailID) {
     }
   }
 
-  .recommend {
+  .guessLike {
     margin: 0.133rem 0;
     @include background_color("background_color3");
     padding: 0.267rem 0.133rem;
 
-    .recommend-list {
+    .guessLike-list {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
 
-      .recommend-item {
+      .guessLike-item {
         position: relative;
         margin: 0.133rem;
         width: 45%;

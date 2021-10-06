@@ -97,149 +97,122 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import {Toast, Image as VanImage, Icon, Dialog, Popup, Field} from 'vant'
 import {reactive, ref, getCurrentInstance} from "vue";
 import timeFormat from "@/utils/timeFormat";
 import user from "@/utils/user";
 
-export default {
-  components: {
-    [VanImage.name]: VanImage,
-    [Icon.name]: Icon,
-    [Popup.name]: Popup,
-    [Field.name]: Field,
-    Dialog,
-    Toast
-  },
-  props: {
-    // 评论回复列表
-    commentsList: {
-      type: Array, default() {
-        return []
-      }
-    },
-  },
-  name: "Comments",
-  emits: ['likeMessage', 'delMessage', 'replySend'],
-  setup(props, {emit}) {
-    // 事件总线
-    const internalInstance = getCurrentInstance();
-    const $bus = internalInstance.appContext.config.globalProperties.$bus;
-    // 引入用户信息模块
-    let {userId, isLogin} = user();
-    // 时间显示几天前
-    let {timeAgo} = timeFormat()
-    // 已点赞列表
-    const likeList = ref([])
-    // 判断是否已点赞
-    const isLike = (messageId) => {
-      for (let i = 0; i < likeList.value.length; i++) {
-        if (messageId === parseInt(likeList.value[i])) {
-          return true;
-        }
-      }
-      return false;
+const props = defineProps({
+  // 评论回复列表
+  commentsList: {
+    type: Array, default() {
+      return []
     }
-    // 留言评论点赞
-    const likeMessage = (messageId) => {
-      likeList.value.push(messageId)
-      $bus.emit("likeMessage", messageId);
+  },
+})
+const emit = defineEmits(['likeMessage', 'delMessage', 'replySend'])
+// 事件总线
+const internalInstance = getCurrentInstance();
+const $bus = internalInstance.appContext.config.globalProperties.$bus;
+// 引入用户信息模块
+let {userId, isLogin} = user();
+// 时间显示几天前
+let {timeAgo} = timeFormat()
+// 已点赞列表
+const likeList = ref([])
+// 判断是否已点赞
+const isLike = (messageId) => {
+  for (let i = 0; i < likeList.value.length; i++) {
+    if (messageId === parseInt(likeList.value[i])) {
+      return true;
     }
-    // 判断评论留言能否删除
-    const isDelete = (messageUser) => {
-      if (!isLogin.value) {
-        return false
-      }
-      if (messageUser !== userId.value) {
-        return false
-      }
+  }
+  return false;
+}
+// 留言评论点赞
+const likeMessage = (messageId) => {
+  likeList.value.push(messageId)
+  $bus.emit("likeMessage", messageId);
+}
+// 判断评论留言能否删除
+const isDelete = (messageUser) => {
+  if (!isLogin.value) {
+    return false
+  }
+  if (messageUser !== userId.value) {
+    return false
+  }
+  return true
+}
+// 评论留言删除
+const delMessage = (messageId) => {
+  Dialog.confirm({
+    title: '删除确认',
+    message: '当真要删除这条宝贵的记录吗？',
+  }).then(() => {
+    $bus.emit("delMessage", messageId);
+  })
+}
+// 回复输入框默认状态
+const textareaShow = ref(false)
+// 回复输入框内容
+const replyForm = reactive({
+  content: '',
+  user: '',
+  father: ''
+})
+// 点击留言评论回复事件
+const replyMessage = (father) => {
+  textareaShow.value = true
+  replyForm.father = father
+  replyForm.user = userId.value
+}
+// 发送评论留言回复事件
+const replySend = () => {
+  if (replyForm.content === '') {
+    Toast.fail("请输入内容！")
+    return false
+  } else {
+    $bus.emit("replySend", replyForm);
+    // emit('replySend', replyForm)
+    replyForm.content = ''
+    textareaShow.value = false
+  }
+}
+// 判断是否可回复留言
+const isReply = (user) => {
+  if (isLogin.value === true && userId.value !== user) {
+    return true
+  } else {
+    return false
+  }
+}
+// 判断浏览器是否为miui
+const isMIUI = () => {
+  let UA = window.navigator.userAgent
+  if (UA.includes('MiuiBrowser')) {
+    if (window.screen.height / window.screen.width >= 2) {
+      console.log("是小米全面屏手机")
       return true
     }
-    // 评论留言删除
-    const delMessage = (messageId) => {
-      Dialog.confirm({
-        title: '删除确认',
-        message: '当真要删除这条宝贵的记录吗？',
-      }).then(() => {
-        $bus.emit("delMessage", messageId);
-      })
-    }
-    // 回复输入框默认状态
-    const textareaShow = ref(false)
-    // 回复输入框内容
-    const replyForm = reactive({
-      content: '',
-      user: '',
-      father: ''
-    })
-    // 点击留言评论回复事件
-    const replyMessage = (father) => {
-      textareaShow.value = true
-      replyForm.father = father
-      replyForm.user = userId.value
-    }
-    // 发送评论留言回复事件
-    const replySend = () => {
-      if (replyForm.content === '') {
-        Toast.fail("请输入内容！")
-        return false
-      } else {
-        $bus.emit("replySend", replyForm);
-        // emit('replySend', replyForm)
-        replyForm.content = ''
-        textareaShow.value = false
-      }
-    }
-    // 判断是否可回复留言
-    const isReply = (user) => {
-      if (isLogin.value === true && userId.value !== user) {
-        return true
-      } else {
-        return false
-      }
-    }
-    // 判断浏览器是否为miui
-    const isMIUI = () => {
-      let UA = window.navigator.userAgent
-      if (UA.includes('MiuiBrowser')) {
-        if (window.screen.height / window.screen.width >= 2) {
-          console.log("是小米全面屏手机")
-          return true
-        }
-      } else {
-        console.log("不是小米全面屏手机")
-        return false
-      }
-    }
-    // 评论框获得焦点事件
-    const focus = () => {
-      if (isMIUI() === true) {
-        let textareaDom = document.querySelector('.textarea>.van-popup--bottom')
-        textareaDom.style.bottom = '38vh';
-      }
-    }
-    // 评论框失去焦点事件
-    const blur = () => {
-      if (isMIUI() === true) {
-        let textareaDom = document.querySelector('.textarea>.van-popup--bottom')
-        textareaDom.style.bottom = '0.533rem';
-      }
-    }
-    return {
-      timeAgo,
-      isLike,
-      likeMessage,
-      delMessage,
-      isDelete,
-      textareaShow,
-      replyMessage,
-      isReply,
-      replyForm,
-      replySend,
-      blur,
-      focus
-    }
+  } else {
+    console.log("不是小米全面屏手机")
+    return false
+  }
+}
+// 评论框获得焦点事件
+const focus = () => {
+  if (isMIUI() === true) {
+    let textareaDom = document.querySelector('.textarea>.van-popup--bottom')
+    textareaDom.style.bottom = '38vh';
+  }
+}
+// 评论框失去焦点事件
+const blur = () => {
+  if (isMIUI() === true) {
+    let textareaDom = document.querySelector('.textarea>.van-popup--bottom')
+    textareaDom.style.bottom = '0.533rem';
   }
 }
 </script>

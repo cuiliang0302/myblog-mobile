@@ -10,44 +10,33 @@
   </van-nav-bar>
 </template>
 
-<script>
+<script setup>
 import {Search, Toast, Icon, NavBar} from 'vant';
 import {ref} from "vue";
 import {useRouter} from "vue-router";
-import SearchInput from "@/components/common/SearchInput";
+import SearchInput from "@/components/common/SearchInput.vue";
 
-export default {
-  components: {
-    SearchInput,
-    [Search.name]: Search,
-    [Icon.name]: Icon,
-    [NavBar.name]: NavBar
-  },
-  name: "SearchBar",
-  setup(props, {emit}) {
-    // 搜索输入框输入内容
-    const keyWords = ref('')
-    // 搜索栏输入内容改变
-    const keyChange = (key) => {
-      keyWords.value = key
-    }
-    // 搜索栏是否自动聚焦
-    const focus = ref(true)
-    // 搜索输入内容点击按钮
-    const onSearch = () => {
-      if (keyWords.value) {
-        emit('onSearch', keyWords.value)
-      } else {
-        Toast('请先输入搜索内容');
-      }
-    }
-    const router = useRouter()
-    // 返回上一级
-    const toBack = () => {
-      router.go(-1)
-    }
-    return {onSearch, toBack, keyChange, focus};
-  },
+const emit = defineEmits(['onSearch'])
+// 搜索输入框输入内容
+const keyWords = ref('')
+// 搜索栏输入内容改变
+const keyChange = (key) => {
+  keyWords.value = key
+}
+// 搜索栏是否自动聚焦
+const focus = ref(true)
+// 搜索输入内容点击按钮
+const onSearch = () => {
+  if (keyWords.value) {
+    emit('onSearch', keyWords.value)
+  } else {
+    Toast('请先输入搜索内容');
+  }
+}
+const router = useRouter()
+// 返回上一级
+const toBack = () => {
+  router.go(-1)
 }
 </script>
 

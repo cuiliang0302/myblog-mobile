@@ -50,83 +50,60 @@
   </van-tabs>
 </template>
 
-<script>
+<script setup>
 import {Toast, Tab, Tabs, PullRefresh, Cell, Tag, Image as VanImage, Loading, List} from 'vant';
 import {reactive, ref} from 'vue';
 import {useRouter} from "vue-router";
 import timeFormat from "@/utils/timeFormat";
 import setColor from "@/utils/setColor";
 
-export default {
-  components: {
-    [Tab.name]: Tab,
-    [Tabs.name]: Tabs,
-    Toast,
-    [PullRefresh.name]: PullRefresh,
-    [List.name]: List,
-    [Cell.name]: Cell,
-    [Tag.name]: Tag,
-    [VanImage.name]: VanImage,
-    [Loading.name]: Loading
-  },
-  name: "TabList",
-  props: {
-    // 加载中动画
-    load: {
-      type: Boolean,
-      default() {
-        return false;
-      }
-    },
-    // 标签栏列表
-    tabList: {
-      type: Array,
-      default() {
-        return [];
-      }
-    },
-    // 内容列表
-    listState: {
-      type: Object,
-      default() {
-        return {};
-      }
+
+const props = defineProps({
+  // 加载中动画
+  load: {
+    type: Boolean,
+    default() {
+      return false;
     }
   },
-  setup(props, {emit}) {
-    const activeTab = ref('');
-    const router = useRouter()
-    // 时间显示几天前
-    let {timeAgo} = timeFormat()
-    // 标签颜色
-    let {tagColor} = setColor()
-    // 数据刷新
-    const refresh = reactive({
-      count: 0,
-      loading: false,
-    });
-    const onRefresh = () => {
-      console.log("子组件触发刷新")
-      emit('onRefresh')
-    };
-    const onLoad = () => {
-      console.log("子组件触发加载下一页了")
-      emit('onLoad')
-    };
-    // 点击查看文章详情
-    const toDetail = (id) => {
-      router.push({path: `/detail/article/${id}`})
+  // 标签栏列表
+  tabList: {
+    type: Array,
+    default() {
+      return [];
     }
-    return {
-      activeTab,
-      refresh,
-      onRefresh,
-      onLoad,
-      toDetail,
-      timeAgo,
-      tagColor
-    };
   },
+  // 内容列表
+  listState: {
+    type: Object,
+    default() {
+      return {};
+    }
+  }
+})
+const emit = defineEmits(['onRefresh', 'onLoad'])
+const activeTab = ref('');
+const router = useRouter()
+// 时间显示几天前
+let {timeAgo} = timeFormat()
+// 标签颜色
+let {tagColor} = setColor()
+// 数据刷新
+const refresh = reactive({
+  count: 0,
+  loading: false,
+});
+const onRefresh = () => {
+  console.log("子组件触发刷新")
+  emit('onRefresh')
+};
+const onLoad = () => {
+  console.log("子组件触发加载下一页了")
+  emit('onLoad')
+};
+// 点击查看文章详情
+const toDetail = (id) => {
+  router.push({path: `/detail/article/${id}`})
 }
 </script>
 

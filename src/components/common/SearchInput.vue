@@ -4,44 +4,34 @@
               @click="$router.push('/search')"/>
 </template>
 
-<script>
+<script setup>
 import {Search} from 'vant';
 import {onMounted, ref, watch} from "vue";
 
-export default {
-  components: {
-    [Search.name]: Search
-  },
-  name: "SearchInput",
-  props: {
-    // 搜索栏是否自动聚焦
-    focus: {
-      type: Boolean, default() {
-        return false
-      }
-    },
-  },
-  setup(props, {emit}) {
-    // 搜索关键词
-    const key = ref('');
-    // 搜索栏dom对象
-    const refInput = ref(null)
-    onMounted(() => {
-      // 搜索栏自动聚焦
-      if (props.focus) {
-        refInput.value.focus()
-      }
-    })
-    // 监听搜索关键词变化
-    watch(key, (newProps) => {
-      emit('keyChange', newProps)
-    });
-    return {
-      refInput,
-      key
+const props = defineProps({
+  // 搜索栏是否自动聚焦
+  focus: {
+    type: Boolean, default() {
+      return false
     }
+  },
+})
+const emit = defineEmits(['keyChange'])
+
+// 搜索关键词
+const key = ref('');
+// 搜索栏dom对象
+const refInput = ref(null)
+onMounted(() => {
+  // 搜索栏自动聚焦
+  if (props.focus) {
+    refInput.value.focus()
   }
-}
+})
+// 监听搜索关键词变化
+watch(key, (newProps) => {
+  emit('keyChange', newProps)
+});
 </script>
 
 <style scoped>

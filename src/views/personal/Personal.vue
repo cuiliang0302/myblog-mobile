@@ -77,12 +77,12 @@
   </div>
 </template>
 
-<script>
-import Tabbar from "@/components/common/Tabbar";
-import LoginPopup from "@/components/common/LoginPopup";
+<script setup>
+import Tabbar from "@/components/common/Tabbar.vue";
+import LoginPopup from "@/components/common/LoginPopup.vue";
 import {Image as VanImage, Loading, Icon, Cell, CellGroup, Switch, Dialog, Toast} from 'vant';
 import {computed, onMounted, reactive, ref} from "vue";
-import store from "@/store";
+import store from "@/store/index";
 import {useRouter} from "vue-router";
 import router from "@/router";
 import user from "@/utils/user";
@@ -91,43 +91,12 @@ import fontSize from "@/utils/fontSize";
 import {getSiteConfig} from "@/api/management";
 import dark from "@/utils/dark";
 
-export default {
-  components: {
-    Tabbar,
-    LoginPopup,
-    [VanImage.name]: VanImage,
-    [Loading.name]: Loading,
-    [Icon.name]: Icon,
-    [Cell.name]: Cell,
-    [CellGroup.name]: CellGroup,
-    [Switch.name]: Switch,
-    Dialog,
-  },
-  name: "Personal",
-  setup() {
-    // 引入公共方法
-    let {isLogin, userInfo, userId, toView, refLoginPopup, logo} = global()
 
-    // 引入系统与设置模块
-    let {changeFlow, fontType, isDark, changeDark, logout} = setting(userId, userInfo, isLogin, refLoginPopup)
+// 引入公共方法
+let {isLogin, userInfo, userId, toView, refLoginPopup, logo} = global()
 
-    onMounted(() => {
-
-    })
-    return {
-      isLogin,
-      userInfo,
-      isDark,
-      toView,
-      refLoginPopup,
-      fontType,
-      changeDark,
-      logout,
-      changeFlow,
-      logo
-    }
-  },
-};
+// 引入系统与设置模块
+let {changeFlow, fontType, isDark, changeDark, logout} = setting(userId, userInfo, isLogin, refLoginPopup)
 
 // 公共方法
 function global() {
@@ -244,14 +213,14 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
 }
 </script>
 <style scoped lang="scss">
-@import "~@/assets/style/index.scss";
+@import "src/assets/style/index.scss";
 //水波纹特效和背景图
 
 section {
   position: relative;
   width: 100%;
   height: 2.64rem;
-  background-image: url("~@/assets/images/personal-img.jpg");
+  background-image: url("src/assets/images/personal-img.jpg");
   background-repeat: no-repeat;
   background-size: 100%;
   padding: 0 0 2.667rem 0;

@@ -84,99 +84,74 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import {Form, Button, Field, Divider, Icon, Checkbox, Toast} from 'vant';
-import VerifyImgBtn from "@/components/verify/VerifyImgBtn";
+import VerifyImgBtn from "@/components/verify/VerifyImgBtn.vue";
 import {reactive, ref} from "vue";
 import {postLogin} from '@/api/account'
-import store from "@/store";
+import store from "@/store/index";
 import {useRouter} from "vue-router";
 
-export default {
-  components: {
-    [Form.name]: Form,
-    [Button.name]: Button,
-    [Field.name]: Field,
-    [Divider.name]: Divider,
-    [Icon.name]: Icon,
-    [Checkbox.name]: Checkbox,
-    Toast,
-    VerifyImgBtn
-  },
-  name: "Login",
-  setup() {
-    const router = useRouter()
-    // 保持登录复选框
-    const remember = ref(false);
-    // 用户登录表单
-    const loginForm = reactive({
-      username: '',
-      password: '',
-    });
-    // 验证码通过验证状态
-    const isPassing = ref(false)
-    // 验证码按钮样式
-    const btnType = ref('default')
-    // 验证码通过验证
-    const pass = () => {
-      isPassing.value = true
+
+const router = useRouter()
+// 保持登录复选框
+const remember = ref(false);
+// 用户登录表单
+const loginForm = reactive({
+  username: '',
+  password: '',
+});
+// 验证码通过验证状态
+const isPassing = ref(false)
+// 验证码按钮样式
+const btnType = ref('default')
+// 验证码通过验证
+const pass = () => {
+  isPassing.value = true
+}
+// 表单登录按钮
+const onSubmit = () => {
+  if (!isPassing.value) {
+    console.log("滑动了吗")
+    btnType.value = 'danger'
+    return
+  }
+  postLogin(loginForm).then((response) => {
+    console.log(response)
+    Toast.success('登录成功！');
+    if (remember.value) {
+      console.log('记住了')
+      store.commit('setKeepLogin', true)
+      store.commit('setUserLocal', response)
+    } else {
+      console.log('记不住')
+      store.commit('setKeepLogin', false)
+      store.commit('setUserSession', response)
     }
-    // 表单登录按钮
-    const onSubmit = () => {
-      if (!isPassing.value) {
-        console.log("滑动了吗")
-        btnType.value = 'danger'
-        return
-      }
-      postLogin(loginForm).then((response) => {
-        console.log(response)
-        Toast.success('登录成功！');
-        if (remember.value) {
-          console.log('记住了')
-          store.commit('setKeepLogin', true)
-          store.commit('setUserLocal', response)
-        } else {
-          console.log('记不住')
-          store.commit('setKeepLogin', false)
-          store.commit('setUserSession', response)
-        }
-        router.push(store.state.nextPath)
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail('账号或密码错误！');
-        loginForm.username = ''
-        loginForm.password = ''
-        isPassing.value = false
-      });
-    };
-    // qq登录
-    const qqLogin = () => {
-      Toast('QQ登录正在开发中！')
-    }
-    const githubLogin = () => {
-      Toast('GitHub登录正在开发中！')
-      // Toast.loading({
-      //   message: '登录跳转中...',
-      //   forbidClick: true,
-      // });
-      // window.location.href = 'http://127.0.0.1:8000/auth/login/github/'
-    }
-    const wbLogin = () => {
-      Toast('微博登录正在开发中！')
-    }
-    return {
-      loginForm,
-      onSubmit,
-      remember,
-      isPassing,
-      pass,
-      btnType,
-      qqLogin,
-      githubLogin,
-      wbLogin
-    };
-  },
+    router.push(store.state.nextPath)
+  }).catch(response => {
+    //发生错误时执行的代码
+    console.log(response)
+    Toast.fail('账号或密码错误！');
+    loginForm.username = ''
+    loginForm.password = ''
+    isPassing.value = false
+  });
+};
+// qq登录
+const qqLogin = () => {
+  Toast('QQ登录正在开发中！')
+}
+const githubLogin = () => {
+  Toast('GitHub登录正在开发中！')
+  // Toast.loading({
+  //   message: '登录跳转中...',
+  //   forbidClick: true,
+  // });
+  // window.location.href = 'http://127.0.0.1:8000/auth/login/github/'
+}
+const wbLogin = () => {
+  Toast('微博登录正在开发中！')
 }
 </script>
 

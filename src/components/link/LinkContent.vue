@@ -23,48 +23,38 @@
   </section>
 </template>
 
-<script>
-import {Grid, GridItem, Loading, Image as VanImage,Toast} from 'vant';
+<script setup>
+import {Grid, GridItem, Loading, Image as VanImage, Toast} from 'vant';
 
-export default {
-  name: "LinkContent",
-  components: {
-    [Grid.name]: Grid,
-    [GridItem.name]: GridItem,
-    [Loading.name]: Loading,
-    [VanImage.name]: VanImage,
-    Toast
-  },
-  props: {
-    // 评论回复列表
-    title: {
-      type: String, default() {
-        return ''
-      }
-    },
-    linkList: {
-      type: Array, default() {
-        return []
-      }
-    },
-  },
-  setup() {
-    const toLink = (url) => {
-      window.location.href = url
-      Toast.loading({
-        message: '第三方网站跳转中...',
-        forbidClick: true,
-      });
+
+const props = defineProps({
+  // 评论回复列表
+  title: {
+    type: String, default() {
+      return ''
     }
-    return {
-      toLink
+  },
+  // 友情链接列表
+  linkList: {
+    type: Array, default() {
+      return []
     }
-  }
+  },
+})
+
+const toLink = (url) => {
+  window.location.href = url
+  Toast.loading({
+    message: '第三方网站跳转中...',
+    forbidClick: true,
+  });
 }
+
 </script>
 
 <style scoped lang="scss">
-@import "~@/assets/style/index.scss";
+@import "src/assets/style/index.scss";
+
 .link-content {
   margin: 0.4rem 0;
 
@@ -82,8 +72,9 @@ export default {
         margin-left: 10px;
       }
     }
-    .describe{
-      p{
+
+    .describe {
+      p {
         line-height: 15px;
         margin-bottom: 0;
         @include font_color('font_color2');
@@ -91,8 +82,10 @@ export default {
     }
   }
 }
-.van-grid-item{
+
+.van-grid-item {
   height: 150px;
+
   .van-grid-item :first-child {
     border-radius: 10px;
   }

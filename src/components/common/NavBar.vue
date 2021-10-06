@@ -15,51 +15,35 @@
   <ActionSheet ref="showAction"></ActionSheet>
 </template>
 
-<script>
+<script setup>
 import {NavBar, Icon, Search} from 'vant';
 import {onMounted, ref} from "vue";
-import ActionSheet from "@/components/common/ActionSheet";
-import SearchInput from "@/components/common/SearchInput"
+import ActionSheet from "@/components/common/ActionSheet.vue";
+import SearchInput from "@/components/common/SearchInput.vue"
 import {getSiteConfig} from "@/api/management";
-export default {
-  components: {
-    [NavBar.name]: NavBar,
-    [Icon.name]: NavBar,
-    [Search.name]: Search,
-    ActionSheet,
-    SearchInput
-  },
-  name: "NavBar",
-  setup() {
-    const key = ref('')
-    const active = ref(0);
-    const showAction = ref();
-    const fnShowAction = () => {
-      showAction.value.showAction();
-    };
-    // 网站logo
-    const logo = ref()
-    // 获取网站logo
-    async function siteConfigData() {
-      let siteConfig_data = await getSiteConfig()
-      logo.value = siteConfig_data.logo
-    }
-    onMounted(()=>{
-      siteConfigData()
-    })
-    return {
-      key,
-      active,
-      showAction,
-      fnShowAction,
-      logo
-    }
-  }
+
+const key = ref('')
+const active = ref(0);
+const showAction = ref();
+const fnShowAction = () => {
+  showAction.value.showAction();
+};
+// 网站logo
+const logo = ref()
+
+// 获取网站logo
+async function siteConfigData() {
+  let siteConfig_data = await getSiteConfig()
+  logo.value = siteConfig_data.logo
 }
+
+onMounted(() => {
+  siteConfigData()
+})
 </script>
 
 <style lang="scss" scoped>
-@import "src/assets/style/variable";
+@import "src/assets/style/index";
 
 .van-nav-bar__left {
   img {

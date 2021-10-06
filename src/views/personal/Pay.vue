@@ -1,7 +1,7 @@
 <!--赞赏支持-->
 <template>
   <div class="pay">
-    <NavBar :title="'赞赏支持'"></NavBar>
+    <PersonalNavBar :title="'赞赏支持'"></PersonalNavBar>
     <section>
       <div class="title">
         <h2>支付宝</h2>
@@ -31,20 +31,12 @@
   </div>
 </template>
 
-<script>
-import NavBar from "@/components/personal/NavBar";
+<script setup>
+import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
 import {Image as VanImage, Loading} from 'vant';
 import {onMounted, reactive} from "vue";
 import {getInfo} from "@/api/management";
 
-export default {
-  components: {
-    [VanImage.name]: VanImage,
-    [Loading.name]: Loading,
-    NavBar
-  },
-  name: "Pay",
-  setup() {
     const info = reactive({
       'wechat_pay': '',
       'ali_pay': ''
@@ -60,11 +52,7 @@ export default {
     onMounted(() => {
       infoData()
     })
-    return {
-      info
-    }
-  }
-}
+
 </script>
 
 <style scoped lang="scss">

@@ -8,69 +8,52 @@
     </section>
     <div class="content">
       <div class="title">
-        <span :class="componentName==='Login'? ['is_activate']:[]" @click="switchLogin">登&nbsp;录</span>
-        <span :class="componentName==='Register'? ['is_activate']:[]" @click="switchRegister">注&nbsp;册</span>
+        <span :class="component.name==='Login'? ['is_activate']:[]" @click="switchLogin">登&nbsp;录</span>
+        <span :class="component.name==='Register'? ['is_activate']:[]" @click="switchRegister">注&nbsp;册</span>
       </div>
       <transition enter-active-class="animated animate__animated animate__flipInY">
-        <component :is="componentName"></component>
+        <component :is="component.comp"></component>
       </transition>
     </div>
   </div>
 </template>
 
-<script>
-import Login from "@/components/LoginRegister/Login";
-import Register from "@/components/LoginRegister/Register";
-import {onMounted, ref} from "vue";
+<script setup>
+import Login from "@/components/LoginRegister/Login.vue";
+import Register from "@/components/LoginRegister/Register.vue";
+import {onMounted, shallowReactive} from "vue";
 import {useRouter} from "vue-router";
 
-export default {
-  components: {
-    Login,
-    Register
-  },
-  name: "LoginRegister",
-  setup() {
-    const router = useRouter();
-    // 阻止默认事件
-    const wraper = usePreventDefault()
-    // 默认显示登录组件
-    const componentName = ref('Login')
-    // 其他页面调用，默认跳转
-    onMounted(() => {
-      if (router.currentRoute.value.query.component) {
-        componentName.value = router.currentRoute.value.query.component
-      }
-    })
-    // 切换到注册组件
-    let switchRegister = () => {
-      componentName.value = 'Register'
-    }
-    // 切换到登录组件
-    let switchLogin = () => {
-      componentName.value = 'Login'
-    }
-    return {
-      componentName,
-      switchRegister,
-      switchLogin,
-      wraper
+const router = useRouter();
+// 默认显示登录组件
+const component = shallowReactive({
+  name: 'Login',
+  comp: Login
+})
+// 其他页面调用，默认跳转
+onMounted(() => {
+  if (router.currentRoute.value.query.component) {
+    component.name = router.currentRoute.value.query.component
+    if (component.name === 'Login') {
+      component.comp = Login
+    } else {
+      component.comp = Register
     }
   }
-};
-
-export function usePreventDefault() {
-  const wraper = ref(null)
-  onMounted(() => {
-    wraper.value?.addEventListener('touchmove', e => {
-      e.preventDefault()
-    })
-  })
-  return wraper
+})
+// 切换到注册组件
+let switchRegister = () => {
+  component.name = 'Register'
+  component.comp = Register
+}
+// 切换到登录组件
+let switchLogin = () => {
+  component.name = 'Login'
+  component.comp = Login
 }
 </script>
 <style lang="scss" scoped>
-@import "~@/assets/style/index.scss";
+@import "src/assets/style/index.scss";
 
 .bgc {
   @include background_color('background_color4');
@@ -83,7 +66,7 @@ section {
   width: 100%;
   position: absolute;
   height: 9.867rem;
-  background-image: url("~@/assets/images/login-bg.jpg");
+  background-image: url("/src/assets/images/login-bg.jpg");
   background-repeat: no-repeat;
   background-size: 100%;
   padding-bottom: 2.533rem;

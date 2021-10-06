@@ -1,7 +1,7 @@
 <!--我的评论-->
 <template>
   <div class="comment">
-    <NavBar :title="'我的评论'"></NavBar>
+    <PersonalNavBar :title="'我的评论'"></PersonalNavBar>
     <van-tabs v-model:active="active" color="#409EFF" animated swipeable @click="onClick">
       <van-tab title="文章">
         <van-empty v-if="commentList.length===0" description="暂无收藏记录"/>
@@ -15,26 +15,16 @@
   </div>
 </template>
 
-<script>
-import TimeLine from "@/components/common/TimeLine";
-import NavBar from "@/components/personal/NavBar";
+<script setup>
+import TimeLine from "@/components/common/TimeLine.vue";
+import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
 import {Tab, Tabs, Toast, Empty} from 'vant';
-import {onMounted, reactive, ref} from "vue";
+import {onMounted,  ref} from "vue";
 import user from "@/utils/user";
 import {useRouter} from "vue-router";
-import {getArticleHistory, getSectionHistory, getUserArticleComment, getUserSectionComment} from "@/api/record";
+import {getUserArticleComment, getUserSectionComment} from "@/api/record";
 
-export default {
-  components: {
-    NavBar,
-    TimeLine,
-    [Tab.name]: Tab,
-    [Tabs.name]: Tabs,
-    [Empty.name]: Empty,
-    Toast
-  },
-  name: "MyComments",
-  setup() {
+
     // 引入用户信息模块
     let {userId, isLogin} = user();
     const router = useRouter()
@@ -90,14 +80,6 @@ export default {
     onMounted(() => {
       getArticleHistoryData()
     })
-    return {
-      active,
-      onClick,
-      toDetail,
-      commentList
-    }
-  }
-}
 </script>
 
 <style scoped>

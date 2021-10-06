@@ -1,7 +1,7 @@
 // 是否登录判断
 
 import {computed, onMounted, reactive, ref} from "vue";
-import store from "@/store";
+import store from "@/store/index";
 
 function user() {
   const isLogin = ref(false)

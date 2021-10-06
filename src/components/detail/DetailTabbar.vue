@@ -143,7 +143,7 @@
   </van-config-provider>
 </template>
 
-<script>
+<script setup>
 import {
   Tabbar,
   TabbarItem,
@@ -162,105 +162,64 @@ import {
 import {onMounted, ref} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
 import user from "@/utils/user";
-import LoginPopup from "@/components/common/LoginPopup";
+import LoginPopup from "@/components/common/LoginPopup.vue";
 import {getQRcode} from "@/api/blog";
 import useClipboard from "vue-clipboard3";
-import store from "@/store";
+import store from "@/store/index";
 
-export default {
-  components: {
-    [Tabbar.name]: Tabbar,
-    [TabbarItem.name]: TabbarItem,
-    [ShareSheet.name]: ShareSheet,
-    [Popup.name]: Popup,
-    [Tab.name]: Tab,
-    [Tabs.name]: Tabs,
-    [Empty.name]: Empty,
-    [Loading.name]: Loading,
-    [VanImage.name]: VanImage,
-    [Overlay.name]: Overlay,
-    [Icon.name]: Icon,
-    [ConfigProvider.name]: ConfigProvider,
-    LoginPopup
-  },
-  props: {
-    // markdown标题
-    titleList: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
-    // 笔记目录
-    catalogList: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
-    // 当前显示的组件
-    componentName: {
-      type: String,
-      default() {
-        return 'article'
-      }
-    },
-    // 是否已收藏
-    is_collect: {
-      type: Boolean,
-      default() {
-        return false
-      }
+
+const props = defineProps({
+  // markdown标题
+  titleList: {
+    type: Array,
+    default() {
+      return []
     }
   },
-  name: "Tabbar",
-  emits: ['rollTo', 'dirTab', 'toNoteDetail', 'likeClick', 'collectClick', 'onShare'],
-  setup(props, {emit}) {
-    // 调用大纲模块
-    let {directoryClick, showDir, activeDir, rollTo, tabChange, toDetail} = fnDirectory(props, {emit})
-    // 调用分享模块
-    let {
-      options,
-      onSelect,
-      showShare,
-      QRcode_show,
-      QRcode_url,
-      isWeChat,
-      overlay_show,
-      themeVars
-    } = fnShare(props, {emit})
-    // 调用点赞模块
-    let {isLike, likeClick} = fnLike(props, {emit})
-    // 调用收藏模块
-    let {collectionClick, refLoginPopup} = fnCollection(props, {emit})
-    // 调用评论模块
-    let {commentClick} = fnComment()
-    // 调用公共模块
-    let {active} = fnPublic(isLike)
-    return {
-      active,
-      options,
-      onSelect,
-      showShare,
-      likeClick,
-      isLike,
-      collectionClick,
-      commentClick,
-      directoryClick,
-      showDir,
-      activeDir,
-      rollTo,
-      tabChange,
-      toDetail,
-      refLoginPopup,
-      QRcode_show,
-      QRcode_url,
-      isWeChat,
-      overlay_show,
-      themeVars
-    };
+  // 笔记目录
+  catalogList: {
+    type: Array,
+    default() {
+      return []
+    }
   },
-}
+  // 当前显示的组件
+  componentName: {
+    type: String,
+    default() {
+      return 'article'
+    }
+  },
+  // 是否已收藏
+  is_collect: {
+    type: Boolean,
+    default() {
+      return false
+    }
+  }
+})
+const emit = defineEmits(['rollTo', 'dirTab', 'toNoteDetail', 'likeClick', 'collectClick', 'onShare'])
+// 调用大纲模块
+let {directoryClick, showDir, activeDir, rollTo, tabChange, toDetail} = fnDirectory(props, emit)
+// 调用分享模块
+let {
+  options,
+  onSelect,
+  showShare,
+  QRcode_show,
+  QRcode_url,
+  isWeChat,
+  overlay_show,
+  themeVars
+} = fnShare(props, emit)
+// 调用点赞模块
+let {isLike, likeClick} = fnLike(props, emit)
+// 调用收藏模块
+let {collectionClick, refLoginPopup} = fnCollection(props, emit)
+// 调用评论模块
+let {commentClick} = fnComment()
+// 调用公共模块
+let {active} = fnPublic(isLike)
 
 // 公共模块
 function fnPublic(isLike) {
@@ -277,7 +236,7 @@ function fnPublic(isLike) {
 }
 
 // 大纲功能模块
-function fnDirectory(props, {emit}) {
+function fnDirectory(props, emit) {
   const activeDir = ref(0)
   const showDir = ref(false);
   // 大纲菜单打开
@@ -311,7 +270,7 @@ function fnDirectory(props, {emit}) {
 }
 
 //分享功能模块
-function fnShare(props, {emit}) {
+function fnShare(props, emit) {
   const {toClipboard} = useClipboard()
   const showShare = ref(false);
   const QRcode_show = ref(false)
@@ -319,7 +278,7 @@ function fnShare(props, {emit}) {
   const QRcode_url = ref()
   const options = [
     [
-      {name: 'QQ空间', icon: require('@/assets/images/qq-zone.png')},
+      {name: 'QQ空间', icon: '/src/assets/images/qq-zone.png'},
       {name: '微博', icon: 'weibo'},
       {name: 'QQ', icon: 'qq'},
       {name: '微信', icon: 'wechat'},
@@ -399,7 +358,7 @@ function fnShare(props, {emit}) {
 }
 
 // 点赞功能模块
-function fnLike(props, {emit}) {
+function fnLike(props, emit) {
   // 是否已点赞
   const isLike = ref(false)
   const likeClick = () => {
@@ -417,7 +376,7 @@ function fnLike(props, {emit}) {
 }
 
 // 收藏功能模块
-function fnCollection(props, {emit}) {
+function fnCollection(props, emit) {
   const router = useRouter()
   // 提示登录组件对象
   const refLoginPopup = ref()
@@ -441,7 +400,6 @@ function fnCollection(props, {emit}) {
 
 // 评论功能模块
 function fnComment() {
-  const router = useRouter()
   const commentClick = () => {
     const returnEle = document.querySelector("#comment");  //productId是将要跳转区域的id
     if (!!returnEle) {
@@ -457,7 +415,7 @@ function fnComment() {
 </script>
 
 <style lang="scss" scoped>
-@import "~@/assets/style/variable";
+@import "src/assets/style/index";
 
 .active {
   color: $color-primary

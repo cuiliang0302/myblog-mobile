@@ -42,92 +42,68 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import {Tag, Empty, List, Loading, Toast, DropdownMenu, DropdownItem} from 'vant';
-import SearchBar from "@/components/search/SearchBar";
+import SearchBar from "@/components/search/SearchBar.vue";
 import {getSearchHistory, getSearchHot} from "@/api/record";
 import {onMounted, reactive, ref} from "vue";
 import user from "@/utils/user";
 import {Image as VanImage} from "vant/lib/image";
 import {useRouter} from "vue-router";
 
-export default {
-  components: {
-    [Tag.name]: Tag,
-    [Empty.name]: Empty,
-    [List.name]: List,
-    [VanImage.name]: VanImage,
-    [Loading.name]: Loading,
-    [DropdownMenu.name]: DropdownMenu,
-    [DropdownItem.name]: DropdownItem,
-    Toast,
-    SearchBar,
-  },
-  name: "Search",
-  setup() {
-    const router = useRouter()
-    // 引入用户信息模块
-    let {userId, isLogin} = user();
-    // 搜索历史列表
-    let historyList = ref([])
-    // 热门搜索列表
-    let hotList = ref([])
-    // 下拉菜单默认值
-    const dropValue = reactive({
-      kind: 'article',
-      order: 'default',
-    });
-    const kind = [
-      {text: '搜文章', value: 'article'},
-      {text: '搜笔记', value: 'note'},
-    ];
-    const order = [
-      {text: '默认排序(按时间)', value: 'default'},
-      {text: '阅读量排序', value: 'view'},
-    ];
-    // 搜索栏输入搜索
-    const onSearch = (key) => {
-      console.log(key)
-      router.push({path: '/result', query: {key: key, kind: dropValue.kind, order: dropValue.order}})
-    }
-    // 点击标签搜索
-    const clickSearch = (key) => {
-      console.log(key)
-      router.push({path: '/result', query: {key: key, kind: dropValue.kind, order: dropValue.order}})
-    }
 
-    // 获取搜索热词
-    async function searchKeyHotData() {
-      hotList.value = await getSearchHot()
-    }
-
-    // 获取搜索记录
-    async function getSearchKeyHistoryData(user_id) {
-      let SearchKeyHistoryData = await getSearchHistory(user_id)
-      historyList.value = SearchKeyHistoryData.keys
-    }
-
-    onMounted(() => {
-      searchKeyHotData()
-      if (isLogin.value) {
-        getSearchKeyHistoryData(userId.value)
-      }
-    })
-    return {
-      historyList,
-      hotList,
-      clickSearch,
-      onSearch,
-      dropValue,
-      kind,
-      order,
-    }
-  }
+const router = useRouter()
+// 引入用户信息模块
+let {userId, isLogin} = user();
+// 搜索历史列表
+let historyList = ref([])
+// 热门搜索列表
+let hotList = ref([])
+// 下拉菜单默认值
+const dropValue = reactive({
+  kind: 'article',
+  order: 'default',
+});
+const kind = [
+  {text: '搜文章', value: 'article'},
+  {text: '搜笔记', value: 'note'},
+];
+const order = [
+  {text: '默认排序(按时间)', value: 'default'},
+  {text: '阅读量排序', value: 'view'},
+];
+// 搜索栏输入搜索
+const onSearch = (key) => {
+  console.log(key)
+  router.push({path: '/result', query: {key: key, kind: dropValue.kind, order: dropValue.order}})
 }
+// 点击标签搜索
+const clickSearch = (key) => {
+  console.log(key)
+  router.push({path: '/result', query: {key: key, kind: dropValue.kind, order: dropValue.order}})
+}
+
+// 获取搜索热词
+async function searchKeyHotData() {
+  hotList.value = await getSearchHot()
+}
+
+// 获取搜索记录
+async function getSearchKeyHistoryData(user_id) {
+  let SearchKeyHistoryData = await getSearchHistory(user_id)
+  historyList.value = SearchKeyHistoryData.keys
+}
+
+onMounted(() => {
+  searchKeyHotData()
+  if (isLogin.value) {
+    getSearchKeyHistoryData(userId.value)
+  }
+})
 </script>
 
 <style lang="scss">
-@import "~@/assets/style/index.scss";
+@import "src/assets/style/index.scss";
 
 .search {
   .history {

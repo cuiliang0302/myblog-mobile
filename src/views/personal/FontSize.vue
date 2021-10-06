@@ -1,7 +1,7 @@
 <!--字体设置-->
 <template>
   <div>
-    <NavBar :title="'字体设置'"></NavBar>
+    <PersonalNavBar :title="'字体设置'"></PersonalNavBar>
     <div class="font">
       <div class="preview" id="setFont" style="font-size: 37px">
         <h1>拖动下面的滑块，可实现预览字体大小的变化</h1>
@@ -21,19 +21,12 @@
   </div>
 </template>
 
-<script>
-import NavBar from "@/components/personal/NavBar";
+<script setup>
+import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
 import {Slider, Toast} from 'vant';
-import {computed, onMounted, ref, watch} from "vue";
+import {onMounted,watch} from "vue";
 import fontSize from "@/utils/fontSize";
 
-export default {
-  components: {
-    NavBar,
-    [Slider.name]: Slider
-  },
-  name: "FontSize",
-  setup() {
     // 引入字体设置模块
     let {fontShow, fontValue, changeSize, rootSize, fontType} = fontSize()
     onMounted(() => {
@@ -44,11 +37,7 @@ export default {
       const html = document.querySelector('#setFont')
       html.style.fontSize = newSize + 'px'
     });
-    return {
-      fontShow, fontValue, changeSize, rootSize, fontType
-    }
-  }
-}
+
 </script>
 
 <style lang="scss">

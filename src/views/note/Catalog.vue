@@ -32,9 +32,9 @@
   </div>
 </template>
 
-<script>
-import NavBar from "@/components/common/NavBar";
-import Tabbar from "@/components/common/Tabbar";
+<script setup>
+import NavBar from "@/components/common/NavBar.vue";
+import Tabbar from "@/components/common/Tabbar.vue";
 import {Collapse, CollapseItem, Cell, CellGroup, Tab, Tabs, Loading, Empty} from 'vant';
 import {onMounted, ref} from "vue";
 import {getCatalogue, getNoteDetail} from "@/api/blog";
@@ -42,92 +42,76 @@ import {useRouter} from "vue-router";
 import {getSectionHistory} from "@/api/record";
 import user from "@/utils/user";
 
-export default {
-  components: {
-    NavBar,
-    Tabbar,
-    [Collapse.name]: Collapse,
-    [CollapseItem.name]: CollapseItem,
-    [Cell.name]: Cell,
-    [CellGroup.name]: CellGroup,
-    [Tab.name]: Tab,
-    [Tabs.name]: Tabs,
-    [Loading.name]: Loading,
-    [Empty.name]: Empty
-  },
-  name: "Catalog",
-  setup() {
-    // 引入用户信息模块
-    let {userId, isLogin} = user();
-    const router = useRouter();
-    // 笔记名称
-    const title = ref()
-    // 当前tabbar
-    const active = 2
-    // 加载动画
-    const load = ref(true)
-    // 目录/书签tab默认值
-    const activeTab = ref(0);
-    // 展开的一级目录
-    const activeNames = ref([]);
-    // 笔记目录列表
-    const catalogList = ref([])
-    // 笔记收藏数据
-    const collectList = ref([])
-    // 跳转至笔记详情页
-    const toDetail = (detailId) => {
-      router.push({path: `/detail/section/${detailId}`})
-    }
 
-    // 获取笔记收藏数据
-    async function sectionCollectData() {
-      if (isLogin.value === true) {
-        let collectHistory_data = await getSectionHistory(NaN, userId.value)
-        console.log(collectHistory_data)
-        let collect_data = []
-        for (let index in collectHistory_data) {
-          if (collectHistory_data[index]['is_collect'] === true) {
-            collect_data.push(collectHistory_data[index])
-          }
-        }
-        collectList.value = collect_data.map((item) => {
-          return {
-            id: item['section_id'],
-            name: item['section'],
-            time: item['time']
-          }
-        })
-      } else {
-        collectList.value = []
+// 引入用户信息模块
+let {userId, isLogin} = user();
+const router = useRouter();
+// 笔记名称
+const title = ref()
+// 当前tabbar
+const active = 2
+// 加载动画
+const load = ref(true)
+// 目录/书签tab默认值
+const activeTab = ref(0);
+// 展开的一级目录
+const activeNames = ref([]);
+// 笔记目录列表
+const catalogList = ref([])
+// 笔记收藏数据
+const collectList = ref([])
+// 跳转至笔记详情页
+const toDetail = (detailId) => {
+  router.push({path: `/detail/section/${detailId}`})
+}
+
+// 获取笔记收藏数据
+async function sectionCollectData() {
+  if (isLogin.value === true) {
+    let collectHistory_data = await getSectionHistory(NaN, userId.value)
+    console.log(collectHistory_data)
+    let collect_data = []
+    for (let index in collectHistory_data) {
+      if (collectHistory_data[index]['is_collect'] === true) {
+        collect_data.push(collectHistory_data[index])
       }
     }
-
-    // 获取笔记名称
-    async function titleData(catalogueID) {
-      let note_data = await getNoteDetail(catalogueID)
-      title.value = note_data.name
-    }
-
-    // 获取笔记目录数据
-    async function catalogueData(catalogueID) {
-      catalogList.value = await getCatalogue(catalogueID)
-      console.log(catalogList.value)
-    }
-
-    onMounted(async () => {
-      let catalogueID = router.currentRoute.value.params.id
-      await titleData(catalogueID)
-      await catalogueData(catalogueID)
-      await sectionCollectData()
-      load.value = false
+    collectList.value = collect_data.map((item) => {
+      return {
+        id: item['section_id'],
+        name: item['section'],
+        time: item['time']
+      }
     })
-    return {title, active, catalogList, activeNames, load, activeTab, collectList, toDetail};
+  } else {
+    collectList.value = []
   }
 }
+
+// 获取笔记名称
+async function titleData(catalogueID) {
+  let note_data = await getNoteDetail(catalogueID)
+  title.value = note_data.name
+}
+
+// 获取笔记目录数据
+async function catalogueData(catalogueID) {
+  catalogList.value = await getCatalogue(catalogueID)
+  console.log(catalogList.value)
+}
+
+onMounted(async () => {
+  let catalogueID = router.currentRoute.value.params.id
+  await titleData(catalogueID)
+  await catalogueData(catalogueID)
+  await sectionCollectData()
+  load.value = false
+})
+
 </script>
 
 <style scoped lang="scss">
-@import "~@/assets/style/index";
+@import "src/assets/style/index";
 
 .number {
   margin-right: 15px;

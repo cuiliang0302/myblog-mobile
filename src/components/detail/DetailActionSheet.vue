@@ -29,47 +29,36 @@
   </van-action-sheet>
 </template>
 
-<script>
+<script setup>
 import {Toast, ActionSheet, Slider, Switch} from 'vant';
 import store from "@/store/index"
 import {ref, computed} from "vue";
 import fontSize from "@/utils/fontSize";
 import dark from "@/utils/dark";
-
-export default {
-  components: {
-    [ActionSheet.name]: ActionSheet,
-    [Slider.name]: Slider,
-    [Switch.name]: Switch
-  },
-  name: "ActionSheet",
-  setup() {
-    // 引入暗黑模块
-    let {setDark} = dark()
-    // 动作菜单默认状态
-    const show = ref(false)
-    // 动作菜单点击取消
-    const onCancel = () => Toast('取消')
-    // 父组件点击动作菜单调用
-    const showAction = () => {
-      show.value = true
-    };
-    // 是否开启深色模式
-    const isDark = computed(() => store.state.dark)
-    // 点击切换深色浅色按钮
-    const changePattern = (value) => {
-      setDark(value)
-      if (value) {
-        Toast('已开启深色模式')
-      } else {
-        Toast('已关闭深色模式')
-      }
-    }
-    // 引入字体设置模块
-    let {fontValue, changeSize, fontType} = fontSize()
-    return {show, showAction, onCancel, changePattern, isDark, fontValue, changeSize, fontType};
-  },
+// 引入字体设置模块
+let {fontValue, changeSize, fontType} = fontSize()
+// 引入暗黑模块
+let {setDark} = dark()
+// 动作菜单默认状态
+const show = ref(false)
+// 动作菜单点击取消
+const onCancel = () => Toast('取消')
+// 父组件点击动作菜单调用
+const showAction = () => {
+  show.value = true
+};
+// 是否开启深色模式
+const isDark = computed(() => store.state.dark)
+// 点击切换深色浅色按钮
+const changePattern = (value) => {
+  setDark(value)
+  if (value) {
+    Toast('已开启深色模式')
+  } else {
+    Toast('已关闭深色模式')
+  }
 }
+
 </script>
 
 <style lang="scss" scoped>
@@ -99,9 +88,11 @@ export default {
         font-size: 0.427rem;
         width: 2.667rem;
       }
+
       span:nth-child(2) {
         font-size: 0.373rem;
       }
+
       span:nth-child(3) {
         font-size: 0.373rem;
       }
@@ -128,7 +119,7 @@ export default {
 }
 
 .van-switch {
-  background-image: url("~@/assets/images/dark-btn.png");
+  background-image: url("/src/assets/images/dark-btn.png");
   background-size: 1.6rem 0.8rem;
 }
 </style>

@@ -2,7 +2,7 @@
   <van-popup v-model:show="popupIsShow">
     <section>
       <div class="tip-img">
-        <img :src="require('@/assets/images/login-popup.png')" alt=""/>
+        <img :src="'/src/assets/images/login-popup.png'" alt=""/>
       </div>
       <div class="tip-content">
         <h3>您还没有登录</h3>
@@ -18,43 +18,32 @@
   </van-popup>
 </template>
 
-<script>
+<script setup>
 import {Popup, Button} from 'vant';
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 
-export default {
-  components: {
-    [Popup.name]: Popup,
-    [Button.name]: Button
-  },
-  name: "LoginPopup",
-  setup() {
-    const router = useRouter()
-    // 默认不显示登录提示弹窗
-    const popupIsShow = ref(false);
-    // 显示登录提示弹窗
-    const showPopup = () => {
-      popupIsShow.value = true;
-    };
-    // 跳转至登录页
-    const toLogin = () => {
-      router.push({path: '/login_register', query: {component: 'Login'}})
-      popupIsShow.value = false
-    }
-    // 跳转至注册页
-    const toRegister = () => {
-      router.push({path: '/login_register', query: {component: 'Register'}})
-      popupIsShow.value = false
-    }
-    return {
-      popupIsShow,
-      showPopup,
-      toLogin,
-      toRegister
-    };
-  }
+
+const router = useRouter()
+// 默认不显示登录提示弹窗
+const popupIsShow = ref(false);
+// 显示登录提示弹窗
+const showPopup = () => {
+  popupIsShow.value = true;
+};
+// 跳转至登录页
+const toLogin = () => {
+  router.push({path: '/login_register', query: {component: 'Login'}})
+  popupIsShow.value = false
 }
+// 跳转至注册页
+const toRegister = () => {
+  router.push({path: '/login_register', query: {component: 'Register'}})
+  popupIsShow.value = false
+}
+defineExpose({
+  showPopup
+})
 </script>
 
 <style lang="scss" scoped>

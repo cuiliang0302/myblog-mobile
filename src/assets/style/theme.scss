@@ -15,7 +15,7 @@ $themes: (
                 border_color2: #8bb9f3,
                 border_color3: #fafafb,
           //背景图
-                background_img1: url("~@/assets/images/wave-light.png")
+                background_img1: url("/src/assets/images/wave-light.png")
         ),
         dark: (
           //字体
@@ -33,7 +33,7 @@ $themes: (
                 border_color2: #3d414a,
                 border_color3: #595959,
           //背景图
-                background_img1: url("~@/assets/images/wave-dark.png")
+                background_img1: url("src/assets/images/wave-dark.png")
         )
 );
 

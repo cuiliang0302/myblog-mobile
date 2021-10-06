@@ -2,7 +2,7 @@
 
 
 import {onMounted, reactive} from "vue";
-import store from "@/store";
+import store from "@/store/index";
 
 function dark() {
 	let isDark = store.state.dark
@@ -38,9 +38,6 @@ function dark() {
 		switchBackgroundColor: '#d6d6d6',
 		// 复选框
 		checkboxLabelColor: '#d6d6d6',
-		// 轻提示
-		toastBackgroundColor: '#d6d6d6',
-		toastTextColor: '#1F1F1F',
 		// 宫格
 		gridItemContentBackgroundColor: '#141414',
 		// 导航栏

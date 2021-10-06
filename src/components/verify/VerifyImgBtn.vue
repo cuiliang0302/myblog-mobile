@@ -33,78 +33,64 @@
     </van-popup>
   </div>
 </template>
-<script>
+<script setup>
 // 图片滑块组件(拼图)
-import dragVerifyImgChip from "@/components/verify/dragVerifyImgChip";
+import dragVerifyImgChip from "@/components/verify/dragVerifyImgChip.vue";
 import {onMounted, ref} from "vue";
 import {Button, Popup, Toast, Icon} from 'vant';
 
-export default {
-  components: {
-    dragVerifyImgChip,
-    [Button.name]: Button,
-    [Popup.name]: Popup,
-    [Icon.name]: Icon,
-    Toast
+const props = defineProps({
+  // 是否通过验证
+  isPassing: {
+    type: Boolean,
+    default: false
   },
-
-  name: "VerifyImgBtn",
-  props: {
-    // 是否通过验证
-    isPassing: {
-      type: Boolean,
-      default: false
-    },
-    // 按钮样式
-    btnType: {
-      type: String,
-      default: 'default'
-    }
-  },
-  setup(props, {emit}) {
-    // 滑块验证对象
-    const dragVerify = ref(null)
-    // 验证弹窗状态
-    const show = ref(false)
-    const imgList = ref([require('@/assets/verify/verify-1.jpg'),
-      require('@/assets/verify/verify-2.jpg'),
-      require('@/assets/verify/verify-3.jpg'),
-      require('@/assets/verify/verify-4.jpg'),
-      require('@/assets/verify/verify-5.jpg'),
-      require('@/assets/verify/verify-6.jpg')])
-    const imgId = ref()
-    const getImgId = () => {
-      imgId.value = parseInt(Math.random() * imgList.value.length, 10);
-    }
-    const reimg = () => {
-      console.log('刷新图片')
-      getImgId()
-    }
-    const pass = () => {
-      Toast.success('验证成功！');
-      emit('pass')
-      // props.isPassing.value = true
-      setTimeout(() => {
-        show.value = false
-        dragVerify.value.reset()
-        reimg()
-      }, 1000);
-    }
-    const showPopup = () => {
-      show.value = true;
-    };
-    onMounted(() => {
-      reimg()
-    })
-    return {
-      show, showPopup, imgList, imgId, reimg, pass, dragVerify
-    }
-  },
+  // 按钮样式
+  btnType: {
+    type: String,
+    default: 'default'
+  }
+})
+const emit = defineEmits(['pass'])
+// 滑块验证对象
+const dragVerify = ref(null)
+// 验证弹窗状态
+const show = ref(false)
+const imgList = ref([
+  'src/assets/verify/verify-1.jpg',
+  'src/assets/verify/verify-2.jpg',
+  'src/assets/verify/verify-3.jpg',
+  'src/assets/verify/verify-4.jpg',
+  'src/assets/verify/verify-5.jpg',
+  'src/assets/verify/verify-6.jpg'])
+const imgId = ref()
+const getImgId = () => {
+  imgId.value = parseInt(Math.random() * imgList.value.length, 10);
 }
+const reimg = () => {
+  console.log('刷新图片')
+  getImgId()
+}
+const pass = () => {
+  Toast.success('验证成功！');
+  emit('pass')
+  // props.isPassing.value = true
+  setTimeout(() => {
+    show.value = false
+    dragVerify.value.reset()
+    reimg()
+  }, 1000);
+}
+const showPopup = () => {
+  show.value = true;
+};
+onMounted(() => {
+  reimg()
+})
 </script>
 
 <style lang="scss">
-@import "src/assets/style/variable";
+@import "src/assets/style/index";
 
 .verify {
   padding: 0.533rem

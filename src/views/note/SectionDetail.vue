@@ -1,7 +1,7 @@
-<!--内容详情页-->
+<!--笔记内容详情页-->
 <template>
   <div class="detail" v-title="detail.title+'-'+sitename">
-    <NavBar :componentName="'note'"></NavBar>
+    <DetailNavBar :componentName="'note'"></DetailNavBar>
     <van-skeleton title round :row="10" :loading="loading">
       <div class="main">
         <div class="title">
@@ -56,25 +56,25 @@
     </van-skeleton>
     <div class="context">
       <div class="last">
-        <span>
-          <svg class="icon context-icon" aria-hidden="true">
-            <use xlink:href="#icon-last-solid"></use>
-          </svg>
-        </span>
+            <span>
+              <svg class="icon context-icon" aria-hidden="true">
+                <use xlink:href="#icon-last-solid"></use>
+              </svg>
+            </span>
         <span v-if="context.last && context.last.title" @click="toDetail(context.last.id)">
-          {{ context.last.title }}
-        </span>
+              {{ context.last.title }}
+            </span>
         <span v-else>已是第一篇</span>
       </div>
       <div class="next">
-        <span>
-          <svg class="icon context-icon" aria-hidden="true">
-            <use xlink:href="#icon-next-solid"></use>
-          </svg>
-        </span>
+            <span>
+              <svg class="icon context-icon" aria-hidden="true">
+                <use xlink:href="#icon-next-solid"></use>
+              </svg>
+            </span>
         <span v-if="context.next && context.next.title" @click="toDetail(context.next.id)">
-          {{ context.next.title }}
-        </span>
+              {{ context.next.title }}
+            </span>
         <span v-else>已是最后一篇</span>
       </div>
     </div>
@@ -103,17 +103,19 @@
       </div>
     </div>
     <div class="bottom-margin"></div>
-    <Tabbar :componentName="'note'" :titleList="titleList" :catalogList="catalogList" :is_collect="is_collect"
-            @collectClick="collectClick" @rollTo="rollTo"
-            @dirTab="dirTab" @toNoteDetail="toNoteDetail" @likeClick="likeClick" @onShare="onShare"></Tabbar>
-    <LoginPopup ref="refLoginPopup"></LoginPopup>
+    <DetailTabbar :componentName="'note'" :titleList="titleList" :catalogList="catalogList" :is_collect="is_collect"
+                  @collectClick="collectClick" @rollTo="rollTo"
+                  @dirTab="getCatalogueData" @toNoteDetail="toDetail" @likeClick="likeClick"
+                  @onShare="onShare"></DetailTabbar>
+    <LoginPopup ref="loginPopupRef"></LoginPopup>
   </div>
 </template>
 
-<script>
-import NavBar from '@/components/datail/NavBar';
-import Tabbar from '@/components/datail/Tabbar';
-import Comments from '@/components/common/Comments'
+<script setup>
+import DetailNavBar from '@/components/detail/DetailNavBar.vue';
+import DetailTabbar from '@/components/detail/DetailTabbar.vue';
+import LoginPopup from "@/components/common/LoginPopup.vue";
+import Comments from '@/components/common/Comments.vue'
 import {Divider, Image as VanImage, Loading, Skeleton, Toast, Field, Empty, ImagePreview} from 'vant'
 import {getCurrentInstance, nextTick, onMounted, reactive, ref, watch} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
@@ -135,28 +137,21 @@ import scss from 'highlight.js/lib/languages/scss';
 import xml from 'highlight.js/lib/languages/xml';
 import fontSize from "@/utils/fontSize";
 import {getSiteConfig} from "@/api/management";
-import store from "@/store";
+import store from "@/store/index";
 import {
   getCatalogue,
   getContext,
-  getSectionDetail,
-  putSectionDetail,
-  getQRcode
+  getQRcode, getSectionDetail, getGuessLike, putSectionDetail
 } from "@/api/blog";
 import {getImgProxy} from "@/api/public";
 import {
   getSectionComment,
   postSectionComment,
-  deleteSectionComment,
   putSectionComment,
-  postReplySectionComment,
-  getSectionHistory,
-  postSectionHistory,
-  putSectionHistory
+  deleteSectionComment,
+  postReplySectionComment, getSectionHistory, postSectionHistory, putSectionHistory
 } from "@/api/record";
 import user from "@/utils/user";
-import LoginPopup from "@/components/common/LoginPopup";
-import useClipboard from 'vue-clipboard3'
 
 hljs.registerLanguage('json', json);
 hljs.registerLanguage('python', python);
@@ -175,173 +170,60 @@ VMdPreview.use(githubTheme, {
   },
   Hljs: hljs,
 });
-export default {
-  components: {
-    [Divider.name]: Divider,
-    [VanImage.name]: VanImage,
-    [Loading.name]: Loading,
-    [Skeleton.name]: Skeleton,
-    [Field.name]: Field,
-    [Empty.name]: Empty,
-    [ImagePreview.Component.name]: ImagePreview.Component,
-    NavBar,
-    Tabbar,
-    Comments,
-    VMdPreview,
-    LoginPopup
-  },
-  name: "Detail",
-  setup() {
-    // 事件总线
-    const internalInstance = getCurrentInstance();  //当前组件实例
-    const $bus = internalInstance.appContext.config.globalProperties.$bus;
-    const router = useRouter();
-    const route = useRouter();
-    // 调用公共组件模块
-    let {
-      sitename,
-      DetailID,
-      detail,
-      timeDate,
-      loading,
-      toDetail,
-      likeClick,
-      onShare
-    } = publicFn(route, router, sectionData)
-    // markdown模块
-    let {titleList, editor, rollTo, getTitle, setMDFont, showImg} = markdown(titleList)
-    // 笔记模块
-    let {context, catalogList, dirTab, toNoteDetail, sectionData, contextData} = note(detail, toDetail)
-    // 评论回复模块
-    let {
-      messageForm,
-      commentsList,
-      sectionCommentData,
-      clickSend,
-      refLoginPopup
-    } = comment(DetailID, $bus, router)
-    // 浏览记录模块
-    let {
-      is_collect,
-      collectClick,
-      getSectionHistoryData,
-      postSectionHistoryData
-    } = history(DetailID)
+// 调用公共组件模块
+let {sitename, DetailID, timeDate, loading, toDetail, router} = publicFn()
 
-    // 获取内容详情
-    async function getDetail(DetailID) {
-      Toast.loading({
-        message: '加载中...',
-        forbidClick: true,
-      });
-      await sectionData(DetailID)
-      await contextData(DetailID)
-      await sectionCommentData(DetailID)
-      await getSectionHistoryData(DetailID)
-      await postSectionHistoryData(DetailID)
-      loading.value = false;
-      await setMDFont()
-      await getTitle()
-      window.scrollTo({top: 0})
-    }
+// 调用笔记模块
+let {detail, getDetail, context, getContextData} = section(DetailID)
+// 调用markdown模块
+let {editor, showImg, setMDFont} = markdown()
+// 调用评论回复模块
+let {messageForm, commentsList, clickSend, sectionCommentData, loginPopupRef} = comment(DetailID, router)
+// 调用tabbar模块
+let {
+  titleList,
+  getTitle,
+  rollTo,
+  is_collect,
+  collectClick,
+  likeClick,
+  onShare,
+  getSectionHistoryData,
+  postSectionHistoryData,
+  getCatalogueData,
+  catalogList
+} = tabbarFn(editor, DetailID, detail)
+onMounted(async () => {
+  await getDetail(DetailID.value)
+  await setMDFont()
+  await getTitle()
+  await postSectionHistoryData(DetailID.value)
+  await getCatalogueData()
+})
+onBeforeRouteUpdate(async (to) => {
+  console.log(to)
+  DetailID.value = to.params.id
+  await getDetail(DetailID.value)
+  await setMDFont()
+  await getTitle()
+  await getContextData(DetailID.value)
+  await sectionCommentData(DetailID.value)
+  await getSectionHistoryData(DetailID.value)
+  await postSectionHistoryData(DetailID.value)
+  window.scrollTo({top: 0})
+});
 
-    onMounted(async () => {
-      let DetailID = router.currentRoute.value.params.id
-      await getDetail(DetailID)
-    })
-    onBeforeRouteUpdate(async (to) => {
-      console.log(to)
-      await getDetail(to.params.id)
-    });
-    return {
-      sitename,
-      detail,
-      timeDate,
-      toDetail,
-      titleList,
-      editor,
-      commentsList,
-      rollTo,
-      loading,
-      context,
-      dirTab,
-      catalogList,
-      toNoteDetail,
-      messageForm,
-      clickSend,
-      refLoginPopup,
-      likeClick,
-      is_collect,
-      collectClick,
-      onShare,
-      showImg
-    }
-  }
-}
-
-// 通用模块
-function publicFn(route, router) {
-  const {toClipboard} = useClipboard()
+// 公共组件模块
+function publicFn() {
+  const router = useRouter();
   // 站点名称
   const sitename = ref()
-  // 文章笔记ID
+  // 笔记ID
   const DetailID = ref()
-  // 内容详情
-  let detail = reactive({})
-  // 文章发布日期只保留天
+  // 笔记发布日期只保留天
   let {timeDate} = timeFormat()
   // 骨架屏默认显示
   const loading = ref(true);
-  // 切换新的文章或笔记
-  const toDetail = (detailId) => {
-    DetailID.value = detailId
-    router.push({path: `/detail/section/${detailId}`})
-  }
-  // 点赞文章或笔记
-  const likeClick = () => {
-    detail.like = detail.like + 1
-    putSectionDetail(DetailID.value, detail).then((response) => {
-      console.log(response)
-      Toast.success('点赞成功！');
-      getSectionDetail(DetailID.value)
-    }).catch(response => {
-      //发生错误时执行的代码
-      console.log(response)
-      Toast.fail(response.msg);
-    });
-  }
-
-  // 分享文章或笔记
-  const onShare = async (name) => {
-    const URL = window.location.href
-    console.log(URL)
-    console.log("爹收到了", name)
-    if (name === '复制链接') {
-      try {
-        await toClipboard(URL)
-        Toast.success('链接已复制至剪切板')
-      } catch (e) {
-        Toast.fail('剪切板调用异常！')
-        console.error(e)
-      }
-    }
-    if (name === '二维码') {
-      getQRcode(URL).then((response) => {
-        console.log(response)
-        let blob = new Blob([response], {type: 'application/octet-stream'})
-        let url = window.URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = 'QRcode.png'
-        link.click()
-        Toast.success('二维码已开始下载')
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail('获取二维码失败');
-      });
-    }
-  }
 
   // 获取站点名称
   async function siteConfigData() {
@@ -349,103 +231,34 @@ function publicFn(route, router) {
     sitename.value = siteConfig_data.name
   }
 
+  // 切换新的笔记
+  const toDetail = (detailId) => {
+    DetailID.value = detailId
+    router.push({path: `/detail/section/${detailId}`})
+  }
   onMounted(() => {
     siteConfigData()
     DetailID.value = router.currentRoute.value.params.id
+    loading.value = false
   })
   return {
-    sitename, DetailID,  detail, timeDate, loading, toDetail, likeClick, onShare
-  }
-}
-
-// markdown模块
-function markdown() {
-  // 引入字体设置模块
-  let {rootSize} = fontSize()
-  // markdown对象
-  let editor = ref(null)
-  // 文章标题列表
-  let titleList = ref([])
-  // markdown标题跳转
-  const rollTo = (anchor) => {
-    console.log('收到跳转请求')
-    const {lineIndex} = anchor;
-    const heading = editor.value.querySelector(
-        `.v-md-editor-preview [data-v-md-line="${lineIndex}"]`
-    );
-    if (heading) {
-      heading.scrollIntoView({behavior: "smooth", block: "center"})
-    }
-  }
-
-  // 获取markdown标题
-  async function getTitle() {
-    await nextTick()
-    const anchors = editor.value.querySelectorAll(
-        '.v-md-editor-preview h1,h2,h3'
-    )
-    const titles = Array.from(anchors).filter((title) => !!title.innerText.trim());
-    if (!titles.length) {
-      titleList.value = [];
-      return;
-    }
-    const hTags = Array.from(new Set(titles.map((title) => title.tagName))).sort();
-    titleList.value = titles.map((el) => ({
-      title: el.innerText,
-      lineIndex: el.getAttribute('data-v-md-line'),
-      indent: hTags.indexOf(el.tagName),
-    }));
-  }
-
-  // 设置markdown字体
-  async function setMDFont() {
-    await nextTick()
-    const html = document.querySelector('.main')
-    html.style.fontSize = rootSize.value + 'px'
-  }
-
-  // 调整字体大小
-  watch(rootSize, (newSize) => {
-    const html = document.querySelector('.main')
-    html.style.fontSize = newSize + 'px'
-  });
-  // 图片预览
-  const showImg = (MDimages, currentIndex) => {
-    ImagePreview({
-      images: MDimages,
-      startPosition: currentIndex,
-      closeable: true,
-    });
-  }
-  return {
-    titleList, editor, rollTo, getTitle, setMDFont, showImg
+    sitename, DetailID, timeDate, loading, toDetail, router
   }
 }
 
 // 笔记模块
-function note(detail, toDetail) {
-  // 笔记上下篇
-  const context = reactive({})
-  // 笔记目录
-  const catalogList = ref([])
-  // 获取笔记目录
-  const dirTab = () => {
-    catalogueData(detail.note_id)
-  }
-  // 子组件获取笔记内容
-  const toNoteDetail = (sectionId) => {
-    toDetail('note', sectionId)
-  }
+function section(DetailID) {
+  // 笔记详情
+  const detail = reactive({})
 
-  // 获取笔记目录数据
-  async function catalogueData(note_id) {
-    catalogList.value = await getCatalogue(note_id)
-    console.log(catalogList.value)
-  }
-
-  // 获取笔记详情
-  async function sectionData(DetailID) {
-    const detail_data = await getSectionDetail(DetailID)
+  // 获取笔记内容详情
+  async function getDetail(DetailID) {
+    Toast.loading({
+      message: '加载中...',
+      forbidClick: true,
+    });
+    let detail_data = await getSectionDetail(DetailID)
+    console.log(detail_data)
     for (let i in detail_data) {
       if (i === 'body') {
         // 图片防盗链处理
@@ -468,33 +281,71 @@ function note(detail, toDetail) {
     }
   }
 
+  // 笔记上下篇
+  const context = reactive({})
+
   // 获取笔记上下篇
-  async function contextData(DetailID) {
-    const context_data = await getContext(DetailID)
+  async function getContextData() {
+    const context_data = await getContext(DetailID.value)
     for (let i in context_data) {
       context[i] = context_data[i]
     }
   }
 
-  return {
-    context, catalogList, dirTab, toNoteDetail, catalogueData, sectionData, contextData
+  onMounted(() => {
+    getContextData()
+  })
+  return {detail, getDetail, context, getContextData}
+}
+
+// markdown模块
+function markdown() {
+  // markdown对象
+  let editor = ref(null)
+  // 引入字体设置模块
+  let {rootSize} = fontSize()
+  // 图片预览
+  const showImg = (MDimages, currentIndex) => {
+    ImagePreview({
+      images: MDimages,
+      startPosition: currentIndex,
+      closeable: true,
+    });
   }
+
+  // 设置markdown字体
+  async function setMDFont() {
+    await nextTick()
+    const html = document.querySelector('.main')
+    html.style.fontSize = rootSize.value + 'px'
+  }
+
+  // 调整字体大小
+  watch(rootSize, (newSize) => {
+    const html = document.querySelector('.main')
+    html.style.fontSize = newSize + 'px'
+  });
+  return {editor, showImg, setMDFont}
 }
 
 // 评论回复模块
-function comment(DetailID, $bus, router) {
+function comment(DetailID, router) {
+  // 事件总线
+  const internalInstance = getCurrentInstance();  //当前组件实例
+  const $bus = internalInstance.appContext.config.globalProperties.$bus;
   // 引入用户信息模块
   let {userId, isLogin} = user();
   // 留言评论列表
   const commentsList = ref([])
 
   // 获取笔记评论数据
-  async function sectionCommentData(DetailID) {
-    commentsList.value = await getSectionComment(DetailID)
+  async function sectionCommentData() {
+    commentsList.value = await getSectionComment(DetailID.value)
+    console.log(commentsList.value)
   }
 
   // 提示登录组件对象
-  const refLoginPopup = ref()
+  const loginPopupRef = ref(null)
   // 评论表单
   const messageForm = reactive({
     content: '',
@@ -524,7 +375,7 @@ function comment(DetailID, $bus, router) {
       }
     } else {
       store.commit('setNextPath', router.currentRoute.value.fullPath)
-      refLoginPopup.value.showPopup()
+      loginPopupRef.value.showPopup()
     }
   }
   // 评论点赞事件
@@ -567,28 +418,78 @@ function comment(DetailID, $bus, router) {
       }
     });
   });
+  onMounted(() => {
+    sectionCommentData()
+  })
   return {
     commentsList,
     sectionCommentData,
     messageForm,
     clickSend,
-    refLoginPopup,
+    loginPopupRef,
   }
 }
 
-// 浏览记录模块
-function history(DetailID) {
+// tabbar模块
+function tabbarFn(editor, DetailID, detail) {
   // 引入用户信息模块
   let {userId, isLogin} = user();
-  // 文章收藏状态
+  // 笔记标题列表
+  let titleList = ref([])
+
+  // 获取markdown标题
+  async function getTitle() {
+    await nextTick()
+    const anchors = editor.value.querySelectorAll(
+        '.v-md-editor-preview h1,h2,h3'
+    )
+    const titles = Array.from(anchors).filter((title) => !!title.innerText.trim());
+    if (!titles.length) {
+      titleList.value = [];
+      return;
+    }
+    const hTags = Array.from(new Set(titles.map((title) => title.tagName))).sort();
+    titleList.value = titles.map((el) => ({
+      title: el.innerText,
+      lineIndex: el.getAttribute('data-v-md-line'),
+      indent: hTags.indexOf(el.tagName),
+    }));
+  }
+
+  // markdown标题跳转
+  const rollTo = (anchor) => {
+    console.log('收到跳转请求')
+    const {lineIndex} = anchor;
+    const heading = editor.value.querySelector(
+        `.v-md-editor-preview [data-v-md-line="${lineIndex}"]`
+    );
+    if (heading) {
+      heading.scrollIntoView({behavior: "smooth", block: "center"})
+    }
+  }
+  // 笔记目录
+  const catalogList = ref([])
+  // 子组件获取笔记内容
+  const toNoteDetail = (sectionId) => {
+    toDetail('note', sectionId)
+  }
+
+  // 获取笔记目录数据
+  async function getCatalogueData() {
+    catalogList.value = await getCatalogue(detail.note_id)
+    console.log(catalogList.value)
+  }
+
+  // 笔记收藏状态
   const is_collect = ref(false)
 
   // 获取笔记浏览记录（是否已收藏）
-  async function getSectionHistoryData(DetailID) {
+  async function getSectionHistoryData() {
     if (isLogin.value === true) {
-      let res = await getSectionHistory(DetailID, userId.value)
+      let res = await getSectionHistory(DetailID.value, userId.value)
       console.log(res)
       is_collect.value = res.is_collect
+      console.log(is_collect.value)
     }
   }
 
@@ -598,7 +499,7 @@ function history(DetailID) {
     user: ''
   })
 
-  // 添加文章浏览记录
+  // 添加笔记浏览记录
   async function postSectionHistoryData(DetailID) {
     if (isLogin.value === true) {
       sectionHistoryForm.section_id = DetailID
@@ -616,7 +517,8 @@ function history(DetailID) {
   })
   // 子组件添加/取消收藏事件
   const collectClick = () => {
-    console.log("爹收到了")
+    console.log("添加/取消收藏")
+    console.log("当前收藏状态是", is_collect.value)
     is_collect.value = !is_collect.value
     CollectForm.user = userId.value
     CollectForm.is_collect = is_collect.value
@@ -634,18 +536,72 @@ function history(DetailID) {
       Toast.fail(response.msg);
     });
   }
+  // 点赞笔记
+  const likeClick = () => {
+    detail.like = detail.like + 1
+    putSectionDetail(DetailID.value, detail).then((response) => {
+      console.log(response)
+      Toast.success('点赞成功！');
+      getSectionDetail(DetailID.value)
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      Toast.fail(response.msg);
+    });
+  }
 
+  // 分享笔记
+  const onShare = async (name) => {
+    const URL = window.location.href
+    console.log(URL)
+    console.log("爹收到了", name)
+    if (name === '复制链接') {
+      try {
+        await toClipboard(URL)
+        Toast.success('链接已复制至剪切板')
+      } catch (e) {
+        Toast.fail('剪切板调用异常！')
+        console.error(e)
+      }
+    }
+    if (name === '二维码') {
+      getQRcode(URL).then((response) => {
+        console.log(response)
+        let blob = new Blob([response], {type: 'application/octet-stream'})
+        let url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = 'QRcode.png'
+        link.click()
+        Toast.success('二维码已开始下载')
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        Toast.fail('获取二维码失败');
+      });
+    }
+  }
+  onMounted(() => {
+    getSectionHistoryData()
+  })
   return {
+    titleList,
+    getTitle,
+    rollTo,
+    postSectionHistoryData,
+    getSectionHistoryData,
     is_collect,
     collectClick,
-    getSectionHistoryData,
-    postSectionHistoryData
+    likeClick,
+    onShare,
+    getCatalogueData,
+    catalogList
   }
 }
 </script>
 
 <style lang="scss" scoped>
-@import "~@/assets/style/index.scss";
+@import "src/assets/style/index.scss";
 
 .detail {
   .main {

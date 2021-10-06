@@ -47,32 +47,21 @@
   </van-tabbar>
 </template>
 
-<script>
+<script setup>
 import {Tabbar, TabbarItem} from 'vant';
 import {ref} from 'vue';
 
-export default {
-  components: {
-    [Tabbar.name]: Tabbar,
-    [TabbarItem.name]: TabbarItem,
-  },
-  name: "Tabbar",
-  props: {
-    // 加载中动画
-    activeBar: {
-      type: Number,
-      default() {
-        return 0;
-      }
+const props = defineProps({
+  // 加载中动画
+  activeBar: {
+    type: Number,
+    default() {
+      return 0;
     }
-  },
-  setup() {
-    const active = ref(0);
-    return {
-      active,
-    };
-  },
-}
+  }
+})
+
+const active = ref(0)
 </script>
 
 <style lang="scss" scoped>

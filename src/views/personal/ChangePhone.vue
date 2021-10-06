@@ -1,7 +1,7 @@
 <!--更换手机-->
 <template>
   <div class="password">
-    <NavBar :title="'更换手机'"></NavBar>
+    <PersonalNavBar :title="'更换手机'"></PersonalNavBar>
     <van-form @submit="onSubmit">
       <van-field
           v-model="phoneForm.password"
@@ -42,95 +42,76 @@
   </div>
 </template>
 
-<script>
-import NavBar from "@/components/personal/NavBar";
+<script setup>
+import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
 import {Form, Field, Button, Toast} from 'vant';
 import {reactive, ref} from "vue";
-import {postCode, getRegister,putChangePhone} from "@/api/account";
-import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn";
+import {postCode, getRegister, putChangePhone} from "@/api/account";
+import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn.vue";
 import user from "@/utils/user";
 
-export default {
-  components: {
-    [Form.name]: Form,
-    [Field.name]: Field,
-    [Button.name]: Button,
-    NavBar,
-    VerifyCodeBtn,
-  },
-  name: "ChangePhone",
-  setup() {
-    // 引入用户信息模块
-    let {userName, userId} = user();
-    // 更换手机表单
-    const phoneForm = reactive({
-      password: '',
-      newPhone: '',
-      code: '',
-    });
-    // 验证码按钮状态
-    const btnDisabled = ref(true)
-    // 获取验证码表单
-    const codeForm = reactive({
-      contact: '',
-      action: '更换手机',
-      username: '',
-    })
-    // 获取验证码
-    const pass = () => {
-      codeForm.contact = phoneForm.newPhone
-      codeForm.username = userName.value
-      postCode(codeForm).then((response) => {
-        console.log(response)
-        Toast.success('验证码发送成功！');
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail(response.msg);
-      });
-    }
-    // 异步校验手机号
-    const checkContact = (val) =>
-        new Promise((resolve) => {
-          const objRegExp = /^1[0-9]\d{9}$/;
-          if (objRegExp.test(val)) {
-            getRegister(NaN, val).then((response) => {
-              console.log(response)
-              btnDisabled.value = false
-              resolve(true)
-            }).catch(response => {
-              //发生错误时执行的代码
-              console.log(response)
-              Toast.fail(response.msg);
-              btnDisabled.value = true
-              resolve(false)
-            });
-          } else {
-            btnDisabled.value = true
-            resolve(false)
-          }
-        })
-    // 表单提交事件
-    const onSubmit = () => {
-      putChangePhone(userId.value, phoneForm).then((response) => {
-        console.log(response)
-        Toast.success('手机修改成功！');
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail(response.msg);
-      });
-    };
 
-    return {
-      phoneForm,
-      checkContact,
-      btnDisabled,
-      pass,
-      onSubmit,
-    }
-  }
+// 引入用户信息模块
+let {userName, userId} = user();
+// 更换手机表单
+const phoneForm = reactive({
+  password: '',
+  newPhone: '',
+  code: '',
+});
+// 验证码按钮状态
+const btnDisabled = ref(true)
+// 获取验证码表单
+const codeForm = reactive({
+  contact: '',
+  action: '更换手机',
+  username: '',
+})
+// 获取验证码
+const pass = () => {
+  codeForm.contact = phoneForm.newPhone
+  codeForm.username = userName.value
+  postCode(codeForm).then((response) => {
+    console.log(response)
+    Toast.success('验证码发送成功！');
+  }).catch(response => {
+    //发生错误时执行的代码
+    console.log(response)
+    Toast.fail(response.msg);
+  });
 }
+// 异步校验手机号
+const checkContact = (val) =>
+    new Promise((resolve) => {
+      const objRegExp = /^1[0-9]\d{9}$/;
+      if (objRegExp.test(val)) {
+        getRegister(NaN, val).then((response) => {
+          console.log(response)
+          btnDisabled.value = false
+          resolve(true)
+        }).catch(response => {
+          //发生错误时执行的代码
+          console.log(response)
+          Toast.fail(response.msg);
+          btnDisabled.value = true
+          resolve(false)
+        });
+      } else {
+        btnDisabled.value = true
+        resolve(false)
+      }
+    })
+// 表单提交事件
+const onSubmit = () => {
+  putChangePhone(userId.value, phoneForm).then((response) => {
+    console.log(response)
+    Toast.success('手机修改成功！');
+  }).catch(response => {
+    //发生错误时执行的代码
+    console.log(response)
+    Toast.fail(response.msg);
+  });
+};
 </script>
 
 <style scoped lang="scss">

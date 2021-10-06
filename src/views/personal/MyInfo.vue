@@ -1,6 +1,6 @@
 <template>
   <div class="info">
-    <NavBar :title="'我的信息'"></NavBar>
+    <PersonalNavBar :title="'我的信息'"></PersonalNavBar>
     <div class="photo">
       <UploadImg :imgURL="userInfoForm.photo" :dir="'photo'" @saveImg="saveImg"></UploadImg>
       <p>点击更换头像</p>
@@ -126,9 +126,9 @@
   </div>
 </template>
 
-<script>
-import NavBar from "@/components/personal/NavBar";
-import UploadImg from "@/components/common/UploadImg";
+<script setup>
+import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
+import UploadImg from "@/components/common/UploadImg.vue";
 import {
   Form,
   Field,
@@ -147,24 +147,7 @@ import {getRegister, getUserinfoId, putUserinfoId} from "@/api/account";
 import user from "@/utils/user";
 import {areaList} from "@vant/area-data";
 
-export default {
-  components: {
-    [Form.name]: Form,
-    [Field.name]: Field,
-    [Button.name]: Button,
-    [Cell.name]: Cell,
-    [CellGroup.name]: CellGroup,
-    [Picker.name]: Picker,
-    [Popup.name]: Popup,
-    [VanImage.name]: VanImage,
-    [Area.name]: Area,
-    [DatetimePicker.name]: DatetimePicker,
-    NavBar,
-    Toast,
-    UploadImg,
-  },
-  name: "MyInfo",
-  setup() {
+
     // 引入用户信息模块
     let {userId, isLogin} = user();
     // 我的信息表单
@@ -253,24 +236,6 @@ export default {
     onMounted(() => {
       getUserinfo(userId.value)
     })
-    return {
-      userInfoForm,
-      saveImg,
-      oldUsername,
-      checkUsername,
-      showSex,
-      onSubmit,
-      columns,
-      onCancel,
-      chooseSex,
-      areaList,
-      showArea,
-      chooseArea,
-      showBirthday,
-      chooseBirthday,
-    }
-  }
-}
 </script>
 
 <style scoped lang="scss">
@@ -279,7 +244,7 @@ export default {
 .photo {
   text-align: center;
   padding-top: 0.533rem;
-  @include background_color('background_color3');;
+  @include background_color('background_color5');;
 
   p {
     font-size: 0.373rem;

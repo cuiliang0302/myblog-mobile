@@ -18,47 +18,37 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import {Tag} from 'vant';
 import timeFormat from "@/utils/timeFormat";
 
-export default {
-  props: {
-    list: {
-      type: Array,
-      default() {
-        return [];
-      }
-    },
-    kind: {
-      type: String,
-      default() {
-        return '';
-      }
-    },
-    action: {
-      type: String,
-      default() {
-        return '';
-      }
+
+const props = defineProps({
+  list: {
+    type: Array,
+    default() {
+      return [];
     }
   },
-  components: {
-    [Tag.name]: Tag
-  },
-  name: "TimeLine",
-  setup(props, {emit}) {
-    // 日期格式化
-    let {timeFull} = timeFormat()
-    const toDetail = (detailId) => {
-      console.log(detailId)
-      emit('toDetail', detailId)
+  kind: {
+    type: String,
+    default() {
+      return '';
     }
-    return {
-      toDetail,
-      timeFull
+  },
+  action: {
+    type: String,
+    default() {
+      return '';
     }
   }
+})
+const emit = defineEmits(['toDetail'])
+// 日期格式化
+let {timeFull} = timeFormat()
+const toDetail = (detailId) => {
+  console.log(detailId)
+  emit('toDetail', detailId)
 }
 </script>
 

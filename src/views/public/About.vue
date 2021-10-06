@@ -10,9 +10,9 @@
   </div>
 </template>
 
-<script>
-import NavBar from "@/components/common/NavBar";
-import Tabbar from '@/components/common/Tabbar';
+<script setup>
+import NavBar from "@/components/common/NavBar.vue";
+import Tabbar from '@/components/common/Tabbar.vue';
 import {Collapse, CollapseItem} from 'vant';
 import {onMounted, ref} from "vue";
 import {getAbout} from "@/api/management";
@@ -26,35 +26,23 @@ VMdPreview.use(githubTheme, {
   Hljs: hljs,
 });
 
-export default {
-  components: {
-    NavBar,
-    Tabbar,
-    [Collapse.name]: Collapse,
-    [CollapseItem.name]: CollapseItem,
-    VMdPreview
-  },
-  name: "About",
-  setup() {
-    const activeName = ref(0);
-    // 关于页数据
-    const about = ref([])
 
-    // 获取关于页数据
-    async function aboutData() {
-      about.value = await getAbout()
-    }
+const activeName = ref(0);
+// 关于页数据
+const about = ref([])
 
-    onMounted(() => {
-      aboutData()
-    })
-    return {activeName, about};
-  },
+// 获取关于页数据
+async function aboutData() {
+  about.value = await getAbout()
 }
+
+onMounted(() => {
+  aboutData()
+})
 </script>
 
 <style lang="scss">
-@import "~@/assets/style/variable";
+@import "src/assets/style/index.scss";
 
 .v-md-editor-preview {
   padding: 0;

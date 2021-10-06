@@ -1,7 +1,7 @@
 <!--申请友链-->
 <template>
   <div class="link">
-    <NavBar :title="'申请友链'"></NavBar>
+    <PersonalNavBar :title="'申请友链'"></PersonalNavBar>
     <div class="ask">
       <div class="title">
         <h2>申请须知</h2>
@@ -71,86 +71,66 @@
   </div>
 </template>
 
-<script>
-import NavBar from "@/components/personal/NavBar";
+<script setup>
+import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
 import {Form, Field, Button, Uploader, Cell, CellGroup, Toast} from 'vant';
 import {onMounted, reactive} from "vue";
-import UploadImg from "@/components/common/UploadImg";
+import UploadImg from "@/components/common/UploadImg.vue";
 import {getSiteConfig, postLink} from "@/api/management";
 
-export default {
-  components: {
-    [Form.name]: Form,
-    [Field.name]: Field,
-    [Button.name]: Button,
-    [Uploader.name]: Uploader,
-    [Cell.name]: Cell,
-    [CellGroup.name]: CellGroup,
-    NavBar,
-    UploadImg
-  },
-  name: "ApplyLink",
-  setup() {
-    const linkForm = reactive({
-      name: '',
-      logo: '',
-      url: '',
-      describe: ''
-    });
-    const webInfo = reactive({
-      name: '',
-      logo: '',
-      describe: '',
-      domain: ''
-    })
-    // 上传logo完成事件
-    const saveImg = (URL) => {
-      linkForm.logo = URL
-    }
-    // 表单提交
-    const onSubmit = () => {
-      console.log(linkForm);
-      if (linkForm.logo.length === 0) {
-        Toast.fail('请上传logo图片');
-        return false
-      }
-      postLink(linkForm).then((response) => {
-        console.log(response)
-        Toast.success('申请提交成功！');
-        linkForm.url = ''
-        linkForm.name = ''
-        linkForm.describe = ''
-        linkForm.logo = ''
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        for (let i in response) {
-          Toast.fail(i + response[i][0]);
-        }
-      });
-    };
 
-    // 获取网站配置数据
-    async function siteConfigData() {
-      let siteConfig_data = await getSiteConfig()
-      console.log(siteConfig_data)
-      webInfo.name = siteConfig_data.name
-      webInfo.logo = siteConfig_data.logo
-      webInfo.describe = siteConfig_data.title.slice(6)
-      webInfo.domain = siteConfig_data.domain
-    }
-
-    onMounted(() => {
-      siteConfigData()
-    })
-    return {
-      webInfo,
-      linkForm,
-      onSubmit,
-      saveImg,
-    }
-  }
+const linkForm = reactive({
+  name: '',
+  logo: '',
+  url: '',
+  describe: ''
+});
+const webInfo = reactive({
+  name: '',
+  logo: '',
+  describe: '',
+  domain: ''
+})
+// 上传logo完成事件
+const saveImg = (URL) => {
+  linkForm.logo = URL
 }
+// 表单提交
+const onSubmit = () => {
+  console.log(linkForm);
+  if (linkForm.logo.length === 0) {
+    Toast.fail('请上传logo图片');
+    return false
+  }
+  postLink(linkForm).then((response) => {
+    console.log(response)
+    Toast.success('申请提交成功！');
+    linkForm.url = ''
+    linkForm.name = ''
+    linkForm.describe = ''
+    linkForm.logo = ''
+  }).catch(response => {
+    //发生错误时执行的代码
+    console.log(response)
+    for (let i in response) {
+      Toast.fail(i + response[i][0]);
+    }
+  });
+};
+
+// 获取网站配置数据
+async function siteConfigData() {
+  let siteConfig_data = await getSiteConfig()
+  console.log(siteConfig_data)
+  webInfo.name = siteConfig_data.name
+  webInfo.logo = siteConfig_data.logo
+  webInfo.describe = siteConfig_data.title.slice(6)
+  webInfo.domain = siteConfig_data.domain
+}
+
+onMounted(() => {
+  siteConfigData()
+})
 </script>
 
 <style scoped lang="scss">

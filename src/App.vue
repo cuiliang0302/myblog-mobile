@@ -24,7 +24,7 @@ import {useRoute} from "vue-router";
 import animate from "animate.css";
 import {ConfigProvider, Dialog} from "vant";
 import dark from "@/utils/dark";
-import store from "@/store";
+import store from "@/store/index";
 
 export default {
   name: "App",
@@ -42,7 +42,7 @@ export default {
     // 首屏加载动画
     onMounted(() => {
       const now = new Date()
-      console.log(now.getHours())
+      // setDark(false)
       if (now.getHours() >= 21 || now.getHours() <= 6) {
         console.log("这是夜间模式")
         setDark(true)
@@ -100,7 +100,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "~@/assets/style/index.scss";
+@import "src/assets/style/index.scss";
 
 .router-view {
   @include font_color("font_color1");

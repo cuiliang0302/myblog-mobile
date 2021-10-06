@@ -112,125 +112,99 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import {Step, Steps, Form, Button, Field, Toast} from 'vant';
 import {reactive, ref} from "vue";
 import {getRegister, postCode, postSetPassword} from "@/api/account";
-import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn";
-import store from "@/store";
+import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn.vue";
 
-export default {
-  components: {
-    [Step.name]: Step,
-    [Steps.name]: Steps,
-    [Form.name]: Form,
-    [Button.name]: Button,
-    [Field.name]: Field,
-    VerifyCodeBtn
-  },
-  name: "SetPassword",
-  setup() {
-    const active = ref(0);
-    // 用户验证表单
-    const verifyForm = reactive({
-      contact: '',
-      code: '',
-      password: ''
-    });
-    // 异步校验邮箱/手机号
-    const checkContact = (val) =>
-        new Promise((resolve) => {
-          if (val) {
-            getRegister(NaN, val).then((response) => {
-              console.log(response)
-              resolve(false)
-            }).catch(response => {
-              //发生错误时执行的代码
-              console.log(response)
-              btnDisabled.value = false
-              resolve(true)
-            });
-          } else {
-            btnDisabled.value = true
-            resolve(false)
-          }
-        })
-    // 验证码按钮状态
-    const btnDisabled = ref(true)
-    // 获取验证码表单
-    const codeForm = reactive({
-      contact: '',
-      action: '重置密码',
-      username: '用户',
-    })
-    // 获取验证码
-    const pass = () => {
-      console.log("通过验证了,获取验证码")
-      codeForm.contact = verifyForm.contact
-      postCode(codeForm).then((response) => {
-        console.log(response)
-        Toast.success('验证码发送成功！');
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail(response.msg);
-      });
-    }
-    // 用户验证表单提交
-    const verifySubmit = (values) => {
-      console.log('submit', values);
-      active.value = 1
-    };
-    // 密码正则校验
-    const pattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
-    // 密码一致性校验
-    const checkPassword = (val) =>
-        new Promise((resolve) => {
-          console.log(val)
-          if (val && passwordForm.password1 === passwordForm.password2) {
-            resolve(true)
-          } else {
-            resolve(false)
-          }
-        })
-    // 设置密码表单
-    const passwordForm = reactive({
-      password1: '',
-      password2: '',
-    });
 
-    // 密码表单提交
-    async function passwordSubmit() {
-      verifyForm.password = passwordForm.password1
-      try {
-        let response = await postSetPassword(verifyForm)
-        console.log(response)
-        active.value = 2
-      } catch (error) {
-        console.log(error)
-        Toast.fail(error.msg);
-        active.value = 0
+const active = ref(0);
+// 用户验证表单
+const verifyForm = reactive({
+  contact: '',
+  code: '',
+  password: ''
+});
+// 异步校验邮箱/手机号
+const checkContact = (val) =>
+    new Promise((resolve) => {
+      if (val) {
+        getRegister(NaN, val).then((response) => {
+          console.log(response)
+          resolve(false)
+        }).catch(response => {
+          //发生错误时执行的代码
+          console.log(response)
+          btnDisabled.value = false
+          resolve(true)
+        });
+      } else {
+        btnDisabled.value = true
+        resolve(false)
       }
-    }
+    })
+// 验证码按钮状态
+const btnDisabled = ref(true)
+// 获取验证码表单
+const codeForm = reactive({
+  contact: '',
+  action: '重置密码',
+  username: '用户',
+})
+// 获取验证码
+const pass = () => {
+  console.log("通过验证了,获取验证码")
+  codeForm.contact = verifyForm.contact
+  postCode(codeForm).then((response) => {
+    console.log(response)
+    Toast.success('验证码发送成功！');
+  }).catch(response => {
+    //发生错误时执行的代码
+    console.log(response)
+    Toast.fail(response.msg);
+  });
+}
+// 用户验证表单提交
+const verifySubmit = (values) => {
+  console.log('submit', values);
+  active.value = 1
+};
+// 密码正则校验
+const pattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
+// 密码一致性校验
+const checkPassword = (val) =>
+    new Promise((resolve) => {
+      console.log(val)
+      if (val && passwordForm.password1 === passwordForm.password2) {
+        resolve(true)
+      } else {
+        resolve(false)
+      }
+    })
+// 设置密码表单
+const passwordForm = reactive({
+  password1: '',
+  password2: '',
+});
 
-    return {
-      active,
-      verifyForm,
-      pass,
-      btnDisabled,
-      checkContact,
-      verifySubmit,
-      pattern,
-      checkPassword,
-      passwordForm,
-      passwordSubmit,
-    };
-  },
+// 密码表单提交
+async function passwordSubmit() {
+  verifyForm.password = passwordForm.password1
+  try {
+    let response = await postSetPassword(verifyForm)
+    console.log(response)
+    active.value = 2
+  } catch (error) {
+    console.log(error)
+    Toast.fail(error.msg);
+    active.value = 0
+  }
 }
 </script>
 
 <style scoped lang="scss">
-@import "~@/assets/style/index";
+@import "src/assets/style/index";
 
 .password {
   height: 100%;
@@ -241,7 +215,7 @@ export default {
     width: 100%;
     position: absolute;
     height: 88%;
-    background-image: url("~@/assets/images/background.png");
+    background-image: url("src/assets/images/background.png");
     background-repeat: no-repeat;
     background-size: 100%;
     padding-bottom: 2.667rem;

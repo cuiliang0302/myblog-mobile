@@ -1,7 +1,7 @@
 <!--内容详情页-->
 <template>
   <div class="detail" v-title="detail.title+'-'+sitename">
-    <NavBar :componentName="componentName"></NavBar>
+    <NavBar :componentName="'article'"></NavBar>
     <van-skeleton title round :row="10" :loading="loading">
       <div class="main">
         <div class="title">
@@ -13,8 +13,7 @@
             <use xlink:href="#icon-category-solid"></use>
           </svg>
         </span>
-        <span v-if="componentName==='article'">{{ detail.category }}</span>
-        <span v-else>{{ detail.note }}</span>
+        <span>{{ detail.category }}</span>
       </span>
             <span class="info-item">
         <span class="info-icon">
@@ -51,15 +50,15 @@
           </div>
         </div>
         <div class="body" ref="editor">
-          <v-md-preview :text="detail.body" @image-click="imgView"></v-md-preview>
+          <v-md-preview :text="detail.body" @image-click="showImg"></v-md-preview>
         </div>
       </div>
     </van-skeleton>
-    <div class="recommend" v-show="componentName==='article'">
+    <div class="recommend">
       <van-divider content-position="left">💖 猜你喜欢</van-divider>
       <div class="recommend-list">
         <div class="recommend-item" v-for="(item,index) in recommendList" :key="index"
-             @click="toDetail('article',item.id)">
+             @click="toDetail(item.id)">
           <van-image :src="item.cover" radius="0.4rem" width="100%" height="3.2rem" lazy-load>
             <template v-slot:loading>
               <van-loading type="spinner" size="20"/>
@@ -67,30 +66,6 @@
           </van-image>
           <span>{{ item.title }}</span>
         </div>
-      </div>
-    </div>
-    <div class="context" v-show="componentName==='note'">
-      <div class="last">
-        <span>
-          <svg class="icon context-icon" aria-hidden="true">
-            <use xlink:href="#icon-last-solid"></use>
-          </svg>
-        </span>
-        <span v-if="context.last && context.last.title" @click="toDetail('note',context.last.id)">
-          {{ context.last.title }}
-        </span>
-        <span v-else>已是第一篇</span>
-      </div>
-      <div class="next">
-        <span>
-          <svg class="icon context-icon" aria-hidden="true">
-            <use xlink:href="#icon-next-solid"></use>
-          </svg>
-        </span>
-        <span v-if="context.next && context.next.title" @click="toDetail('note',context.next.id)">
-          {{ context.next.title }}
-        </span>
-        <span v-else>已是最后一篇</span>
       </div>
     </div>
     <div class="comment" id="comment">
@@ -118,17 +93,18 @@
       </div>
     </div>
     <div class="bottom-margin"></div>
-    <Tabbar :componentName="componentName" :titleList="titleList" :catalogList="catalogList" :is_collect="is_collect"
+    <Tabbar :componentName="'article'" :titleList="titleList" :is_collect="is_collect"
             @collectClick="collectClick" @rollTo="rollTo"
-            @dirTab="dirTab" @toNoteDetail="toNoteDetail" @likeClick="likeClick" @onShare="onShare"></Tabbar>
+            @likeClick="likeClick" @onShare="onShare"></Tabbar>
     <LoginPopup ref="refLoginPopup"></LoginPopup>
   </div>
 </template>
 
 <script>
-import NavBar from '@/components/datail/NavBar';
-import Tabbar from '@/components/datail/Tabbar';
-import Comments from '@/components/common/Comments'
+import NavBar from '@/components/detail/DetailNavBar.vue';
+import Tabbar from '@/components/detail/DetailTabbar.vue';
+import Comments from '@/components/common/Comments.vue'
+import LoginPopup from "@/components/common/LoginPopup.vue";
 import {Divider, Image as VanImage, Loading, Skeleton, Toast, Field, Empty, ImagePreview} from 'vant'
 import {getCurrentInstance, nextTick, onMounted, reactive, ref, watch} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
@@ -144,17 +120,17 @@ import dockerfile from 'highlight.js/lib/languages/dockerfile';
 import json from 'highlight.js/lib/languages/json';
 import yaml from 'highlight.js/lib/languages/yaml';
 import sql from 'highlight.js/lib/languages/sql';
+import javascript from 'highlight.js/lib/languages/javascript';
+import css from 'highlight.js/lib/languages/css';
+import scss from 'highlight.js/lib/languages/scss';
+import xml from 'highlight.js/lib/languages/xml';
 import fontSize from "@/utils/fontSize";
 import {getSiteConfig} from "@/api/management";
-import store from "@/store";
+import store from "@/store/index";
 import {
-  getCatalogue,
-  getContext,
-  getSectionDetail,
   getArticleDetail,
   getGuessLike,
   putArticleDetail,
-  putSectionDetail,
   getQRcode
 } from "@/api/blog";
 import {getImgProxy} from "@/api/public";
@@ -164,20 +140,12 @@ import {
   deleteArticleComment,
   putArticleComment,
   postReplyArticleComment,
-  getSectionComment,
-  postSectionComment,
-  deleteSectionComment,
-  putSectionComment,
-  postReplySectionComment,
   postArticleHistory,
   putArticleHistory,
   getArticleHistory,
-  getSectionHistory,
-  postSectionHistory,
-  putSectionHistory
 } from "@/api/record";
 import user from "@/utils/user";
-import LoginPopup from "@/components/common/LoginPopup";
+
 import useClipboard from 'vue-clipboard3'
 
 hljs.registerLanguage('json', json);
@@ -186,9 +154,14 @@ hljs.registerLanguage('bash', bash);
 hljs.registerLanguage('dockerfile', dockerfile);
 hljs.registerLanguage('yaml', yaml);
 hljs.registerLanguage('sql', sql);
+hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('scss', scss);
+hljs.registerLanguage('css', css);
+hljs.registerLanguage('xml', xml);
 VMdPreview.use(githubTheme, {
   codeHighlightExtensionMap: {
     vue: 'xml',
+    less: 'scss',
   },
   Hljs: hljs,
 });
@@ -218,58 +191,33 @@ export default {
     let {
       sitename,
       DetailID,
-      componentName,
       detail,
       timeDate,
       loading,
       toDetail,
       likeClick,
       onShare
-    } = publicFn(route, router, sectionData)
+    } = publicFn(route, router)
     // markdown模块
-    let {titleList, editor, rollTo, getTitle, setMDFont, imgView} = markdown(titleList)
+    let {titleList, editor, rollTo, getTitle, setMDFont, showImg} = markdown(titleList)
     // 文章模块
     let {recommendList, articleData, guessLikeData} = article(detail)
-    // 笔记模块
-    let {context, catalogList, dirTab, toNoteDetail, sectionData, contextData} = note(detail, toDetail)
     // 评论回复模块
-    let {
-      messageForm,
-      commentsList,
-      articleCommentData,
-      sectionCommentData,
-      clickSend,
-      refLoginPopup
-    } = comment(DetailID, $bus, componentName, router)
+    let {messageForm, commentsList, articleCommentData, clickSend, refLoginPopup} = comment(DetailID, $bus, router)
     // 浏览记录模块
-    let {
-      is_collect,
-      getArticleHistoryData,
-      postArticleHistoryData,
-      collectClick,
-      getSectionHistoryData,
-      postSectionHistoryData
-    } = history(DetailID, componentName)
+    let {is_collect, getArticleHistoryData, postArticleHistoryData, collectClick} = history(DetailID)
 
-    // 获取内容详情
+    // 获取文章内容详情
     async function getDetail(DetailID) {
       Toast.loading({
         message: '加载中...',
         forbidClick: true,
       });
-      if (componentName.value === 'article') {
-        await articleData(DetailID)
-        await guessLikeData(DetailID)
-        await articleCommentData(DetailID)
-        await getArticleHistoryData(DetailID)
-        await postArticleHistoryData(DetailID)
-      } else {
-        await sectionData(DetailID)
-        await contextData(DetailID)
-        await sectionCommentData(DetailID)
-        await getSectionHistoryData(DetailID)
-        await postSectionHistoryData(DetailID)
-      }
+      await articleData(DetailID)
+      await guessLikeData(DetailID)
+      await articleCommentData(DetailID)
+      await getArticleHistoryData(DetailID)
+      await postArticleHistoryData(DetailID)
       loading.value = false;
       await setMDFont()
       await getTitle()
@@ -277,18 +225,15 @@ export default {
     }
 
     onMounted(async () => {
-      componentName.value = router.currentRoute.value.query.component
       let DetailID = router.currentRoute.value.params.id
       await getDetail(DetailID)
     })
     onBeforeRouteUpdate(async (to) => {
       console.log(to)
-      componentName.value = to.query.component
       await getDetail(to.params.id)
     });
     return {
       sitename,
-      componentName,
       detail,
       timeDate,
       toDetail,
@@ -298,10 +243,6 @@ export default {
       commentsList,
       rollTo,
       loading,
-      context,
-      dirTab,
-      catalogList,
-      toNoteDetail,
       messageForm,
       clickSend,
       refLoginPopup,
@@ -309,7 +250,7 @@ export default {
       is_collect,
       collectClick,
       onShare,
-      imgView
+      showImg
     }
   }
 }
@@ -319,9 +260,7 @@ function publicFn(route, router) {
   const {toClipboard} = useClipboard()
   // 站点名称
   const sitename = ref()
-  // 显示组件模块
-  const componentName = ref('')
-  // 文章笔记ID
+  // 文章ID
   const DetailID = ref()
   // 内容详情
   let detail = reactive({})
@@ -329,40 +268,26 @@ function publicFn(route, router) {
   let {timeDate} = timeFormat()
   // 骨架屏默认显示
   const loading = ref(true);
-  // 切换新的文章或笔记
-  const toDetail = (component, detailId) => {
-    console.log(component)
+  // 切换新的文章
+  const toDetail = (detailId) => {
     DetailID.value = detailId
-    router.push({path: `/detail/${detailId}`, query: {component: component}})
+    router.push({path: `/detail/article/${detailId}`})
   }
-  // 点赞文章或笔记
+  // 点赞文章
   const likeClick = () => {
-    if (componentName.value === 'article') {
-      detail.like = detail.like + 1
-      putArticleDetail(DetailID.value, detail).then((response) => {
-        console.log(response)
-        Toast.success('点赞成功！');
-        getArticleDetail(DetailID.value)
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail(response.msg);
-      });
-    } else {
-      detail.like = detail.like + 1
-      putSectionDetail(DetailID.value, detail).then((response) => {
-        console.log(response)
-        Toast.success('点赞成功！');
-        getSectionDetail(DetailID.value)
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail(response.msg);
-      });
-    }
+    detail.like = detail.like + 1
+    putArticleDetail(DetailID.value, detail).then((response) => {
+      console.log(response)
+      Toast.success('点赞成功！');
+      getArticleDetail(DetailID.value)
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      Toast.fail(response.msg);
+    });
   }
 
-  // 分享文章或笔记
+  // 分享文章
   const onShare = async (name) => {
     const URL = window.location.href
     console.log(URL)
@@ -405,7 +330,7 @@ function publicFn(route, router) {
     DetailID.value = router.currentRoute.value.params.id
   })
   return {
-    sitename, DetailID, componentName, detail, timeDate, loading, toDetail, likeClick, onShare
+    sitename, DetailID, detail, timeDate, loading, toDetail, likeClick, onShare
   }
 }
 
@@ -460,16 +385,16 @@ function markdown() {
     const html = document.querySelector('.main')
     html.style.fontSize = newSize + 'px'
   });
-  // markdown图片查看
-  const imgView = (MDimages, currentIndex) => {
-    console.log(MDimages, currentIndex)
+  // 图片预览
+  const showImg = (MDimages, currentIndex) => {
     ImagePreview({
       images: MDimages,
       startPosition: currentIndex,
+      closeable: true,
     });
   }
   return {
-    titleList, editor, rollTo, getTitle, setMDFont, imgView
+    titleList, editor, rollTo, getTitle, setMDFont, showImg
   }
 }
 
@@ -485,7 +410,7 @@ function article(detail) {
       if (i === 'body') {
         // 图片防盗链处理
         detail.body = detail_data.body
-        const pattern = /!\[(.*?)\]\((.*?)\)/gm;
+        const pattern = /!\[(.*?)\]\((https:\/\/cdn.nlark.com.*?)\)/gm;
         let matcher;
         let imgArr = [];
         while ((matcher = pattern.exec(detail.body)) !== null) {
@@ -513,67 +438,8 @@ function article(detail) {
   }
 }
 
-// 笔记模块
-function note(detail, toDetail) {
-  // 笔记上下篇
-  const context = reactive({})
-  // 笔记目录
-  const catalogList = ref([])
-  // 获取笔记目录
-  const dirTab = () => {
-    catalogueData(detail.note_id)
-  }
-  // 子组件获取笔记内容
-  const toNoteDetail = (sectionId) => {
-    toDetail('note', sectionId)
-  }
-
-  // 获取笔记目录数据
-  async function catalogueData(note_id) {
-    catalogList.value = await getCatalogue(note_id)
-    console.log(catalogList.value)
-  }
-
-  // 获取笔记详情
-  async function sectionData(DetailID) {
-    const detail_data = await getSectionDetail(DetailID)
-    for (let i in detail_data) {
-      if (i === 'body') {
-        // 图片防盗链处理
-        detail.body = detail_data.body
-        const pattern = /!\[(.*?)\]\((.*?)\)/gm;
-        let matcher;
-        let imgArr = [];
-        while ((matcher = pattern.exec(detail.body)) !== null) {
-          imgArr.push(matcher[2]);
-        }
-        for (let i = 0; i < imgArr.length; i++) {
-          detail.body = detail.body.replace(
-              imgArr[i],
-              "https://images.weserv.nl/?url=" + imgArr[i]
-          );
-        }
-      } else {
-        detail[i] = detail_data[i]
-      }
-    }
-  }
-
-  // 获取笔记上下篇
-  async function contextData(DetailID) {
-    const context_data = await getContext(DetailID)
-    for (let i in context_data) {
-      context[i] = context_data[i]
-    }
-  }
-
-  return {
-    context, catalogList, dirTab, toNoteDetail, catalogueData, sectionData, contextData
-  }
-}
-
 // 评论回复模块
-function comment(DetailID, $bus, componentName, router) {
+function comment(DetailID, $bus, router) {
   // 引入用户信息模块
   let {userId, isLogin} = user();
   // 留言评论列表
@@ -582,11 +448,6 @@ function comment(DetailID, $bus, componentName, router) {
   // 获取文章评论数据
   async function articleCommentData(DetailID) {
     commentsList.value = await getArticleComment(DetailID)
-  }
-
-  // 获取笔记评论数据
-  async function sectionCommentData(DetailID) {
-    commentsList.value = await getSectionComment(DetailID)
   }
 
   // 提示登录组件对象
@@ -601,37 +462,20 @@ function comment(DetailID, $bus, componentName, router) {
     if (isLogin.value) {
       if (messageForm.content) {
         messageForm.user = userId.value
-        if (componentName.value === 'article') {
-          messageForm['article_id'] = DetailID.value
-          console.log(messageForm)
-          postArticleComment(messageForm).then((response) => {
-            console.log(response)
-            Toast.success('留言成功！');
-            messageForm.content = ''
-            articleCommentData(DetailID.value)
-          }).catch(response => {
-            //发生错误时执行的代码
-            console.log(response)
-            for (let i in response) {
-              Toast.fail(i + response[i][0]);
-            }
-          });
-        } else {
-          messageForm['section_id'] = DetailID.value
-          console.log(messageForm)
-          postSectionComment(messageForm).then((response) => {
-            console.log(response)
-            Toast.success('留言成功！');
-            messageForm.content = ''
-            sectionCommentData(DetailID.value)
-          }).catch(response => {
-            //发生错误时执行的代码
-            console.log(response)
-            for (let i in response) {
-              Toast.fail(i + response[i][0]);
-            }
-          });
-        }
+        messageForm['article_id'] = DetailID.value
+        console.log(messageForm)
+        postArticleComment(messageForm).then((response) => {
+          console.log(response)
+          Toast.success('留言成功！');
+          messageForm.content = ''
+          articleCommentData(DetailID.value)
+        }).catch(response => {
+          //发生错误时执行的代码
+          console.log(response)
+          for (let i in response) {
+            Toast.fail(i + response[i][0]);
+          }
+        });
       } else {
         Toast("一言不发，发个寂寞")
       }
@@ -642,88 +486,47 @@ function comment(DetailID, $bus, componentName, router) {
   }
   // 评论点赞事件
   if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", messageId => {
-    if (componentName.value === 'article') {
-      putArticleComment(messageId).then((response) => {
-        console.log(response)
-        Toast.success('点赞成功！');
-        articleCommentData(DetailID.value)
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail(response.msg);
-      });
-    } else {
-      putSectionComment(messageId).then((response) => {
-        console.log(response)
-        Toast.success('点赞成功！');
-        sectionCommentData(DetailID.value)
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail(response.msg);
-      });
-    }
+    putArticleComment(messageId).then((response) => {
+      console.log(response)
+      Toast.success('点赞成功！');
+      articleCommentData(DetailID.value)
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      Toast.fail(response.msg);
+    });
   });
   // 评论删除事件
   if (!$bus.all.get("delMessage")) $bus.on("delMessage", messageId => {
-    if (componentName.value === 'article') {
-      deleteArticleComment(messageId).then((response) => {
-        console.log(response)
-        Toast.success('留言删除成功！');
-        articleCommentData(DetailID.value)
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail(response.msg);
-      });
-    } else {
-      deleteSectionComment(messageId).then((response) => {
-        console.log(response)
-        Toast.success('留言删除成功！');
-        sectionCommentData(DetailID.value)
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail(response.msg);
-      });
-    }
+    deleteArticleComment(messageId).then((response) => {
+      console.log(response)
+      Toast.success('留言删除成功！');
+      articleCommentData(DetailID.value)
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      Toast.fail(response.msg);
+    });
   });
   // 留言回复事件
   if (!$bus.all.get("replySend")) $bus.on("replySend", replyForm => {
-    if (componentName.value === 'article') {
-      replyForm['article_id'] = DetailID.value
-      console.log(replyForm)
-      postReplyArticleComment(replyForm).then((response) => {
-        console.log(response)
-        Toast.success('回复成功！');
-        articleCommentData(DetailID.value)
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        for (let i in response) {
-          Toast.fail(i + response[i][0]);
-        }
-      });
-    } else {
-      replyForm['section_id'] = DetailID.value
-      console.log(replyForm)
-      postReplySectionComment(replyForm).then((response) => {
-        console.log(response)
-        Toast.success('回复成功！');
-        sectionCommentData(DetailID.value)
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        for (let i in response) {
-          Toast.fail(i + response[i][0]);
-        }
-      });
-    }
+    replyForm['article_id'] = DetailID.value
+    console.log(replyForm)
+    postReplyArticleComment(replyForm).then((response) => {
+      console.log(response)
+      Toast.success('回复成功！');
+      articleCommentData(DetailID.value)
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      for (let i in response) {
+        Toast.fail(i + response[i][0]);
+      }
+    });
   });
   return {
     commentsList,
     articleCommentData,
-    sectionCommentData,
     messageForm,
     clickSend,
     refLoginPopup,
@@ -731,7 +534,7 @@ function comment(DetailID, $bus, componentName, router) {
 }
 
 // 浏览记录模块
-function history(DetailID, componentName) {
+function history(DetailID) {
   // 引入用户信息模块
   let {userId, isLogin} = user();
   // 文章收藏状态
@@ -741,15 +544,6 @@ function history(DetailID, componentName) {
   async function getArticleHistoryData(DetailID) {
     if (isLogin.value === true) {
       let res = await getArticleHistory(DetailID, userId.value)
-      console.log(res)
-      is_collect.value = res.is_collect
-    }
-  }
-
-  // 获取笔记浏览记录（是否已收藏）
-  async function getSectionHistoryData(DetailID) {
-    if (isLogin.value === true) {
-      let res = await getSectionHistory(DetailID, userId.value)
       console.log(res)
       is_collect.value = res.is_collect
     }
@@ -772,22 +566,6 @@ function history(DetailID, componentName) {
     }
   }
 
-  // 添加笔记浏览记录表单
-  const sectionHistoryForm = reactive({
-    section_id: '',
-    user: ''
-  })
-
-  // 添加文章浏览记录
-  async function postSectionHistoryData(DetailID) {
-    if (isLogin.value === true) {
-      sectionHistoryForm.section_id = DetailID
-      sectionHistoryForm.user = userId.value
-      console.log(sectionHistoryForm)
-      let res = await postSectionHistory(sectionHistoryForm)
-      console.log(res)
-    }
-  }
 
   // 添加/取消收藏表单
   const CollectForm = reactive({
@@ -800,37 +578,19 @@ function history(DetailID, componentName) {
     is_collect.value = !is_collect.value
     CollectForm.user = userId.value
     CollectForm.is_collect = is_collect.value
-    if (componentName.value === 'article') {
-      console.log("是文章")
-      CollectForm['article_id'] = DetailID
-      putArticleHistory(CollectForm).then((response) => {
-        console.log(response)
-        if (response.is_collect === true) {
-          Toast.success('已添加收藏！');
-        } else {
-          Toast.success('已取消收藏！');
-        }
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail(response.msg);
-      });
-    } else {
-      console.log("是笔记")
-      CollectForm['section_id'] = DetailID
-      putSectionHistory(CollectForm).then((response) => {
-        console.log(response)
-        if (response.is_collect === true) {
-          Toast.success('已添加收藏！');
-        } else {
-          Toast.success('已取消收藏！');
-        }
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail(response.msg);
-      });
-    }
+    CollectForm['article_id'] = DetailID
+    putArticleHistory(CollectForm).then((response) => {
+      console.log(response)
+      if (response.is_collect === true) {
+        Toast.success('已添加收藏！');
+      } else {
+        Toast.success('已取消收藏！');
+      }
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      Toast.fail(response.msg);
+    });
   }
 
   return {
@@ -838,14 +598,12 @@ function history(DetailID, componentName) {
     getArticleHistoryData,
     postArticleHistoryData,
     collectClick,
-    getSectionHistoryData,
-    postSectionHistoryData
   }
 }
 </script>
 
 <style lang="scss" scoped>
-@import "~@/assets/style/index.scss";
+@import "src/assets/style/index.scss";
 
 .detail {
   .main {
@@ -974,7 +732,7 @@ function history(DetailID, componentName) {
       .recommend-item {
         position: relative;
         margin: 0.133rem;
-        width: 4.533rem;
+        width: 45%;
 
         span {
           position: absolute;
@@ -991,38 +749,6 @@ function history(DetailID, componentName) {
           white-space: nowrap;
         }
       }
-    }
-  }
-
-  .context {
-    display: flex;
-    @include background_color("background_color4");
-    font-size: 16px;
-    color: $color-text-primary;
-
-    div {
-      flex: 1;
-      margin: 10px;
-      background-color: $color-background-base;
-      border-radius: 5px;
-    }
-
-    .last {
-      padding: 5px 5px 5px 0;
-      display: flex;
-      align-items: center;
-    }
-
-    .next {
-      padding: 5px 0 5px 5px;
-      display: flex;
-      align-items: center;
-      flex-direction: row-reverse;
-    }
-
-    .context-icon {
-      color: $color-primary;
-      margin: 0 0.267rem;
     }
   }
 

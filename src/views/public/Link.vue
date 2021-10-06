@@ -7,21 +7,13 @@
   </div>
 </template>
 
-<script>
-import NavBar from "@/components/common/NavBar";
-import Tabbar from '@/components/common/Tabbar'
-import LinkContent from "@/components/link/LinkContent";
+<script setup>
+import NavBar from "@/components/common/NavBar.vue";
+import Tabbar from '@/components/common/Tabbar.vue'
+import LinkContent from "@/components/link/LinkContent.vue";
 import {onMounted, reactive, ref} from "vue";
 import {getLink} from "@/api/management";
 
-export default {
-  components: {
-    NavBar,
-    Tabbar,
-    LinkContent
-  },
-  name: "Link",
-  setup() {
     const recommend = reactive(
         {
           title: '🔥 强烈推荐',
@@ -48,16 +40,10 @@ export default {
     onMounted(() => {
       linkData()
     })
-    return {
-      recommend,
-      link
-    }
-  }
-}
 </script>
 
 <style scoped lang="scss">
-@import "~@/assets/style/index.scss";
+@import "src/assets/style/index.scss";
 
 .message {
 }

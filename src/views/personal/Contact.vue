@@ -1,13 +1,13 @@
 <!--联系博主-->
 <template>
   <div>
-    <NavBar :title="'联系博主'"></NavBar>
+    <PersonalNavBar :title="'联系博主'"></PersonalNavBar>
     <van-grid :column-num="2" :gutter="20" clickable>
       <van-grid-item @click="copy('QQ',contact.qq)">
         <van-image
             width="1.067rem"
             height="1.067rem"
-            :src="require('@/assets/images/qq-round.png')"
+            :src="'src/assets/images/qq-round.png'"
         />
         <p>QQ</p>
       </van-grid-item>
@@ -41,71 +41,55 @@
   </div>
 </template>
 
-<script>
-import NavBar from "@/components/personal/NavBar";
+<script setup>
+import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
 import useClipboard from 'vue-clipboard3'
 import {Grid, GridItem, Image as VanImage, Toast} from 'vant'
-import {useRouter} from "vue-router";
 import {getInfo} from "@/api/management";
 import {onMounted} from "vue";
 
-export default {
-  components: {
-    NavBar,
-    [Grid.name]: Grid,
-    [GridItem.name]: GridItem,
-    [VanImage.name]: VanImage
-  },
-  name: "Contact",
-  setup() {
-    const {toClipboard} = useClipboard()
-    const contact = {
-      qq: '',
-      wechat: '',
-      github: '',
-      gitee: '',
-      email: ''
-    }
-    // 地址复制至剪切板
-    const copy = async (type, value) => {
-      try {
-        await toClipboard(value)
-        Toast.success(type + '已复制至剪切板')
-      } catch (e) {
-        Toast.fail('剪切板调用异常！')
-        console.error(e)
-      }
-    }
-    // 跳转至第三方网站
-    const toURL = (url) => {
-      window.location.href = url
-      Toast.loading({
-        message: '第三方网站跳转中...',
-        forbidClick: true,
-      });
-    }
 
-    // 获取博主信息数据
-    async function infoData() {
-      let info_data = await getInfo()
-      console.log(info_data)
-      contact.qq = info_data.qq
-      contact.wechat = info_data.wechat
-      contact.github = info_data.github
-      contact.gitee = info_data.gitee
-      contact.email = info_data.email
-    }
-
-    onMounted(() => {
-      infoData()
-    })
-    return {
-      contact,
-      toURL,
-      copy
-    }
+const {toClipboard} = useClipboard()
+const contact = {
+  qq: '',
+  wechat: '',
+  github: '',
+  gitee: '',
+  email: ''
+}
+// 地址复制至剪切板
+const copy = async (type, value) => {
+  try {
+    await toClipboard(value)
+    Toast.success(type + '已复制至剪切板')
+  } catch (e) {
+    Toast.fail('剪切板调用异常！')
+    console.error(e)
   }
 }
+// 跳转至第三方网站
+const toURL = (url) => {
+  window.location.href = url
+  Toast.loading({
+    message: '第三方网站跳转中...',
+    forbidClick: true,
+  });
+}
+
+// 获取博主信息数据
+async function infoData() {
+  let info_data = await getInfo()
+  console.log(info_data)
+  contact.qq = info_data.qq
+  contact.wechat = info_data.wechat
+  contact.github = info_data.github
+  contact.gitee = info_data.gitee
+  contact.email = info_data.email
+}
+
+onMounted(() => {
+  infoData()
+})
 </script>
 
 <style lang="scss">

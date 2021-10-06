@@ -19,62 +19,51 @@
   </van-action-sheet>
 </template>
 
-<script>
+<script setup>
 import {Toast, ActionSheet, Slider} from 'vant';
 import {ref} from "vue";
-import {onBeforeRouteLeave, useRouter} from "vue-router";
+import {useRouter} from "vue-router";
 
-export default {
-  components: {
-    [ActionSheet.name]: ActionSheet,
-    [Slider.name]: Slider,
-    [Toast.name]: Toast
-  },
-  name: "ActionSheet",
-  setup() {
-    const router = useRouter()
-    // 动作菜单默认状态
-    const show = ref(false)
-    // 动作菜单点击取消
-    const onCancel = () => {
-      console.log('取消')
-    }
-    // 父组件点击动作菜单调用
-    const showAction = () => {
-      show.value = true
-    }
-    // 跳转标签页
-    const toTag = () => {
-      show.value = false
-      router.push('/tag')
-    }
-    // 跳转归档页
-    const toClassify = () => {
-      show.value = false
-      router.push('/classify')
-    }
-    // 跳转留言板页
-    const toMessage = () => {
-      show.value = false
-      router.push('/message')
-    }
-    // 跳转关于页
-    const toAbout = () => {
-      show.value = false
-      router.push('/about')
-    }
-    // 跳转友情链接页
-    const toLink = () => {
-      show.value = false
-      router.push('/link')
-    }
-    return {show, showAction, onCancel, toTag, toClassify, toMessage, toAbout, toLink};
-  },
+const router = useRouter()
+// 动作菜单默认状态
+const show = ref(false)
+// 动作菜单点击取消
+const onCancel = () => {
+  console.log('取消')
+}
+// 父组件点击动作菜单调用
+const showAction = () => {
+  show.value = true
+}
+// 跳转标签页
+const toTag = () => {
+  show.value = false
+  router.push('/tag')
+}
+// 跳转归档页
+const toClassify = () => {
+  show.value = false
+  router.push('/classify')
+}
+// 跳转留言板页
+const toMessage = () => {
+  show.value = false
+  router.push('/message')
+}
+// 跳转关于页
+const toAbout = () => {
+  show.value = false
+  router.push('/about')
+}
+// 跳转友情链接页
+const toLink = () => {
+  show.value = false
+  router.push('/link')
 }
 </script>
 
 <style lang="scss" scoped>
-@import "src/assets/style/index";
+@import "/src/assets/style/index";
 
 .content {
   padding: 0.533rem;

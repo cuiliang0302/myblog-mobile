@@ -15,41 +15,26 @@
   </div>
 </template>
 
-<script>
-import NavBar from "@/components/common/NavBar";
-import Tabbar from '@/components/common/Tabbar'
+<script setup>
+import NavBar from "@/components/common/NavBar.vue";
+import Tabbar from '@/components/common/Tabbar.vue'
 import {Grid, GridItem, Image as VanImage, Loading} from 'vant';
 import {onMounted, ref} from "vue";
 import {getNote} from "@/api/blog";
 
-export default {
-  components: {
-    [Grid.name]: Grid,
-    [GridItem.name]: GridItem,
-    [VanImage.name]: VanImage,
-    [Loading.name]: Loading,
-    NavBar,
-    Tabbar,
-  },
-  name: "Note",
-  setup() {
-    const noteList = ref([])
+const noteList = ref([])
 
-    // 获取笔记列表数据
-    async function noteData() {
-      const article_data = await getNote()
-      console.log(article_data)
-      noteList.value = article_data
-    }
-
-    onMounted(() => {
-      noteData()
-    })
-    return {
-      noteList
-    }
-  }
+// 获取笔记列表数据
+async function noteData() {
+  const article_data = await getNote()
+  console.log(article_data)
+  noteList.value = article_data
 }
+
+onMounted(() => {
+  noteData()
+})
+
 </script>
 
 <style lang="scss" scoped>

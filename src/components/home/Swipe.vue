@@ -11,38 +11,25 @@
   </van-swipe>
 </template>
 
-<script>
+<script setup>
 import {Swipe, SwipeItem, Image as VanImage, Loading, Toast} from 'vant';
 
-export default {
-  components: {
-    [Swipe.name]: Swipe,
-    [SwipeItem.name]: SwipeItem,
-    [VanImage.name]: VanImage,
-    [Loading.name]: Loading,
-    Toast
+const props = defineProps({
+  // 轮播图数据
+  carouselList: {
+    type: Array,
+    default() {
+      return []
+    }
   },
-  name: "Swipe",
-  props: {
-    // 轮播图数据
-    carouselList: {
-      type: Array,
-      default() {
-        return []
-      }
-    },
-  },
-  setup() {
-    const toView = (url) => {
-      window.location.href = url
-      Toast.loading({
-        message: '第三方站点跳转中...',
-        forbidClick: true,
-      });
-    };
-    return {toView};
-  },
-}
+})
+const toView = (url) => {
+  window.location.href = url
+  Toast.loading({
+    message: '第三方站点跳转中...',
+    forbidClick: true,
+  });
+};
 </script>
 
 <style lang="scss" scoped>

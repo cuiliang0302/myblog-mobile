@@ -25,87 +25,75 @@
     </van-popup>
   </div>
 </template>
-<script>
+<script setup>
 // 图片滑块组件(拼图)
-import dragVerifyImgChip from "@/components/verify/dragVerifyImgChip";
+import dragVerifyImgChip from "@/components/verify/dragVerifyImgChip.vue";
 import {onMounted, reactive, ref, watch} from "vue";
 import {Button, Popup, Toast, Icon} from 'vant';
 
-export default {
-  components: {
-    dragVerifyImgChip,
-    [Button.name]: Button,
-    [Popup.name]: Popup,
-    [Icon.name]: Icon,
-    Toast
-  },
-  props: {
-    // 加载中动画
-    btnDisabled: {
-      type: Boolean,
-      default() {
-        return true;
-      }
-    }
-  },
-  name: "VerifyCodeBtn",
-  setup(props, {emit}) {
-    // 是否通过验证
-    const isPassing = ref(false)
-    // 滑块验证对象
-    const dragVerify = ref(null)
-    // 获取验证码按钮对象
-    let codeBtn = reactive({disabled: false, btnText: '获取验证码'});
-    // 点击获取验证码
-    const getCode = () => {
-      let second = 60
-      const intervalObj = setInterval(() => {
-        codeBtn.disabled = true
-        second--
-        codeBtn.btnText = '获取验证码(' + second + 's)'
-        if (second === 0) {
-          codeBtn.disabled = false
-          codeBtn.btnText = '获取验证码'
-          clearInterval(intervalObj)
-        }
-      }, 1000)
-    }
-    // 验证弹窗状态
-    const show = ref(false)
-    const imgList = ref([require('@/assets/verify/verify-1.jpg'),
-      require('@/assets/verify/verify-2.jpg'),
-      require('@/assets/verify/verify-3.jpg'),
-      require('@/assets/verify/verify-4.jpg'),
-      require('@/assets/verify/verify-5.jpg'),
-      require('@/assets/verify/verify-6.jpg')])
-    const imgId = ref()
-    const getImgId = () => {
-      imgId.value = parseInt(Math.random() * imgList.value.length, 10);
-    }
-    const reimg = () => {
-      getImgId()
-    }
-    const pass = () => {
-      Toast.success('滑动验证成功！');
-      getCode()
-      emit('pass')
-      setTimeout(() => {
-        show.value = false
-        dragVerify.value.reset()
-        reimg()
-      }, 1000);
-    }
-    const showPopup = () => {
-      show.value = true;
-    };
-    onMounted(() => {
-      reimg()
-    })
-    return {
-      show, showPopup, imgList, imgId, reimg, pass, codeBtn, dragVerify, isPassing
+const props = defineProps({
+  // 加载中动画
+  btnDisabled: {
+    type: Boolean,
+    default() {
+      return true;
     }
   }
+})
+const emit = defineEmits(['pass'])
+// 是否通过验证
+const isPassing = ref(false)
+// 滑块验证对象
+const dragVerify = ref(null)
+// 获取验证码按钮对象
+let codeBtn = reactive({disabled: false, btnText: '获取验证码'});
+// 点击获取验证码
+const getCode = () => {
+  let second = 60
+  const intervalObj = setInterval(() => {
+    codeBtn.disabled = true
+    second--
+    codeBtn.btnText = '获取验证码(' + second + 's)'
+    if (second === 0) {
+      codeBtn.disabled = false
+      codeBtn.btnText = '获取验证码'
+      clearInterval(intervalObj)
+    }
+  }, 1000)
 }
+// 验证弹窗状态
+const show = ref(false)
+const imgList = ref([
+  'src/assets/verify/verify-1.jpg',
+  'src/assets/verify/verify-2.jpg',
+  'src/assets/verify/verify-3.jpg',
+  'src/assets/verify/verify-4.jpg',
+  'src/assets/verify/verify-5.jpg',
+  'src/assets/verify/verify-6.jpg'])
+const imgId = ref()
+const getImgId = () => {
+  imgId.value = parseInt(Math.random() * imgList.value.length, 10);
+}
+const reimg = () => {
+  getImgId()
+}
+const pass = () => {
+  Toast.success('滑动验证成功！');
+  getCode()
+  emit('pass')
+  setTimeout(() => {
+    show.value = false
+    dragVerify.value.reset()
+    reimg()
+  }, 1000);
+}
+const showPopup = () => {
+  show.value = true;
+};
+onMounted(() => {
+  reimg()
+})
+
 </script>
 
 <style lang="scss">

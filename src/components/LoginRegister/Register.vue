@@ -71,131 +71,109 @@
     </div>
   </div>
 </template>
-<script>
+<script setup>
 import {reactive, ref} from "vue";
 import {Form, Button, Field, Icon, Toast} from 'vant';
 import {useRouter} from "vue-router";
-import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn";
+import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn.vue";
 import {getRegister, postCode, postLogin, postRegister} from '@/api/account'
-import store from "@/store";
+import store from "@/store/index";
 
-export default {
-  components: {
-    [Form.name]: Form,
-    [Button.name]: Button,
-    [Icon.name]: Icon,
-    [Field.name]: Field,
-    VerifyCodeBtn,
-    Toast
-  },
-  name: "Register",
-  setup() {
-    const router = useRouter()
-    // 注册表单
-    const registerForm = reactive({
-      username: '',
-      contact: '',
-      code: '',
-      password: '',
-    });
-    // 注册完成自动登录表单
-    const loginForm = reactive({
-      username: '',
-      password: '',
-    });
-    // 密码正则校验
-    const pattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
-    // 异步校验用户名
-    const checkUsername = (val) =>
-        new Promise((resolve) => {
-          if (val) {
-            getRegister(val, NaN).then((response) => {
-              console.log(response)
-              resolve(true)
-            }).catch(response => {
-              //发生错误时执行的代码
-              console.log(response)
-              Toast.fail(response.msg);
-              resolve(false)
-            });
-          }
-        })
-    // 异步校验邮箱/手机号
-    const checkContact = (val) =>
-        new Promise((resolve) => {
-          if (val) {
-            getRegister(NaN, val).then((response) => {
-              console.log(response)
-              btnDisabled.value = false
-              resolve(true)
-            }).catch(response => {
-              //发生错误时执行的代码
-              console.log(response)
-              Toast.fail(response.msg);
-              btnDisabled.value = true
-              resolve(false)
-            });
-          }
-        })
-    const onFailed = (errorInfo) => {
-      console.log('failed', errorInfo);
-    };
-    // 验证码按钮状态
-    const btnDisabled = ref(true)
-    // 获取验证码表单
-    const codeForm = reactive({
-      contact: '',
-      action: '用户注册',
-      username: '新用户',
-    })
-    // 获取验证码
-    const pass = () => {
-      console.log("通过验证了,获取验证码")
-      codeForm.contact = registerForm.contact
-      postCode(codeForm).then((response) => {
-        console.log(response)
-        Toast.success('验证码发送成功！');
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail(response.msg);
-      });
-    }
-    const onSubmit = (values) => {
-      console.log('submit', values);
-      postRegister(registerForm).then((response) => {
-        console.log(response)
-        Toast.success('注册成功');
-        loginForm.username = registerForm.username
-        loginForm.password = registerForm.password
-        postLogin(loginForm).then((response) => {
+
+const router = useRouter()
+// 注册表单
+const registerForm = reactive({
+  username: '',
+  contact: '',
+  code: '',
+  password: '',
+});
+// 注册完成自动登录表单
+const loginForm = reactive({
+  username: '',
+  password: '',
+});
+// 密码正则校验
+const pattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
+// 异步校验用户名
+const checkUsername = (val) =>
+    new Promise((resolve) => {
+      if (val) {
+        getRegister(val, NaN).then((response) => {
           console.log(response)
-          store.commit('setKeepLogin', false)
-          store.commit('setUserSession', response)
-          router.push(store.state.nextPath)
+          resolve(true)
         }).catch(response => {
           //发生错误时执行的代码
           console.log(response)
-          Toast.fail('登录异常！');
+          Toast.fail(response.msg);
+          resolve(false)
         });
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        Toast.fail('账号注册失败！');
-      });
-    };
-    return {
-      registerForm,
-      onSubmit,
-      pass,
-      btnDisabled,
-      pattern,
-      checkUsername,
-      checkContact,
-      onFailed
-    };
-  }
+      }
+    })
+// 异步校验邮箱/手机号
+const checkContact = (val) =>
+    new Promise((resolve) => {
+      if (val) {
+        getRegister(NaN, val).then((response) => {
+          console.log(response)
+          btnDisabled.value = false
+          resolve(true)
+        }).catch(response => {
+          //发生错误时执行的代码
+          console.log(response)
+          Toast.fail(response.msg);
+          btnDisabled.value = true
+          resolve(false)
+        });
+      }
+    })
+const onFailed = (errorInfo) => {
+  console.log('failed', errorInfo);
+};
+// 验证码按钮状态
+const btnDisabled = ref(true)
+// 获取验证码表单
+const codeForm = reactive({
+  contact: '',
+  action: '用户注册',
+  username: '新用户',
+})
+// 获取验证码
+const pass = () => {
+  console.log("通过验证了,获取验证码")
+  codeForm.contact = registerForm.contact
+  postCode(codeForm).then((response) => {
+    console.log(response)
+    Toast.success('验证码发送成功！');
+  }).catch(response => {
+    //发生错误时执行的代码
+    console.log(response)
+    Toast.fail(response.msg);
+  });
 }
+const onSubmit = (values) => {
+  console.log('submit', values);
+  postRegister(registerForm).then((response) => {
+    console.log(response)
+    Toast.success('注册成功');
+    loginForm.username = registerForm.username
+    loginForm.password = registerForm.password
+    postLogin(loginForm).then((response) => {
+      console.log(response)
+      store.commit('setKeepLogin', false)
+      store.commit('setUserSession', response)
+      router.push(store.state.nextPath)
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      Toast.fail('登录异常！');
+    });
+  }).catch(response => {
+    //发生错误时执行的代码
+    console.log(response)
+    Toast.fail('账号注册失败！');
+  });
+};
 </script>
 
 <style lang="scss" scoped>

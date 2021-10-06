@@ -48,9 +48,9 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import {Tag, Empty, List, Loading, Toast} from 'vant';
-import NavBar from "@/components/common/NavBar";
+import NavBar from "@/components/common/NavBar.vue";
 import {getSearch} from "@/api/record";
 import {onMounted, reactive, ref} from "vue";
 import user from "@/utils/user";
@@ -58,85 +58,63 @@ import timeFormat from "@/utils/timeFormat";
 import setColor from "@/utils/setColor";
 import {Image as VanImage} from "vant/lib/image";
 import {useRouter} from "vue-router";
-import Tabbar from '@/components/common/Tabbar'
+import Tabbar from '@/components/common/Tabbar.vue'
 
-export default {
-  components: {
-    [Tag.name]: Tag,
-    [Empty.name]: Empty,
-    [List.name]: List,
-    [VanImage.name]: VanImage,
-    [Loading.name]: Loading,
-    Toast,
-    NavBar,
-    Tabbar
-  },
-  name: "Search",
-  setup() {
-    const router = useRouter()
-    // 引入用户信息模块
-    let {userId, isLogin} = user();
-    // 时间显示几天前
-    let {timeAgo} = timeFormat()
-    // 标签颜色
-    let {tagColor} = setColor()
-    // 搜索关键词
-    const searchForm = reactive({})
-    // 搜索结果列表
-    const articleList = reactive({})
-    // 点击查看文章详情
-    const toDetail = (id) => {
-      console.log(id)
-      router.push({path: `/detail/${id}`, query: {component: 'article'}})
+const router = useRouter()
+// 引入用户信息模块
+let {userId, isLogin} = user();
+// 时间显示几天前
+let {timeAgo} = timeFormat()
+// 标签颜色
+let {tagColor} = setColor()
+// 搜索关键词
+const searchForm = reactive({})
+// 搜索结果列表
+const articleList = reactive({})
+// 点击查看文章详情
+const toDetail = (id) => {
+  console.log(id)
+  router.push({path: `/detail/${id}`, query: {component: 'article'}})
+}
+
+// 获取搜索结果列表
+async function searchData(key, kind, order) {
+  Toast.loading({
+    message: '玩命加载中...',
+    forbidClick: true,
+  });
+  let article_data
+  if (isLogin.value) {
+    try {
+      article_data = await getSearch(key, kind, order, userId.value)
+    } catch (error) {
+      console.log(error)
+      Toast.fail(error.msg)
     }
-
-    // 获取搜索结果列表
-    async function searchData(key, kind, order) {
-      Toast.loading({
-        message: '玩命加载中...',
-        forbidClick: true,
-      });
-      let article_data
-      if (isLogin.value) {
-        try {
-          article_data = await getSearch(key, kind, order, userId.value)
-        } catch (error) {
-          console.log(error)
-          Toast.fail(error.msg)
-        }
-      } else {
-        try {
-          article_data = await getSearch(key, kind, order, NaN)
-        } catch (error) {
-          console.log(error)
-          Toast.fail(error.msg)
-        }
-      }
-      console.log(article_data)
-      for (let i in article_data) {
-        articleList[i] = article_data[i]
-      }
-    }
-
-    onMounted(() => {
-      searchForm.key = router.currentRoute.value.query.key
-      searchForm.kind = router.currentRoute.value.query.kind
-      searchForm.order = router.currentRoute.value.query.order
-      searchData(searchForm.key, searchForm.kind, searchForm.order)
-    })
-    return {
-      articleList,
-      timeAgo,
-      tagColor,
-      toDetail,
-      searchForm
+  } else {
+    try {
+      article_data = await getSearch(key, kind, order, NaN)
+    } catch (error) {
+      console.log(error)
+      Toast.fail(error.msg)
     }
   }
+  console.log(article_data)
+  for (let i in article_data) {
+    articleList[i] = article_data[i]
+  }
 }
+
+onMounted(() => {
+  searchForm.key = router.currentRoute.value.query.key
+  searchForm.kind = router.currentRoute.value.query.kind
+  searchForm.order = router.currentRoute.value.query.order
+  searchData(searchForm.key, searchForm.kind, searchForm.order)
+})
 </script>
 
 <style lang="scss">
-@import "~@/assets/style/index.scss";
+@import "src/assets/style/index.scss";
 
 .search {
   .history {
