@@ -63,7 +63,7 @@
              overlay-class="my-overlay"
   >
     <div class="directory">
-      <van-tabs v-model:active="activeDir" color="#409EFF" @change="tabChange">
+      <van-tabs v-model:active="activeDir" color="#409EFF" @click-tab="tabChange">
         <van-tab title="大纲">
           <div class="content">
             <div v-if="titleList.length !== 0">
@@ -89,6 +89,7 @@
             <span v-for="(item,index) in catalogList" :key="item.id">
               第{{ index + 1 }}章：{{ item.name }}
                 <p v-if="item && item.child" v-for="(title,index) in item.child" :key="title.id"
+                   :class="[title.section_id===sectionID ? 'active-title' :'']"
                    @click="toDetail(title.section_id)">
                   {{ index + 1 }}. {{ title.name }}
                 </p>
@@ -169,33 +170,35 @@ import store from "@/store/index";
 
 
 const props = defineProps({
+  // 当前显示的组件
+  componentName: {
+    type: String,
+    required: true,
+    default: 'article'
+  },
   // markdown标题
   titleList: {
     type: Array,
-    default() {
-      return []
-    }
+    required: true,
+    default: []
   },
   // 笔记目录
   catalogList: {
     type: Array,
-    default() {
-      return []
-    }
-  },
-  // 当前显示的组件
-  componentName: {
-    type: String,
-    default() {
-      return 'article'
-    }
+    required: false,
+    default: []
   },
   // 是否已收藏
   is_collect: {
     type: Boolean,
-    default() {
-      return false
-    }
+    required: false,
+    default: false
+  },
+  // 当前笔记的id
+  sectionID: {
+    type: Number,
+    required: false,
+    default: 0
   }
 })
 const emit = defineEmits(['rollTo', 'dirTab', 'toNoteDetail', 'likeClick', 'collectClick', 'onShare'])
@@ -380,7 +383,7 @@ function fnCollection(props, emit) {
   const router = useRouter()
   // 提示登录组件对象
   const refLoginPopup = ref()
-  let {userId, isLogin} = user();
+  let {isLogin} = user();
   const collectionClick = () => {
     console.log(props.is_collect)
     if (isLogin.value === true) {
@@ -445,7 +448,9 @@ function fnComment() {
     }
   }
 }
-
+.active-title{
+  color: $color-primary;
+}
 .wrapper {
   color: white;
   font-size: 20px;

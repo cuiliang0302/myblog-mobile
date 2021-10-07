@@ -18,9 +18,8 @@ const props = defineProps({
   // 轮播图数据
   carouselList: {
     type: Array,
-    default() {
-      return []
-    }
+    required: true,
+    default: []
   },
 })
 const toView = (url) => {

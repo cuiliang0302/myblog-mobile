@@ -11,9 +11,9 @@ import {onMounted, ref, watch} from "vue";
 const props = defineProps({
   // 搜索栏是否自动聚焦
   focus: {
-    type: Boolean, default() {
-      return false
-    }
+    type: Boolean,
+    required: false,
+    default: false
   },
 })
 const emit = defineEmits(['keyChange'])

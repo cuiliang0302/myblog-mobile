@@ -44,16 +44,14 @@ const props = defineProps({
   // 上传图片目录
   dir: {
     type: String,
-    default() {
-      return 'upload';
-    }
+    required: true,
+    default: 'upload'
   },
   // 图片地址
   imgURL: {
     type: String,
-    default() {
-      return '';
-    }
+    required: false,
+    default: ''
   }
 })
 const emit = defineEmits(['saveImg'])

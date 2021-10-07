@@ -106,9 +106,9 @@ import user from "@/utils/user";
 const props = defineProps({
   // 评论回复列表
   commentsList: {
-    type: Array, default() {
-      return []
-    }
+    type: Array,
+    required: true,
+    default: []
   },
 })
 const emit = defineEmits(['likeMessage', 'delMessage', 'replySend'])

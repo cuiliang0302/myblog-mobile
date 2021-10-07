@@ -18,11 +18,11 @@ import {NavBar, Icon, Toast} from 'vant';
 import {useRouter} from "vue-router";
 
 const props = defineProps({
+  // 导航栏标题
   title: {
     type: String,
-    default() {
-      return '个人中心';
-    }
+    required: true,
+    default: '个人中心'
   }
 })
 const router = useRouter();

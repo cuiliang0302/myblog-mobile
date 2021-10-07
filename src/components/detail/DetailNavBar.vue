@@ -23,9 +23,8 @@ const props = defineProps({
   // 当前显示的组件
   componentName: {
     type: String,
-    default() {
-      return 'article'
-    }
+    required: true,
+    default: 'article'
   },
 })
 const router = useRouter();

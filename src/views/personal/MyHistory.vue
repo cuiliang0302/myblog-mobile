@@ -2,7 +2,7 @@
 <template>
   <div class="collect">
     <PersonalNavBar :title="'浏览记录'"></PersonalNavBar>
-    <van-tabs v-model:active="active" color="#409EFF" animated swipeable @click="onClick">
+    <van-tabs v-model:active="active" color="#409EFF" animated swipeable @click-tab="onClick">
       <van-tab title="文章">
         <van-empty v-if="historyList.length===0" description="暂无浏览记录"/>
         <TimeLine v-else :list="historyList" @toDetail="toDetail"></TimeLine>

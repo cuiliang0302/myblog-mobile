@@ -30,15 +30,15 @@ import {Grid, GridItem, Loading, Image as VanImage, Toast} from 'vant';
 const props = defineProps({
   // 评论回复列表
   title: {
-    type: String, default() {
-      return ''
-    }
+    type: String,
+    required: true,
+    default: ''
   },
   // 友情链接列表
   linkList: {
-    type: Array, default() {
-      return []
-    }
+    type: Array,
+    required: true,
+    default: []
   },
 })
 

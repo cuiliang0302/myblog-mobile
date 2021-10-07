@@ -78,7 +78,13 @@
 .van-popup .van-tabs__wrap .van-tabs__nav {
   background-color: transparent !important;
 }
+
 // 重置密码进度条表单提示
-.van-steps{
+.van-steps {
   background-color: transparent !important;
+}
+
+// 评论输入框宽度
+.van-field__control {
+  width: 80% !important;
 }

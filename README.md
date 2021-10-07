@@ -1,4 +1,4 @@
-# vite2-vue3
+# myblog_mobile
 
 ## Project setup
 ```

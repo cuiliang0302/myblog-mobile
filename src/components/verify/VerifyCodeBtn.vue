@@ -32,12 +32,11 @@ import {onMounted, reactive, ref, watch} from "vue";
 import {Button, Popup, Toast, Icon} from 'vant';
 
 const props = defineProps({
-  // 加载中动画
+  // 滑动验证按钮是否禁用
   btnDisabled: {
     type: Boolean,
-    default() {
-      return true;
-    }
+    required: true,
+    default: true
   }
 })
 const emit = defineEmits(['pass'])

@@ -104,6 +104,7 @@
     </div>
     <div class="bottom-margin"></div>
     <DetailTabbar :componentName="'note'" :titleList="titleList" :catalogList="catalogList" :is_collect="is_collect"
+                  :sectionID="detail.id"
                   @collectClick="collectClick" @rollTo="rollTo"
                   @dirTab="getCatalogueData" @toNoteDetail="toDetail" @likeClick="likeClick"
                   @onShare="onShare"></DetailTabbar>

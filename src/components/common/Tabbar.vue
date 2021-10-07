@@ -52,12 +52,11 @@ import {Tabbar, TabbarItem} from 'vant';
 import {ref} from 'vue';
 
 const props = defineProps({
-  // 加载中动画
+  // 当前激活的导航栏id
   activeBar: {
     type: Number,
-    default() {
-      return 0;
-    }
+    required: true,
+    default: 0
   }
 })
 

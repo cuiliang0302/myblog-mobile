@@ -24,23 +24,11 @@ import timeFormat from "@/utils/timeFormat";
 
 
 const props = defineProps({
+  // 时间线内容列表
   list: {
     type: Array,
-    default() {
-      return [];
-    }
-  },
-  kind: {
-    type: String,
-    default() {
-      return '';
-    }
-  },
-  action: {
-    type: String,
-    default() {
-      return '';
-    }
+    required: true,
+    default: []
   }
 })
 const emit = defineEmits(['toDetail'])

@@ -2,7 +2,7 @@
 <template>
   <div class="collect">
     <PersonalNavBar :title="'我的收藏'"></PersonalNavBar>
-    <van-tabs v-model:active="active" color="#409EFF" animated swipeable @click="onClick">
+    <van-tabs v-model:active="active" color="#409EFF" animated swipeable @click-tab="onClick">
       <van-tab title="文章">
         <van-empty v-if="collectList.length===0" description="暂无收藏记录"/>
         <TimeLine v-else :list="collectList" @toDetail="toDetail"></TimeLine>

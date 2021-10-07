@@ -62,23 +62,20 @@ const props = defineProps({
   // 加载中动画
   load: {
     type: Boolean,
-    default() {
-      return false;
-    }
+    required: true,
+    default: false
   },
   // 标签栏列表
   tabList: {
     type: Array,
-    default() {
-      return [];
-    }
+    required: true,
+    default: []
   },
   // 内容列表
   listState: {
     type: Object,
-    default() {
-      return {};
-    }
+    required: true,
+    default: {}
   }
 })
 const emit = defineEmits(['onRefresh', 'onLoad'])
