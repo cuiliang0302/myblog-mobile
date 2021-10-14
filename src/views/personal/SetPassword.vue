@@ -215,7 +215,7 @@ async function passwordSubmit() {
     width: 100%;
     position: absolute;
     height: 88%;
-    background-image: url("src/assets/images/background.png");
+    background-image: url("/src/assets/images/background.png");
     background-repeat: no-repeat;
     background-size: 100%;
     padding-bottom: 2.667rem;

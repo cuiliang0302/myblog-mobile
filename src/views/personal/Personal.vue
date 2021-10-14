@@ -220,7 +220,7 @@ section {
   position: relative;
   width: 100%;
   height: 2.64rem;
-  background-image: url("src/assets/images/personal-img.jpg");
+  background-image: url("/src/assets/images/personal-img.jpg");
   background-repeat: no-repeat;
   background-size: 100%;
   padding: 0 0 2.667rem 0;
