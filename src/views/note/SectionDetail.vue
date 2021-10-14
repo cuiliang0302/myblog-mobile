@@ -1,6 +1,6 @@
 <!--笔记内容详情页-->
 <template>
-  <div class="detail" v-title="detail.title+'-'+sitename">
+  <div class="detail" v-title="(detail.title?detail.title:'笔记正文')+'-'+(sitename?sitename:'')">
     <DetailNavBar :componentName="'note'"></DetailNavBar>
     <van-skeleton title round :row="10" :loading="loading">
       <div class="main">
