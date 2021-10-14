@@ -55,7 +55,7 @@ const props = defineProps({
   // 当前激活的导航栏id
   activeBar: {
     type: Number,
-    required: true,
+    required: false,
     default: 0
   }
 })

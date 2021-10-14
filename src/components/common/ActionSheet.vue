@@ -60,6 +60,9 @@ const toLink = () => {
   show.value = false
   router.push('/link')
 }
+defineExpose({
+  showAction
+})
 </script>
 
 <style lang="scss" scoped>
