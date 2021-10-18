@@ -106,7 +106,7 @@ function global() {
   // 用户信息
   const userInfo = reactive({})
   // 提示登录组件对象
-  const refLoginPopup = ref()
+  const refLoginPopup = ref(null)
   // 跳转到记录消息页
   const toView = (value) => {
     if (isLogin.value) {
@@ -137,6 +137,8 @@ function global() {
   }
 
   onMounted(() => {
+    console.log(refLoginPopup.value.popupIsShow)
+    console.log(refLoginPopup.value)
     siteConfigData()
     if (isLogin.value) {
       getUserinfo(userId.value)

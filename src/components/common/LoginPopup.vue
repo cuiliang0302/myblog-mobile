@@ -42,7 +42,7 @@ const toRegister = () => {
   popupIsShow.value = false
 }
 defineExpose({
-  showPopup
+  showPopup, popupIsShow
 })
 </script>
 
