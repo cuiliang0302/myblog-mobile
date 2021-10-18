@@ -113,6 +113,7 @@ function global() {
       router.push(value)
     } else {
       console.log(value)
+      console.log("没登录呢")
       store.commit('setNextPath', value)
       refLoginPopup.value.showPopup()
     }
@@ -173,7 +174,7 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
         console.log(response)
       });
     } else {
-      console.log("没登录呀")
+      console.log("也没登录呀")
       userInfo.is_flow = false
       refLoginPopup.value.showPopup()
       return false
