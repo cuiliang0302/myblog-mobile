@@ -7,7 +7,7 @@
         <van-image
             width="1.067rem"
             height="1.067rem"
-            :src="'src/assets/images/qq-round.png'"
+            src="src/assets/images/qq-round.png"
         />
         <p>QQ</p>
       </van-grid-item>

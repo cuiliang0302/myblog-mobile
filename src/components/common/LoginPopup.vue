@@ -2,7 +2,7 @@
   <van-popup v-model:show="popupIsShow">
     <section>
       <div class="tip-img">
-        <img :src="'/src/assets/images/login-popup.png'" alt=""/>
+        <img src="/src/assets/images/login-popup.png" alt=""/>
       </div>
       <div class="tip-content">
         <h3>您还没有登录</h3>
