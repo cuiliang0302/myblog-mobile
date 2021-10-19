@@ -7,7 +7,7 @@
         <van-image
             width="1.067rem"
             height="1.067rem"
-            src="src/assets/images/qq-round.png"
+            :src="QQImg"
         />
         <p>QQ</p>
       </van-grid-item>
@@ -47,7 +47,7 @@ import useClipboard from 'vue-clipboard3'
 import {Grid, GridItem, Image as VanImage, Toast} from 'vant'
 import {getInfo} from "@/api/management";
 import {onMounted} from "vue";
-
+import QQImg from "@/assets/images/qq-round.png";
 
 const {toClipboard} = useClipboard()
 const contact = {
