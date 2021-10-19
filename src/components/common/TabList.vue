@@ -1,5 +1,5 @@
 <template>
-  <van-tabs :active="activeTab" color="#44afe0" animated swipeable>
+  <van-tabs :active="activeTab" color="#44afe0" @click-tab="onClickTab" animated swipeable>
     <van-tab v-for="(item,index) in tabList" :key="index" :title="item.name" :name="item.id">
       <van-loading v-show="load" size="0.8rem" text-color="#409EFF" vertical>
         玩命加载中...
@@ -78,7 +78,7 @@ const props = defineProps({
     default: {}
   }
 })
-const emit = defineEmits(['onRefresh', 'onLoad'])
+const emit = defineEmits(['onRefresh', 'onLoad','onClickTab'])
 const activeTab = ref('');
 const router = useRouter()
 // 时间显示几天前
@@ -90,10 +90,18 @@ const refresh = reactive({
   count: 0,
   loading: false,
 });
+// 标签页点击切换事件
+const onClickTab = ({name}) => {
+  console.log("子组件点了哦")
+  console.log(name)
+  emit('onClickTab',name)
+}
+// 数据刷新事件
 const onRefresh = () => {
   console.log("子组件触发刷新")
   emit('onRefresh')
 };
+// 加载下一页数据事件
 const onLoad = () => {
   console.log("子组件触发加载下一页了")
   emit('onLoad')

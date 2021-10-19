@@ -1,7 +1,6 @@
 FROM node:14.17.4 AS build
 COPY . /opt/vue
 WORKDIR /opt/vue
-RUN rm -rf /opt/vue/node_modules
 RUN npm install --registry https://registry.npm.taobao.org/
 RUN npm run build
 

@@ -2,7 +2,9 @@
   <div v-title="title">
     <NavBar></NavBar>
     <Swipe :carouselList="carouselList"></Swipe>
-    <TabList :tabList="tabList" :listState="listState" @click="tabClick" @onLoad="onLoad"
+    <!--    <TabList :tabList="tabList" :listState="listState" @click="tabClick" @onLoad="onLoad"-->
+    <!--             @onRefresh="onRefresh" :load="load"></TabList>-->
+    <TabList :tabList="tabList" :listState="listState" @onClickTab="onClickTab" @onLoad="onLoad"
              @onRefresh="onRefresh" :load="load"></TabList>
     <Tabbar :activeBar="0"></Tabbar>
   </div>
@@ -58,7 +60,7 @@ const tabList = [
 // 标签页排序关键词
 let types = ['-created_time', '-is_recommend,-created_time', '-view,-created_time', '-comment,-created_time']
 // 标签页点击切换
-const tabClick = (index) => {
+const onClickTab = (index) => {
   listState.finished = false
   listState.list = []
   listState.order = types[index]

@@ -171,13 +171,15 @@ VMdPreview.use(githubTheme, {
   },
   Hljs: hljs,
 });
+// markdown对象
+const editor = ref(null)
 // 调用公共组件模块
 let {sitename, DetailID, timeDate, loading, toDetail, router} = publicFn()
 
 // 调用笔记模块
 let {detail, getDetail, context, getContextData} = section(DetailID)
 // 调用markdown模块
-let {editor, showImg, setMDFont} = markdown()
+let {showImg, setMDFont} = markdown()
 // 调用评论回复模块
 let {messageForm, commentsList, clickSend, sectionCommentData, loginPopupRef} = comment(DetailID, router)
 // 调用tabbar模块
@@ -301,8 +303,6 @@ function section(DetailID) {
 
 // markdown模块
 function markdown() {
-  // markdown对象
-  let editor = ref(null)
   // 引入字体设置模块
   let {rootSize} = fontSize()
   // 图片预览
@@ -326,7 +326,7 @@ function markdown() {
     const html = document.querySelector('.main')
     html.style.fontSize = newSize + 'px'
   });
-  return {editor, showImg, setMDFont}
+  return {showImg, setMDFont}
 }
 
 // 评论回复模块

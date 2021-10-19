@@ -167,7 +167,7 @@ import LoginPopup from "@/components/common/LoginPopup.vue";
 import {getQRcode} from "@/api/blog";
 import useClipboard from "vue-clipboard3";
 import store from "@/store/index";
-
+import QzontImg from '@/assets/images/qq-zone.png'
 
 const props = defineProps({
   // 当前显示的组件
@@ -281,7 +281,7 @@ function fnShare(props, emit) {
   const QRcode_url = ref()
   const options = [
     [
-      {name: 'QQ空间', icon: '/src/assets/images/qq-zone.png'},
+      {name: 'QQ空间', icon: QzontImg},
       {name: '微博', icon: 'weibo'},
       {name: 'QQ', icon: 'qq'},
       {name: '微信', icon: 'wechat'},
@@ -448,9 +448,11 @@ function fnComment() {
     }
   }
 }
-.active-title{
+
+.active-title {
   color: $color-primary;
 }
+
 .wrapper {
   color: white;
   font-size: 20px;

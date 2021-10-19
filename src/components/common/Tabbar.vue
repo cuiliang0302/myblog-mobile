@@ -1,5 +1,5 @@
 <template>
-  <van-tabbar v-model="activeBar" placeholder safe-area-inset-bottom>
+  <van-tabbar v-model="props.activeBar" placeholder safe-area-inset-bottom>
     <van-tabbar-item to="/">
       <span>首页</span>
       <template #icon="props">

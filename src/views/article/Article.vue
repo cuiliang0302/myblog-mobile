@@ -1,7 +1,7 @@
 <template>
   <div>
     <NavBar></NavBar>
-    <TabList :tabList="tabList" :listState="listState" @click="tabClick" @onLoad="onLoad"
+    <TabList :tabList="tabList" :listState="listState" @onClickTab="tabClick" @onLoad="onLoad"
              @onRefresh="onRefresh" :load="load"></TabList>
     <Tabbar :activeBar="1"></Tabbar>
   </div>

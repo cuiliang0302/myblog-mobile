@@ -1,5 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import store from "@/store/index";
+
 const router = createRouter({
 	// history: createWebHashHistory(),  // hash模式，
 	history: createWebHistory(),  //h5模式createWebHistory
@@ -29,6 +30,18 @@ const router = createRouter({
 			}
 		},
 		{
+			path: '/detail/article/:id',
+			name: 'ArticleDetail',
+			component: () => import('@/views/article/ArticleDetail.vue'),
+			meta: {
+				title: '文章正文',
+				keepAlive: false,
+				transitionClass: 'back',//前进后退
+				index: 2,
+				isAuth: false
+			}
+		},
+		{
 			path: '/note',
 			name: 'Note',
 			component: () => import('@/views/note/Note.vue'),
@@ -41,35 +54,11 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/personal',
-			name: 'Personal',
-			component: () => import('@/views/personal/Personal.vue'),
-			meta: {
-				title: '个人中心',
-				keepAlive: true,
-				transitionClass: 'gradually',//渐入
-				index: 1,
-				isAuth: false
-			}
-		},
-		{
 			path: '/catalog/:id',
 			name: 'Catalog',
 			component: () => import('@/views/note/Catalog.vue'),
 			meta: {
 				title: '笔记目录',
-				keepAlive: false,
-				transitionClass: 'back',//前进后退
-				index: 2,
-				isAuth: false
-			}
-		},
-		{
-			path: '/detail/article/:id',
-			name: 'ArticleDetail',
-			component: () => import('@/views/article/ArticleDetail.vue'),
-			meta: {
-				title: '文章正文',
 				keepAlive: false,
 				transitionClass: 'back',//前进后退
 				index: 2,
@@ -166,6 +155,18 @@ const router = createRouter({
 			component: () => import('@/views/public/Result.vue'),
 			meta: {
 				title: '搜索结果',
+				keepAlive: true,
+				transitionClass: 'gradually',//渐入
+				index: 1,
+				isAuth: false
+			}
+		},
+		{
+			path: '/personal',
+			name: 'Personal',
+			component: () => import('@/views/personal/Personal.vue'),
+			meta: {
+				title: '个人中心',
 				keepAlive: true,
 				transitionClass: 'gradually',//渐入
 				index: 1,

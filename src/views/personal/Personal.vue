@@ -91,9 +91,10 @@ import fontSize from "@/utils/fontSize";
 import {getSiteConfig} from "@/api/management";
 import dark from "@/utils/dark";
 
-
+// 提示登录组件对象
+const refLoginPopup = ref(null)
 // 引入公共方法
-let {isLogin, userInfo, userId, toView, refLoginPopup, logo} = global()
+let {isLogin, userInfo, userId, toView, logo} = global()
 
 // 引入系统与设置模块
 let {changeFlow, fontType, isDark, changeDark, logout} = setting(userId, userInfo, isLogin, refLoginPopup)
@@ -105,8 +106,6 @@ function global() {
   let {userId, isLogin} = user();
   // 用户信息
   const userInfo = reactive({})
-  // 提示登录组件对象
-  const refLoginPopup = ref(null)
   // 跳转到记录消息页
   const toView = (value) => {
     if (isLogin.value) {
@@ -149,8 +148,7 @@ function global() {
     isLogin,
     userId,
     toView,
-    userInfo,
-    refLoginPopup
+    userInfo
   }
 }
 
