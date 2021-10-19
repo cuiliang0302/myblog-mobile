@@ -3,8 +3,7 @@ import {Toast} from "vant";
 export function request(config) {
   // 创建axios的实例
   const instance = axios.create({
-    // baseURL: 'http://127.0.0.1:8000/v1/',
-    baseURL: 'https://api.cuiliangblog.cn/v1/',
+    baseURL: import.meta.env.VITE_APP_BASE_URL,
     timeout: 20000
   })
   // 请求拦截器配置
