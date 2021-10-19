@@ -58,7 +58,9 @@ const changePattern = (value) => {
     Toast('已关闭深色模式')
   }
 }
-
+defineExpose({
+  showAction
+})
 </script>
 
 <style lang="scss" scoped>

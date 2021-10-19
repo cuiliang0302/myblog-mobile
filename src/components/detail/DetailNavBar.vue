@@ -41,6 +41,7 @@ const onClickLeft = () => {
 const onClickRight = () => {
   showAction.value.showAction();
 }
+
 </script>
 
 <style lang="scss" scoped>
