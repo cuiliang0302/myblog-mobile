@@ -42,7 +42,9 @@ let {setDark} = dark()
 // 动作菜单默认状态
 const show = ref(false)
 // 动作菜单点击取消
-const onCancel = () => Toast('取消')
+const onCancel = () => {
+  console.log("取消")
+}
 // 父组件点击动作菜单调用
 const showAction = () => {
   show.value = true
