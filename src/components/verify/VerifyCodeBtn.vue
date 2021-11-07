@@ -30,6 +30,12 @@
 import dragVerifyImgChip from "@/components/verify/dragVerifyImgChip.vue";
 import {onMounted, reactive, ref, watch} from "vue";
 import {Button, Popup, Toast, Icon} from 'vant';
+import verify1 from '@/assets/verify/verify-1.jpg'
+import verify2 from '@/assets/verify/verify-2.jpg'
+import verify3 from '@/assets/verify/verify-3.jpg'
+import verify4 from '@/assets/verify/verify-4.jpg'
+import verify5 from '@/assets/verify/verify-5.jpg'
+import verify6 from '@/assets/verify/verify-6.jpg'
 
 const props = defineProps({
   // 滑动验证按钮是否禁用
@@ -62,13 +68,7 @@ const getCode = () => {
 }
 // 验证弹窗状态
 const show = ref(false)
-const imgList = ref([
-  'src/assets/verify/verify-1.jpg',
-  'src/assets/verify/verify-2.jpg',
-  'src/assets/verify/verify-3.jpg',
-  'src/assets/verify/verify-4.jpg',
-  'src/assets/verify/verify-5.jpg',
-  'src/assets/verify/verify-6.jpg'])
+const imgList = ref([verify1, verify2, verify3, verify4, verify5, verify6])
 const imgId = ref()
 const getImgId = () => {
   imgId.value = parseInt(Math.random() * imgList.value.length, 10);
