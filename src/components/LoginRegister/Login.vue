@@ -47,7 +47,7 @@
           <div class="remember">
             <van-checkbox v-model="remember" shape="square">保持登录</van-checkbox>
           </div>
-          <div class="forget" @click="$router.push('/set-password')">
+          <div class="forget" @click="$router.push('/setPassword')">
             忘记密码
           </div>
         </div>

@@ -174,7 +174,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/my-history',
+			path: '/myHistory',
 			name: 'MyHistory',
 			component: () => import('@/views/personal/MyHistory.vue'),
 			meta: {
@@ -186,7 +186,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/my-collect',
+			path: '/myCollect',
 			name: 'MyCollect',
 			component: () => import('@/views/personal/MyCollect.vue'),
 			meta: {
@@ -198,7 +198,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/my-comments',
+			path: '/myComments',
 			name: 'MyComments',
 			component: () => import('@/views/personal/MyComments.vue'),
 			meta: {
@@ -222,7 +222,7 @@ const router = createRouter({
 			},
 		},
 		{
-			path: '/my-info',
+			path: '/myInfo',
 			name: 'MyInfo',
 			component: () => import('@/views/personal/MyInfo.vue'),
 			meta: {
@@ -234,7 +234,7 @@ const router = createRouter({
 			},
 		},
 		{
-			path: '/change-password',
+			path: '/changePassword',
 			name: 'ChangePassword',
 			component: () => import('@/views/personal/ChangePassword.vue'),
 			meta: {
@@ -246,7 +246,7 @@ const router = createRouter({
 			},
 		},
 		{
-			path: '/change-email',
+			path: '/changeEmail',
 			name: 'ChangeEmail',
 			component: () => import('@/views/personal/ChangeEmail.vue'),
 			meta: {
@@ -258,7 +258,7 @@ const router = createRouter({
 			},
 		},
 		{
-			path: '/change-phone',
+			path: '/changePhone',
 			name: 'ChangePhone',
 			component: () => import('@/views/personal/ChangePhone.vue'),
 			meta: {
@@ -294,7 +294,7 @@ const router = createRouter({
 			},
 		},
 		{
-			path: '/apply-link',
+			path: '/applyLink',
 			name: 'ApplyLink',
 			component: () => import('@/views/personal/ApplyLink.vue'),
 			meta: {
@@ -318,7 +318,7 @@ const router = createRouter({
 			},
 		},
 		{
-			path: '/fontsize',
+			path: '/fontSize',
 			name: 'FontSize',
 			component: () => import('@/views/personal/FontSize.vue'),
 			meta: {
@@ -330,7 +330,7 @@ const router = createRouter({
 			},
 		},
 		{
-			path: '/login_register',
+			path: '/loginRegister',
 			name: 'LoginRegister',
 			component: () => import('@/views/personal/LoginRegister.vue'),
 			meta: {
@@ -341,7 +341,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/set-password',
+			path: '/setPassword',
 			name: 'SetPassword',
 			component: () => import('@/views/personal/SetPassword.vue'),
 			meta: {
@@ -405,7 +405,7 @@ router.beforeEach((to, from, next) => {
 	}
 	if (to.meta.isAuth === true && JSON.stringify(store.state.userSession) === '{}') {
 		Toast.fail('还未登录，即将跳转至登录页')
-		return next('/login_register')
+		return next('/loginRegister')
 	} else {
 		next()
 	}

@@ -43,7 +43,7 @@
           readonly
       >
         <template #button>
-          <van-button size="small" plain type="primary" @click="$router.push('/change-phone')">更换手机</van-button>
+          <van-button size="small" plain type="primary" @click="$router.push('/changePhone')">更换手机</van-button>
         </template>
       </van-field>
       <van-field
@@ -55,7 +55,7 @@
           readonly
       >
         <template #button>
-          <van-button size="small" plain type="primary" @click="$router.push('/change-email')">更换邮箱</van-button>
+          <van-button size="small" plain type="primary" @click="$router.push('/changeEmail')">更换邮箱</van-button>
         </template>
       </van-field>
       <van-field

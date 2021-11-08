@@ -80,7 +80,7 @@ async function onSubmit() {
     console.log(response)
     Toast.success('修改成功，即将跳转登录页');
     setTimeout(function () {
-      router.push('/login_register')
+      router.push('/loginRegister')
     }, 1500)
   } catch (error) {
     console.log(error)

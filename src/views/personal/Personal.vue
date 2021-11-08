@@ -18,7 +18,7 @@
           </van-image>
           <van-image v-else :src="logo" width="1.867rem" height="1.867rem"
                      round
-                     @click="$router.push('/login_register')"
+                     @click="$router.push('/loginRegister')"
           >
             <template v-slot:loading>
               <van-loading type="spinner" size="20"/>
@@ -28,11 +28,11 @@
       </div>
       <div class="history">
         <span><van-icon name="clock" size="0.8rem" color="#2ecc71"
-                        @click="toView('/my-history')"/><p>浏览记录</p></span>
+                        @click="toView('/myHistory')"/><p>浏览记录</p></span>
         <span><van-icon name="star" size="0.8rem" color="#f1c40f"
-                        @click="toView('/my-collect')"/><p>我的收藏</p></span>
+                        @click="toView('/myCollect')"/><p>我的收藏</p></span>
         <span><van-icon name="chat" size="0.8rem" color="#9b59b6"
-                        @click="toView('/my-comments')"/><p>我的评论</p></span>
+                        @click="toView('/myComments')"/><p>我的评论</p></span>
         <span><van-icon name="todo-list" size="0.8rem" color="#e74c3c"
                         @click="toView('/statistics')"/><p>数据统计</p></span>
       </div>
@@ -40,10 +40,10 @@
     <div class="cell">
       <div class="cell-item">
         <van-cell-group title="账号与安全">
-          <van-cell title="我的信息" size="large" is-link @click="toView('/my-info')"/>
-          <van-cell title="修改密码" size="large" is-link @click="toView('/change-password')"/>
-          <van-cell title="更换邮箱" size="large" is-link @click="toView('/change-email')"/>
-          <van-cell title="更换手机" size="large" is-link @click="toView('/change-phone')"/>
+          <van-cell title="我的信息" size="large" is-link @click="toView('/myInfo')"/>
+          <van-cell title="修改密码" size="large" is-link @click="toView('/changePassword')"/>
+          <van-cell title="更换邮箱" size="large" is-link @click="toView('/changeEmail')"/>
+          <van-cell title="更换手机" size="large" is-link @click="toView('/changePhone')"/>
           <van-cell title="绑定第三方账号" size="large" is-link @click="toView('/binding')"/>
           <van-cell title="博文更新邮件通知" size="large">
             <template #right-icon>
@@ -56,13 +56,13 @@
         <van-cell-group title="支持与反馈">
           <van-cell title="赞赏支持" size="large" is-link to="/pay"/>
           <van-cell title="留言反馈" size="large" is-link to="/message"/>
-          <van-cell title="申请友链" size="large" is-link to="/apply-link"/>
+          <van-cell title="申请友链" size="large" is-link to="/applyLink"/>
           <van-cell title="联系博主" size="large" is-link to="/contact"/>
         </van-cell-group>
       </div>
       <div class="cell-item">
         <van-cell-group title="系统与设置">
-          <van-cell title="字体大小" size="large" is-link :value="fontType" to="/fontsize"/>
+          <van-cell title="字体大小" size="large" is-link :value="fontType" to="/fontSize"/>
           <van-cell title="深色模式" size="large">
             <template #right-icon>
               <van-switch v-model="isDark" @change="changeDark" size="0.533rem"/>
@@ -203,7 +203,7 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
         window.sessionStorage.clear()
         window.localStorage.clear()
         Toast.success('成功退出，跳转至登录页')
-        router.push('/login_register')
+        router.push('/loginRegister')
       })
     } else {
       Toast('未曾登录，何来退出？')

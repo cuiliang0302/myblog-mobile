@@ -33,12 +33,12 @@ const showPopup = () => {
 };
 // 跳转至登录页
 const toLogin = () => {
-  router.push({path: '/login_register', query: {component: 'Login'}})
+  router.push({path: '/loginRegister', query: {component: 'Login'}})
   popupIsShow.value = false
 }
 // 跳转至注册页
 const toRegister = () => {
-  router.push({path: '/login_register', query: {component: 'Register'}})
+  router.push({path: '/loginRegister', query: {component: 'Register'}})
   popupIsShow.value = false
 }
 defineExpose({

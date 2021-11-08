@@ -104,7 +104,7 @@
       </div>
       <div class="btn">
         <van-button v-show="active===2" round block type="primary" native-type="submit"
-                    @click="$router.push('/login_register')">
+                    @click="$router.push('/loginRegister')">
           登录
         </van-button>
       </div>
