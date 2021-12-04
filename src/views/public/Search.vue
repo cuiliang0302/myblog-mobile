@@ -29,7 +29,7 @@
         </div>
         <div class="content">
           <div class="key-item"
-               v-for="(key,index) in hotList"
+               v-for="(key,index) in hotList.slice(0,10)"
                :key="index"
                @click="clickSearch(key)"
           >
