@@ -197,6 +197,7 @@ let {
   catalogList
 } = tabbarFn(editor, DetailID, detail)
 onMounted(async () => {
+  window.scrollTo({top: 0})
   await getDetail(DetailID.value)
   await setMDFont()
   await getTitle()
@@ -204,6 +205,7 @@ onMounted(async () => {
   await getCatalogueData()
 })
 onBeforeRouteUpdate(async (to) => {
+  window.scrollTo({top: 0})
   console.log(to)
   DetailID.value = to.params.id
   await getDetail(DetailID.value)
@@ -213,7 +215,6 @@ onBeforeRouteUpdate(async (to) => {
   await sectionCommentData(DetailID.value)
   await getSectionHistoryData(DetailID.value)
   await postSectionHistoryData(DetailID.value)
-  window.scrollTo({top: 0})
 });
 
 // 公共组件模块

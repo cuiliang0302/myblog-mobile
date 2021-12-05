@@ -185,12 +185,14 @@ let {
   postArticleHistoryData
 } = tabbarFn(editor, DetailID)
 onMounted(async () => {
+  window.scrollTo({top: 0})
   await getDetail(DetailID.value)
   await setMDFont()
   await getTitle()
   await postArticleHistoryData(DetailID.value)
 })
 onBeforeRouteUpdate(async (to) => {
+  window.scrollTo({top: 0})
   DetailID.value = to.params.id
   await getDetail(DetailID.value)
   await setMDFont()
@@ -199,7 +201,6 @@ onBeforeRouteUpdate(async (to) => {
   await articleCommentData(DetailID.value)
   await getArticleHistoryData(DetailID.value)
   await postArticleHistoryData(DetailID.value)
-  window.scrollTo({top: 0})
 });
 
 // 公共组件模块
