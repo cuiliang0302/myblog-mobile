@@ -22,10 +22,10 @@
         </span>
       </div>
       <div class="content">
-        {{ webInfo.name }}<br>
-        {{ webInfo.domain }}<br>
-        {{ webInfo.describe }}<br>
-        {{ webInfo.logo }}<br>
+        网站名称：{{ webInfo.name }}<br>
+        网站地址：{{ webInfo.domain }}<br>
+        网站简介：{{ webInfo.describe }}<br>
+        网站logo：{{ webInfo.logo }}<br>
       </div>
     </div>
     <van-form @submit="onSubmit">
