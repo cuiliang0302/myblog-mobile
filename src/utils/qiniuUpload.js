@@ -7,7 +7,7 @@ function qiniuUpload() {   //file是选择的文件对象
   const upload = (dir, file) => {
     return new Promise((resolve, reject) => {
       getQiNiuToken().then((response) => {
-        let domain = 'https://oss.cuiliangblog.cn/'
+        let domain = response.domain
         let token = response.token
         let key = dir + '/' + file.name.substring(0, file.name.lastIndexOf('.')) + '-' + new Date().getTime()
           + file.name.substring(file.name.lastIndexOf('.'))

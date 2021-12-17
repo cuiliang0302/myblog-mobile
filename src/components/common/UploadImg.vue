@@ -72,6 +72,7 @@ const onChange = (e) => {
 };
 // 裁剪框确定事件
 const onSave = (res) => {
+  console.log(res)
   //blob转file
   const file = new File([res], timeFile(Date.now()) + '.jpg', {type: res.type});
   upload(props.dir, file).then((response) => {
