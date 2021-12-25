@@ -144,98 +144,108 @@ import {
 } from 'vant';
 import {onMounted, reactive, ref} from "vue";
 import {getRegister, getUserinfoId, putUserinfoId} from "@/api/account";
+import {getAreaData} from "@/api/public";
 import user from "@/utils/user";
-import {areaList} from "@vant/area-data";
+// import {areaList} from "@vant/area-data";
 
 
-    // 引入用户信息模块
-    let {userId, isLogin} = user();
-    // 我的信息表单
-    const userInfoForm = reactive({});
-    // 上传头像完成事件
-    const saveImg = (URL) => {
-      userInfoForm.photo = URL
-    }
-    // 原始用户名
-    const oldUsername = ref()
-    // 异步校验用户名
-    const checkUsername = (val) =>
-        new Promise((resolve) => {
-          console.log(val)
-          if (val !== oldUsername.value) {
-            getRegister(val, NaN).then((response) => {
-              console.log(response)
-              resolve(true)
-            }).catch(response => {
-              //发生错误时执行的代码
-              console.log(response)
-              Toast.fail(response.msg);
-              resolve(false)
-            });
-          } else {
-            resolve(true)
-          }
-        })
-    // 性别选择框默认状态
-    const showSex = ref(false)
-    const columns = ['男', '女'];
-    // 性别选择框确认事件
-    const chooseSex = (value, index) => {
-      // Toast(`当前值: ${value}, 当前索引: ${index}`);
-      userInfoForm.sex = index + 1
-      userInfoForm.sex_name = value
-      showSex.value = false
-    };
-    const onCancel = () => Toast('取消');
-    // 地区选择框默认状态
-    const showArea = ref(false);
-    // 地区选择框确认事件
-    const chooseArea = (ConfirmResult) => {
-      userInfoForm.area_code = ConfirmResult[1].code
-      userInfoForm.area_name = ConfirmResult[0].name + ConfirmResult[1].name
-      showArea.value = false
-    }
-    // 生日选择框默认状态
-    const showBirthday = ref(false)
-    // 生日选择框确认事件
-    const chooseBirthday = (value) => {
-      userInfoForm.birthday = value.getFullYear() + '-' + (parseInt(value.getMonth()) + 1) + '-' + value.getDate()
-      showBirthday.value = false
-    }
-    // 修改信息表单提交
-    const onSubmit = (values) => {
-      console.log('点击了')
-      console.log('submit', values);
-      for (let i in userInfoForm) {
-        if (userInfoForm[i] === '') {
-          userInfoForm[i] = null
-        }
+// 引入用户信息模块
+let {userId, isLogin} = user();
+// 我的信息表单
+const userInfoForm = reactive({});
+// 上传头像完成事件
+const saveImg = (URL) => {
+  userInfoForm.photo = URL
+}
+// 原始用户名
+const oldUsername = ref()
+// 异步校验用户名
+const checkUsername = (val) =>
+    new Promise((resolve) => {
+      console.log(val)
+      if (val !== oldUsername.value) {
+        getRegister(val, NaN).then((response) => {
+          console.log(response)
+          resolve(true)
+        }).catch(response => {
+          //发生错误时执行的代码
+          console.log(response)
+          Toast.fail(response.msg);
+          resolve(false)
+        });
+      } else {
+        resolve(true)
       }
-      putUserinfoId(userId.value, userInfoForm).then((response) => {
-        console.log(response)
-        Toast.success('信息修改成功！');
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        for (let i in response) {
-          Toast.fail(i + response[i][0]);
-        }
-      });
-    };
-
-    // 获取用户信息
-    async function getUserinfo(userid) {
-      const userinfo_data = await getUserinfoId(userid)
-      console.log(userinfo_data)
-      for (let i in userinfo_data) {
-        userInfoForm[i] = userinfo_data[i]
-      }
-      oldUsername.value = userInfoForm.username
-    }
-
-    onMounted(() => {
-      getUserinfo(userId.value)
     })
+// 性别选择框默认状态
+const showSex = ref(false)
+const columns = ['男', '女'];
+// 性别选择框确认事件
+const chooseSex = (value, index) => {
+  // Toast(`当前值: ${value}, 当前索引: ${index}`);
+  userInfoForm.sex = index + 1
+  userInfoForm.sex_name = value
+  showSex.value = false
+};
+// 地区数据
+const areaList = reactive({})
+
+// 获取地区数据
+async function getArea() {
+  Object.assign(areaList, await getAreaData());
+  console.log(areaList)
+}
+
+// 地区选择框默认状态
+const showArea = ref(false);
+// 地区选择框确认事件
+const chooseArea = (ConfirmResult) => {
+  userInfoForm.area_code = ConfirmResult[1].code
+  userInfoForm.area_name = ConfirmResult[0].name + ConfirmResult[1].name
+  showArea.value = false
+}
+// 生日选择框默认状态
+const showBirthday = ref(false)
+// 生日选择框确认事件
+const chooseBirthday = (value) => {
+  userInfoForm.birthday = value.getFullYear() + '-' + (parseInt(value.getMonth()) + 1) + '-' + value.getDate()
+  showBirthday.value = false
+}
+// 修改信息表单提交
+const onSubmit = (values) => {
+  console.log('点击了')
+  console.log('submit', values);
+  for (let i in userInfoForm) {
+    if (userInfoForm[i] === '') {
+      userInfoForm[i] = null
+    }
+  }
+  putUserinfoId(userId.value, userInfoForm).then((response) => {
+    console.log(response)
+    Toast.success('信息修改成功！');
+  }).catch(response => {
+    //发生错误时执行的代码
+    console.log(response)
+    for (let i in response) {
+      Toast.fail(i + response[i][0]);
+    }
+  });
+};
+
+// 获取用户信息
+async function getUserinfo(userid) {
+  const userinfo_data = await getUserinfoId(userid)
+  console.log(userinfo_data)
+  for (let i in userinfo_data) {
+    userInfoForm[i] = userinfo_data[i]
+  }
+  oldUsername.value = userInfoForm.username
+}
+
+onMounted(() => {
+  getUserinfo(userId.value)
+  getArea()
+})
 </script>
 
 <style scoped lang="scss">
