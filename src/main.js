@@ -6,8 +6,6 @@ import store from '@/store/index'
 import mitt from 'mitt'
 import '@/assets/style/index.scss'
 import 'lib-flexible'
-import '@/assets/icon/iconfont'
-import '@/assets/images/iconfont'
 const app = createApp(App)
 //绑定事件总线
 app.config.globalProperties.$bus = new mitt();

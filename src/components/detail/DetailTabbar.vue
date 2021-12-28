@@ -3,47 +3,33 @@
     <van-tabbar-item>
       <span>目录</span>
       <template #icon="props">
-        <svg class="icon" aria-hidden="true" @click="directoryClick">
-          <use xlink:href="#icon-directory"></use>
-        </svg>
+        <MyIcon class="icon" type="icon-directory" @click="directoryClick"/>
       </template>
     </van-tabbar-item>
     <van-tabbar-item>
       <span>评论</span>
       <template #icon="props">
-        <svg class="icon" aria-hidden="true" @click="commentClick">
-          <use xlink:href="#icon-comment"></use>
-        </svg>
+        <MyIcon class="icon" type="icon-comment" @click="commentClick"/>
       </template>
     </van-tabbar-item>
     <van-tabbar-item>
       <span>{{ isLike === true ? '已点赞' : '点赞' }}</span>
       <template #icon="props">
-        <svg v-if="isLike === true" class="icon active" aria-hidden="true" @click="likeClick">
-          <use xlink:href="#icon-like-solid"></use>
-        </svg>
-        <svg v-else class="icon" aria-hidden="true" @click="likeClick">
-          <use xlink:href="#icon-like"></use>
-        </svg>
+        <MyIcon v-if="isLike === true" class="icon active" type="icon-like-solid" @click="likeClick"/>
+        <MyIcon v-else class="icon" type="icon-like" @click="likeClick"/>
       </template>
     </van-tabbar-item>
     <van-tabbar-item>
       <span>{{ is_collect === true ? '已收藏' : '收藏' }}</span>
       <template #icon="props">
-        <svg v-if="is_collect === true" class="icon active" @click="collectionClick">
-          <use xlink:href="#icon-collection-solid"></use>
-        </svg>
-        <svg v-else class="icon" aria-hidden="true" @click="collectionClick">
-          <use xlink:href="#icon-collection"></use>
-        </svg>
+        <MyIcon v-if="is_collect === true" class="icon active" type="icon-collection-solid" @click="collectionClick"/>
+        <MyIcon v-else class="icon" type="icon-collection" @click="collectionClick"/>
       </template>
     </van-tabbar-item>
     <van-tabbar-item>
       <span>分享</span>
       <template #icon="props">
-        <svg class="icon" aria-hidden="true" @click="showShare = true">
-          <use xlink:href="#icon-share"></use>
-        </svg>
+        <MyIcon class="icon" type="icon-share" @click="showShare = true"/>
       </template>
     </van-tabbar-item>
   </van-tabbar>
@@ -112,9 +98,7 @@
       <div class="wrapper" @click.stop @click="overlay_show=false">
         <div v-if="isWeChat()" class="wechat">
           <span>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-share-point"></use>
-            </svg>
+            <MyIcon class="icon" type="icon-share-point"/>
           </span>
           <span>
             点击右上角"
@@ -127,13 +111,9 @@
             <span>
               当前浏览器暂不支持直接分享
               <br>请打开浏览器菜单按钮"
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-menu"></use>
-              </svg>
+              <MyIcon class="icon" type="icon-menu"/>
               "<br>然后点击分享按钮"
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-system-share"></use>
-              </svg>
+              <MyIcon class="icon" type="icon-system-share"/>
               "
               完成操作
             </span>
@@ -168,7 +148,8 @@ import {getQRcode} from "@/api/blog";
 import useClipboard from "vue-clipboard3";
 import store from "@/store/index";
 import QzoneImg from '@/assets/images/qq-zone.png'
-
+import icon from '@/utils/icon'
+let {MyIcon} = icon()
 const props = defineProps({
   // 当前显示的组件
   componentName: {

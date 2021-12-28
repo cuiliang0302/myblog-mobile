@@ -27,9 +27,7 @@
             :rules="[{ validator: checkContact, message: '填写正确的邮箱/手机号' }]"
         >
           <template #label>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-email"></use>
-            </svg>
+            <MyIcon class="icon" type="icon-email"/>
           </template>
         </van-field>
         <van-field
@@ -42,9 +40,7 @@
             :rules="[{ required: true, message: '请填写验证码' }]"
         >
           <template #label>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-code"></use>
-            </svg>
+            <MyIcon class="icon" type="icon-code"/>
           </template>
           <template #right-icon>
             <VerifyCodeBtn @pass="pass" :btnDisabled="btnDisabled"></VerifyCodeBtn>
@@ -68,9 +64,7 @@
             :rules="[{ pattern, message: '请填写密码' }]"
         >
           <template #label>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-password"></use>
-            </svg>
+            <MyIcon class="icon" type="icon-password"/>
           </template>
         </van-field>
         <van-field
@@ -84,9 +78,7 @@
             :rules="[{ validator: checkPassword, message: '请再次填写密码' }]"
         >
           <template #label>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-password"></use>
-            </svg>
+            <MyIcon class="icon" type="icon-password"/>
           </template>
         </van-field>
         <div style="margin: 16px;" v-show="active===1">
@@ -96,9 +88,7 @@
         </div>
       </van-form>
       <div v-show="active===2" class="success">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#icon-success-solid"></use>
-        </svg>
+        <MyIcon class="icon" type="icon-success-solid"/>
         <br>
         恭喜，密码重置成功
       </div>
@@ -117,7 +107,8 @@ import {Step, Steps, Form, Button, Field, Toast} from 'vant';
 import {reactive, ref} from "vue";
 import {getRegister, postCode, postSetPassword} from "@/api/account";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn.vue";
-
+import icon from '@/utils/icon'
+let {MyIcon} = icon()
 
 const active = ref(0);
 // 用户验证表单

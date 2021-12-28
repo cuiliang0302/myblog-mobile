@@ -11,9 +11,7 @@
             :rules="[{ required: true, message: '请填写用户名/邮箱号/手机号' }]"
         >
           <template #label>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-username"></use>
-            </svg>
+            <MyIcon class="icon" type="icon-username"/>
           </template>
         </van-field>
         <van-field
@@ -26,18 +24,14 @@
             :rules="[{ required: true, message: '请填写密码' }]"
         >
           <template #label>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-password"></use>
-            </svg>
+            <MyIcon class="icon" type="icon-password"/>
           </template>
         </van-field>
         <van-field
             label-width="20"
         >
           <template #label>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-code"></use>
-            </svg>
+            <MyIcon class="icon" type="icon-code"/>
           </template>
           <template #input>
             <VerifyImgBtn :isPassing="isPassing" :btnType="btnType" @pass="pass" class="verify-btn"></VerifyImgBtn>
@@ -62,23 +56,25 @@
       <van-divider>第三方账号登录</van-divider>
       <div class="other-logo">
         <span @click="qqLogin">
-        <svg class="icon qq-logo" aria-hidden="true">
-            <use xlink:href="#img-qq-round"></use>
-          </svg>
-        <p>QQ</p>
-      </span>
+          <MyIcon class="logo-icon" type="icon-qq-logo"/>
+          <p>QQ</p>
+        </span>
         <span @click="wbLogin">
-        <svg class="icon weibo-logo" aria-hidden="true">
-            <use xlink:href="#img-weibo-round"></use>
-          </svg>
-        <p>微博</p>
-      </span>
+          <MyIcon class="logo-icon" type="icon-weibo-logo"/>
+          <p>微博</p>
+        </span>
         <span @click="githubLogin">
-          <svg class="icon github-logo" aria-hidden="true">
-            <use xlink:href="#img-github-blue"></use>
-          </svg>
-        <p>GitHub</p>
-      </span>
+          <MyIcon class="logo-icon" type="icon-github-logo"/>
+          <p>GitHub</p>
+        </span>
+        <span @click="githubLogin">
+          <MyIcon class="logo-icon" type="icon-baidu-logo"/>
+          <p>百度</p>
+        </span>
+        <span @click="githubLogin">
+          <MyIcon class="logo-icon" type="icon-alipay-logo"/>
+          <p>支付宝</p>
+        </span>
       </div>
     </div>
   </div>
@@ -91,7 +87,9 @@ import {reactive, ref} from "vue";
 import {postLogin} from '@/api/account'
 import store from "@/store/index";
 import {useRouter} from "vue-router";
+import icon from '@/utils/icon'
 
+let {MyIcon} = icon()
 
 const router = useRouter()
 // 保持登录复选框
@@ -152,6 +150,7 @@ const githubLogin = () => {
 }
 const wbLogin = () => {
   Toast('微博登录正在开发中！')
+
 }
 </script>
 
@@ -208,11 +207,10 @@ const wbLogin = () => {
       text-align: center;
 
       span {
-        width: 2.133rem;
+        width: 1.6rem;
 
-        .icon {
-          width: 1.067rem;
-          height: 1.067rem;
+        .logo-icon{
+          font-size: 1.067rem;
         }
 
         p {

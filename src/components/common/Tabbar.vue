@@ -3,45 +3,29 @@
     <van-tabbar-item to="/">
       <span>首页</span>
       <template #icon="props">
-        <svg v-if="props.active" class="icon" aria-hidden="true">
-          <use xlink:href="#icon-home-solid"></use>
-        </svg>
-        <svg v-else class="icon" aria-hidden="true">
-          <use xlink:href="#icon-home"></use>
-        </svg>
+        <MyIcon v-if="props.active" class="icon" type="icon-home-solid"/>
+        <MyIcon v-else class="icon" type="icon-home"/>
       </template>
     </van-tabbar-item>
     <van-tabbar-item to="/article">
       <span>文章</span>
       <template #icon="props">
-        <svg v-if="props.active" class="icon" aria-hidden="true">
-          <use xlink:href="#icon-article-solid"></use>
-        </svg>
-        <svg v-else class="icon" aria-hidden="true">
-          <use xlink:href="#icon-article"></use>
-        </svg>
+        <MyIcon v-if="props.active" class="icon" type="icon-article-solid"/>
+        <MyIcon v-else class="icon" type="icon-article"/>
       </template>
     </van-tabbar-item>
     <van-tabbar-item to="/note">
       <span>笔记</span>
       <template #icon="props">
-        <svg v-if="props.active" class="icon" aria-hidden="true">
-          <use xlink:href="#icon-note-solid"></use>
-        </svg>
-        <svg v-else class="icon" aria-hidden="true">
-          <use xlink:href="#icon-note"></use>
-        </svg>
+        <MyIcon v-if="props.active" class="icon" type="icon-note-solid"/>
+        <MyIcon v-else class="icon" type="icon-note"/>
       </template>
     </van-tabbar-item>
     <van-tabbar-item to="/personal">
       <span>我的</span>
       <template #icon="props">
-        <svg v-if="props.active" class="icon" aria-hidden="true">
-          <use xlink:href="#icon-my-solid"></use>
-        </svg>
-        <svg v-else class="icon" aria-hidden="true">
-          <use xlink:href="#icon-my"></use>
-        </svg>
+        <MyIcon v-if="props.active" class="icon" type="icon-my-solid"/>
+        <MyIcon v-else class="icon" type="icon-my"/>
       </template>
     </van-tabbar-item>
   </van-tabbar>
@@ -50,7 +34,8 @@
 <script setup>
 import {Tabbar, TabbarItem} from 'vant';
 import {ref} from 'vue';
-
+import icon from '@/utils/icon'
+let {MyIcon} = icon()
 const props = defineProps({
   // 当前激活的导航栏id
   activeBar: {
@@ -64,4 +49,9 @@ const active = ref(0)
 </script>
 
 <style lang="scss" scoped>
+.van-tabbar-item{
+  .icon{
+    font-size: 0.533rem;
+  }
+}
 </style>

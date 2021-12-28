@@ -192,7 +192,8 @@ const areaList = reactive({})
 
 // 获取地区数据
 async function getArea() {
-  Object.assign(areaList, await getAreaData());
+  let data = await getAreaData()
+  Object.assign(areaList, data.areaList);
   console.log(areaList)
 }
 

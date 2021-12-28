@@ -11,9 +11,7 @@
             :rules="[{ validator: checkUsername, message: '请填写正确的用户名' }]"
         >
           <template #label>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-username"></use>
-            </svg>
+            <MyIcon class="icon" type="icon-username"/>
           </template>
         </van-field>
         <van-field
@@ -25,9 +23,7 @@
             :rules="[{ validator: checkContact, message: '请填写正确的邮箱号/手机号' }]"
         >
           <template #label>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-email"></use>
-            </svg>
+            <MyIcon class="icon" type="icon-email"/>
           </template>
         </van-field>
         <van-field
@@ -39,9 +35,7 @@
             :rules="[{ required: true, message: '请填写验证码' }]"
         >
           <template #label>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-code"></use>
-            </svg>
+            <MyIcon class="icon" type="icon-code"/>
           </template>
           <template #right-icon>
             <VerifyCodeBtn @pass="pass" :btnDisabled="btnDisabled"></VerifyCodeBtn>
@@ -57,9 +51,7 @@
             :rules="[{ pattern, message: '请填写密码' }]"
         >
           <template #label>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-password"></use>
-            </svg>
+            <MyIcon class="icon" type="icon-password"/>
           </template>
         </van-field>
         <div class="submit">
@@ -78,7 +70,9 @@ import {useRouter} from "vue-router";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn.vue";
 import {getRegister, postCode, postLogin, postRegister} from '@/api/account'
 import store from "@/store/index";
+import icon from '@/utils/icon'
 
+let {MyIcon} = icon()
 
 const router = useRouter()
 // 注册表单

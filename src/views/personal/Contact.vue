@@ -12,29 +12,21 @@
         <p>QQ</p>
       </van-grid-item>
       <van-grid-item @click="copy('微信',contact.wechat)">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#img-weixin"></use>
-        </svg>
+        <MyIcon class="icon" type="icon-weixin"/>
         <p>微信</p>
       </van-grid-item>
       <van-grid-item @click="toURL(contact.github)">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#img-github-blue"></use>
-        </svg>
+        <MyIcon class="icon" type="icon-github-blue"/>
         <p>GitHub</p>
       </van-grid-item>
       <van-grid-item @click="toURL(contact.gitee)">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#img-gitee"></use>
-        </svg>
+        <MyIcon class="icon" type="icon-gitee"/>
         <p>码云</p>
       </van-grid-item>
     </van-grid>
     <van-grid :column-num="1" :gutter="20" clickable>
       <van-grid-item @click="copy('Email',contact.email)">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#img-email"></use>
-        </svg>
+        <MyIcon class="icon" type="icon-email1"/>
         <p>E-Mail</p>
       </van-grid-item>
     </van-grid>
@@ -48,7 +40,8 @@ import {Grid, GridItem, Image as VanImage, Toast} from 'vant'
 import {getInfo} from "@/api/management";
 import {onMounted} from "vue";
 import QQImg from "@/assets/images/qq-round.png";
-
+import icon from '@/utils/icon'
+let {MyIcon} = icon()
 const {toClipboard} = useClipboard()
 const contact = {
   qq: '',
@@ -103,6 +96,7 @@ body {
   .icon {
     width: 1.067rem;
     height: 1.067rem;
+    font-size: 0.933rem;
   }
 }
 </style>

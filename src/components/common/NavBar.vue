@@ -7,9 +7,7 @@
       <SearchInput></SearchInput>
     </template>
     <template #right="props">
-      <svg class="icon" aria-hidden="true" @click="fnShowAction">
-        <use xlink:href="#icon-menu"></use>
-      </svg>
+      <MyIcon class="icon" type="icon-menu"/>
     </template>
   </van-nav-bar>
   <ActionSheet ref="showAction"></ActionSheet>
@@ -21,7 +19,8 @@ import {onMounted, ref} from "vue";
 import ActionSheet from "@/components/common/ActionSheet.vue";
 import SearchInput from "@/components/common/SearchInput.vue"
 import {getSiteConfig} from "@/api/management";
-
+import icon from '@/utils/icon'
+let {MyIcon} = icon()
 const key = ref('')
 const active = ref(0);
 const showAction = ref();
@@ -55,8 +54,7 @@ onMounted(() => {
 
 .van-nav-bar__right {
   .icon {
-    width: 0.933rem;
-    height: 0.933rem;
+    font-size: 0.933rem;
   }
 }
 </style>

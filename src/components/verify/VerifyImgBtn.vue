@@ -1,17 +1,13 @@
 <!--图片验证按钮-->
 <template>
   <div class="main">
-    <div>
+    <div class="verify-btn">
       <van-button v-if="!isPassing" :type="btnType" @click="showPopup" block plain>
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#icon-verify"></use>
-        </svg>
+        <MyIcon class="icon" type="icon-verify"/>
         <b>点击按钮进行验证</b>
       </van-button>
       <van-button v-else plain type="success" block>
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#icon-success"></use>
-        </svg>
+        <MyIcon class="icon" type="icon-success"/>
         <b>验证成功</b>
       </van-button>
     </div>
@@ -44,7 +40,8 @@ import verify3 from '@/assets/verify/verify-3.jpg'
 import verify4 from '@/assets/verify/verify-4.jpg'
 import verify5 from '@/assets/verify/verify-5.jpg'
 import verify6 from '@/assets/verify/verify-6.jpg'
-
+import icon from '@/utils/icon'
+let {MyIcon} = icon()
 const props = defineProps({
   // 是否通过验证
   isPassing: {
@@ -91,15 +88,18 @@ onMounted(() => {
 
 <style lang="scss">
 @import "src/assets/style/index";
-
+.main{
+  .verify-btn{
+    width: 5.6rem;
+  }
+}
 .verify {
   padding: 0.533rem
 }
 
 .van-button__text {
   .icon {
-    width: 0.667rem;
-    height: 0.667rem;
+    font-size: 30px;
   }
 
   b {

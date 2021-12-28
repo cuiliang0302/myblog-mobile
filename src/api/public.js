@@ -17,5 +17,5 @@ export function getEcharts(user, chart) {
 
 // 获取省市代码
 export function getAreaData() {
-	return index.getFile('/static/area-data.json')
+	return index.get('/public/areaData/')
 }

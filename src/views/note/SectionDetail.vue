@@ -9,41 +9,31 @@
           <div class="info">
       <span class="info-item">
         <span class="info-icon">
-          <svg class="icon" aria-hidden="true">
-            <use xlink:href="#icon-category-solid"></use>
-          </svg>
+          <MyIcon class="icon" type="icon-category-solid"/>
         </span>
         <span>{{ detail.note }}</span>
       </span>
             <span class="info-item">
         <span class="info-icon">
-          <svg class="icon" aria-hidden="true">
-            <use xlink:href="#icon-time-solid"></use>
-          </svg>
+          <MyIcon class="icon" type="icon-time-solid"/>
         </span>
         <span>{{ timeDate(detail.created_time) }}</span>
       </span>
             <span class="info-item">
         <span class="info-icon">
-          <svg class="icon" aria-hidden="true">
-            <use xlink:href="#icon-view-solid"></use>
-          </svg>
+          <MyIcon class="icon" type="icon-view-solid"/>
         </span>
         <span>{{ detail.view }}</span>
       </span>
             <span class="info-item">
         <span class="info-icon">
-          <svg class="icon" aria-hidden="true">
-            <use xlink:href="#icon-like-solid"></use>
-          </svg>
+          <MyIcon class="icon" type="icon-like-solid"/>
         </span>
         <span>{{ detail.like }}</span>
       </span>
             <span class="info-item">
         <span class="info-icon">
-          <svg class="icon" aria-hidden="true">
-            <use xlink:href="#icon-comment-solid"></use>
-          </svg>
+          <MyIcon class="icon" type="icon-comment-solid"/>
         </span>
         <span>{{ detail.comment }}</span>
       </span>
@@ -57,9 +47,7 @@
     <div class="context">
       <div class="last">
             <span>
-              <svg class="icon context-icon" aria-hidden="true">
-                <use xlink:href="#icon-last-solid"></use>
-              </svg>
+              <MyIcon class="icon context-icon" type="icon-last-solid"/>
             </span>
         <span v-if="context.last && context.last.title" @click="toDetail(context.last.id)">
               {{ context.last.title }}
@@ -68,9 +56,7 @@
       </div>
       <div class="next">
             <span>
-              <svg class="icon context-icon" aria-hidden="true">
-                <use xlink:href="#icon-next-solid"></use>
-              </svg>
+              <MyIcon class="icon context-icon" type="icon-next-solid"/>
             </span>
         <span v-if="context.next && context.next.title" @click="toDetail(context.next.id)">
               {{ context.next.title }}
@@ -92,9 +78,7 @@
           @click-right-icon="clickSend"
       >
         <template #right-icon>
-          <svg class="icon click-send" aria-hidden="true">
-            <use xlink:href="#icon-send"></use>
-          </svg>
+          <MyIcon class="icon click-send" type="icon-send"/>
         </template>
       </van-field>
       <div class="comment-list">
@@ -142,7 +126,7 @@ import store from "@/store/index";
 import {
   getCatalogue,
   getContext,
-  getQRcode, getSectionDetail, getGuessLike, putSectionDetail
+  getQRcode, getSectionDetail, putSectionDetail
 } from "@/api/blog";
 import {getImgProxy} from "@/api/public";
 import {
@@ -153,7 +137,8 @@ import {
   postReplySectionComment, getSectionHistory, postSectionHistory, putSectionHistory
 } from "@/api/record";
 import user from "@/utils/user";
-
+import icon from '@/utils/icon'
+let {MyIcon} = icon()
 hljs.registerLanguage('json', json);
 hljs.registerLanguage('python', python);
 hljs.registerLanguage('bash', bash);
@@ -642,7 +627,7 @@ function tabbarFn(editor, DetailID, detail) {
             .icon {
               width: 0.4rem;
               height: 0.4rem;
-              vertical-align: -0.187rem;
+              vertical-align: -4px;
             }
           }
 
@@ -762,6 +747,7 @@ function tabbarFn(editor, DetailID, detail) {
       position: absolute;
       right: 0;
       top: 0;
+      font-size: 1.067rem;
     }
   }
 }

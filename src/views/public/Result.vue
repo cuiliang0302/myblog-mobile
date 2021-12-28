@@ -16,24 +16,16 @@
         </div>
         <div class="info">
           <span>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-time"></use>
-            </svg>{{ timeAgo(item.created_time) }}
+            <MyIcon class="icon" type="icon-time"/>{{ timeAgo(item.created_time) }}
           </span>
           <span>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-view"></use>
-            </svg>{{ item.view }}
+            <MyIcon class="icon" type="icon-view"/>{{ item.view }}
           </span>
           <span>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-like"></use>
-            </svg>{{ item.like }}
+            <MyIcon class="icon" type="icon-like"/>{{ item.like }}
           </span>
           <span>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-comment"></use>
-            </svg>{{ item.comment }}
+            <MyIcon class="icon" type="icon-comment"/>{{ item.comment }}
           </span>
           <span v-if="searchForm.kind==='article'">
             <van-tag round :color="tagColor(item.category_id)">{{ item.category }}</van-tag>
@@ -59,7 +51,8 @@ import setColor from "@/utils/setColor";
 import {Image as VanImage} from "vant/lib/image";
 import {useRouter} from "vue-router";
 import Tabbar from '@/components/common/Tabbar.vue'
-
+import icon from '@/utils/icon'
+let {MyIcon} = icon()
 const router = useRouter()
 // 引入用户信息模块
 let {userId, isLogin} = user();

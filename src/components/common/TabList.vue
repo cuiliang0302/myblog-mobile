@@ -25,21 +25,17 @@
               <span class="abstract">{{ item.abstract }}</span>
             </div>
             <div class="info">
-          <span><svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-time"></use>
-            </svg>{{ timeAgo(item.created_time) }}
+          <span>
+            <MyIcon class="icon" type="icon-time"/>{{ timeAgo(item.created_time) }}
           </span>
-              <span><svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-view"></use>
-            </svg>{{ item.view }}
+              <span>
+            <MyIcon class="icon" type="icon-view"/>{{ item.view }}
           </span>
-              <span><svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-like"></use>
-            </svg>{{ item.like }}
+              <span>
+            <MyIcon class="icon" type="icon-like"/>{{ item.like }}
           </span>
-              <span><svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-comment"></use>
-            </svg>{{ item.comment }}
+              <span>
+            <MyIcon class="icon" type="icon-comment"/>{{ item.comment }}
           </span>
               <span><van-tag round :color="tagColor(item.category_id)">{{ item.category }}</van-tag></span>
             </div>
@@ -56,7 +52,9 @@ import {reactive, ref} from 'vue';
 import {useRouter} from "vue-router";
 import timeFormat from "@/utils/timeFormat";
 import setColor from "@/utils/setColor";
+import icon from '@/utils/icon'
 
+let {MyIcon} = icon()
 
 const props = defineProps({
   // 加载中动画
@@ -78,7 +76,7 @@ const props = defineProps({
     default: {}
   }
 })
-const emit = defineEmits(['onRefresh', 'onLoad','onClickTab'])
+const emit = defineEmits(['onRefresh', 'onLoad', 'onClickTab'])
 const activeTab = ref('');
 const router = useRouter()
 // 时间显示几天前
@@ -94,7 +92,7 @@ const refresh = reactive({
 const onClickTab = ({name}) => {
   console.log("子组件点了哦")
   console.log(name)
-  emit('onClickTab',name)
+  emit('onClickTab', name)
 }
 // 数据刷新事件
 const onRefresh = () => {
@@ -166,6 +164,8 @@ const toDetail = (id) => {
         width: 0.347rem;
         height: 0.347rem;
         vertical-align: -1px;
+        color: $color-text-secondary!important;
+        font-size: 0.32rem;
       }
     }
 

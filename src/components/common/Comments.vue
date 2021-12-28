@@ -11,14 +11,10 @@
           </span>
         <span>
               <span v-if="isLike(item.id)===true" class="comment-like">
-                <svg class="icon" aria-hidden="true" @click="showShare = true">
-                  <use xlink:href="#icon-like-solid"></use>
-                </svg>
+                <MyIcon class="icon" type="icon-like-solid" @click="showShare = true"/>
               </span>
               <span v-else @click="likeMessage(item.id)" class="comment-like">
-                <svg class="icon" aria-hidden="true" @click="showShare = true">
-                  <use xlink:href="#icon-like"></use>
-                </svg>
+                <MyIcon class="icon" type="icon-like" @click="showShare = true"/>
               </span>
               <p>{{ item.like }}</p>
           </span>
@@ -28,36 +24,26 @@
       </div>
       <div class="comment-action">
           <span class="comment-btn">
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-time"></use>
-            </svg>
+            <MyIcon class="icon" type="icon-time"/>
             <p>{{ timeAgo(item.time) }}</p>
           </span>
         <span class="comment-btn">
           <span v-if="isReply(item.user)===true" @click="replyMessage(item.id)">
-            <svg class="icon click-btn" aria-hidden="true">
-              <use xlink:href="#icon-comment"></use>
-            </svg>
+            <MyIcon class="icon click-btn" type="icon-comment"/>
             <p>回复</p>
           </span>
           <span v-else style="opacity: 0.5">
-            <svg class="icon click-btn" aria-hidden="true">
-              <use xlink:href="#icon-comment"></use>
-            </svg>
+            <MyIcon class="icon click-btn" type="icon-comment"/>
             <p>回复</p>
           </span>
         </span>
         <span class="comment-btn">
           <span v-if="isDelete(item.user)" @click="delMessage(item.id)">
-            <svg class="icon click-btn" aria-hidden="true">
-              <use xlink:href="#icon-delete"></use>
-            </svg>
-              <p>删除</p>
+            <MyIcon class="icon click-btn" type="icon-delete"/>
+            <p>删除</p>
           </span>
           <span v-else style="opacity: 0.5">
-              <svg class="icon click-btn" aria-hidden="true">
-              <use xlink:href="#icon-delete"></use>
-            </svg>
+            <MyIcon class="icon click-btn" type="icon-delete"/>
               <p>删除</p>
           </span>
         </span>
@@ -88,9 +74,7 @@
           @click-right-icon="replySend"
       >
         <template #right-icon>
-          <svg class="icon click-send" aria-hidden="true">
-            <use xlink:href="#icon-send"></use>
-          </svg>
+          <MyIcon class="icon click-send" type="icon-send"/>
         </template>
       </van-field>
     </van-popup>
@@ -102,7 +86,8 @@ import {Toast, Image as VanImage, Icon, Dialog, Popup, Field} from 'vant'
 import {reactive, ref, getCurrentInstance} from "vue";
 import timeFormat from "@/utils/timeFormat";
 import user from "@/utils/user";
-
+import icon from '@/utils/icon'
+let {MyIcon} = icon()
 const props = defineProps({
   // 评论回复列表
   commentsList: {
@@ -247,6 +232,7 @@ const blur = () => {
 
       .comment-like {
         color: #f1c40f;
+        font-size: 20px;
       }
 
       .comment-user {

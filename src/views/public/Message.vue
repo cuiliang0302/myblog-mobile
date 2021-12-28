@@ -14,9 +14,7 @@
           @click-right-icon="clickSend"
       >
         <template #right-icon>
-          <svg class="icon click-send" aria-hidden="true">
-            <use xlink:href="#icon-send"></use>
-          </svg>
+          <MyIcon class="icon icon-send" type="icon-send"/>
         </template>
       </van-field>
       <div class="comment-list">
@@ -43,7 +41,8 @@ import {
 import {getCurrentInstance, onMounted, reactive, ref} from "vue";
 import {Field, Toast, Image as VanImage, Icon} from 'vant'
 import user from "@/utils/user";
-
+import icon from '@/utils/icon'
+let {MyIcon} = icon()
 
 // 事件总线
 const internalInstance = getCurrentInstance();  //当前组件实例
@@ -151,5 +150,11 @@ onMounted(() => {
   position: absolute;
   right: 0;
   top: 0.267rem;
+}
+.icon-send{
+  font-size: 1.067rem;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 </style>
