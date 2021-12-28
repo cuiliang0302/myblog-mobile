@@ -4,7 +4,14 @@ import index from './index'
 export function postLogin(params) {
   return index.post('/account/login/', params)
 }
-
+// 获取第三方登录ID
+export function getOAuthID(platform) {
+  return index.get('/account/OAuthID/' + '?platform=' + platform + '&kind=M')
+}
+// 第三方授权登录后回调
+export function postOAuthCallback(params) {
+  return index.post('/account/OAuthCallback/', params)
+}
 // 用户注册查询是否可用
 export function getRegister(username, contact) {
   console.log(username, contact)

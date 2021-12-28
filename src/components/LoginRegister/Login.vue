@@ -55,23 +55,23 @@
     <div class="other">
       <van-divider>第三方账号登录</van-divider>
       <div class="other-logo">
-        <span @click="qqLogin">
+        <span @click="otherLogin('QQ')">
           <MyIcon class="logo-icon" type="icon-qq-logo"/>
           <p>QQ</p>
         </span>
-        <span @click="wbLogin">
+        <span @click="otherLogin('WEIBO')">
           <MyIcon class="logo-icon" type="icon-weibo-logo"/>
           <p>微博</p>
         </span>
-        <span @click="githubLogin">
+        <span @click="otherLogin('QQ')">
           <MyIcon class="logo-icon" type="icon-github-logo"/>
           <p>GitHub</p>
         </span>
-        <span @click="githubLogin">
+        <span @click="otherLogin('QQ')">
           <MyIcon class="logo-icon" type="icon-baidu-logo"/>
           <p>百度</p>
         </span>
-        <span @click="githubLogin">
+        <span @click="otherLogin('QQ')">
           <MyIcon class="logo-icon" type="icon-alipay-logo"/>
           <p>支付宝</p>
         </span>
@@ -84,7 +84,7 @@
 import {Form, Button, Field, Divider, Icon, Checkbox, Toast} from 'vant';
 import VerifyImgBtn from "@/components/verify/VerifyImgBtn.vue";
 import {reactive, ref} from "vue";
-import {postLogin} from '@/api/account'
+import {getOAuthID, postLogin} from '@/api/account'
 import store from "@/store/index";
 import {useRouter} from "vue-router";
 import icon from '@/utils/icon'
@@ -136,21 +136,38 @@ const onSubmit = () => {
     isPassing.value = false
   });
 };
-// qq登录
-const qqLogin = () => {
-  Toast('QQ登录正在开发中！')
-}
-const githubLogin = () => {
-  Toast('GitHub登录正在开发中！')
-  // Toast.loading({
-  //   message: '登录跳转中...',
-  //   forbidClick: true,
-  // });
-  // window.location.href = 'http://127.0.0.1:8000/auth/login/github/'
-}
-const wbLogin = () => {
-  Toast('微博登录正在开发中！')
-
+// 第三方登录
+const otherLogin = (kind) => {
+  Toast('第三方登录正在调试中，如遇登录异常请更换其他登录方式！')
+  console.log(kind)
+  let domain = window.location.protocol + "//" + window.location.host
+  if (kind === 'WEIBO') {
+    getOAuthID(kind).then((response) => {
+      console.log(response)
+      let url = 'https://open.weibo.cn/oauth2/authorize?client_id=' + response.clientId +
+          '&response_type=code&redirect_uri=' + domain + '/OAuth/' + kind + '&display=mobile'
+      console.log(url)
+      window.location.href = url;
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      Toast.fail('获取第三方登录ID失败！')
+    });
+  }
+  if (kind === 'QQ') {
+    getOAuthID(kind).then((response) => {
+      console.log(response)
+      let url = 'https://graph.qq.com/oauth2.0/authorize?client_id=' + response.clientId +
+          '&response_type=code&redirect_uri=' + domain + '/OAuth/' + kind + '&display=mobile'
+          + '&state=' + Math.random().toString(36).slice(-6)
+      console.log(url)
+      window.location.href = url;
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      Toast.fail('获取第三方登录ID失败！')
+    });
+  }
 }
 </script>
 
@@ -209,7 +226,7 @@ const wbLogin = () => {
       span {
         width: 1.6rem;
 
-        .logo-icon{
+        .logo-icon {
           font-size: 1.067rem;
         }
 
