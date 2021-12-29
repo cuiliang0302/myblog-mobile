@@ -161,7 +161,6 @@ const otherLogin = (kind) => {
           '&response_type=code&redirect_uri=' + domain + '/OAuth/' + kind + '&display=mobile'
           + '&state=' + Math.random().toString(36).slice(-6)
       console.log(url)
-      alert(url)
       window.location.href = url;
     }).catch(response => {
       //发生错误时执行的代码
