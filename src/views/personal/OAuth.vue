@@ -17,7 +17,7 @@ const platform_name = ref('')
 // 回调登录表单
 const OAuthForm = reactive({
   platform: '',
-  kind: 'PC',
+  kind: 'M',
   code: '',
   redirect_uri: ''
 })
