@@ -274,7 +274,7 @@ const router = createRouter({
 			name: 'Binding',
 			component: () => import('@/views/personal/Binding.vue'),
 			meta: {
-				title: '绑定第三方账号',
+
 				keepAlive: true,
 				transitionClass: 'back',//前进后退
 				index: 2,
@@ -337,6 +337,18 @@ const router = createRouter({
 				title: '登录&注册',
 				keepAlive: false,
 				transitionClass: 'gradually',
+				isAuth: false
+			}
+		},
+		{
+			path: '/OAuth/:platform',
+			name: 'OAuth',
+			component: () => import('@/views/personal/OAuth.vue'),
+			meta: {
+				title: '第三方登录授权页',
+				keepAlive: true,
+				transitionClass: 'gradually',//渐入
+				index: 1,
 				isAuth: false
 			}
 		},
