@@ -175,7 +175,6 @@ const otherLogin = (kind) => {
           response.clientId + '&scope=auth_user&redirect_uri=' + domain + '/OAuth/' + kind + '&state=' + Math.random().toString(36).slice(-6)
       let url = 'alipays://platformapi/startapp?appId=20000067&url=' + encodeURIComponent(parameter)
       console.log(url)
-      alert(url)
       window.location.href = url;
     }).catch(response => {
       //发生错误时执行的代码
