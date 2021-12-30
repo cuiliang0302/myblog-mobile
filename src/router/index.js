@@ -274,7 +274,7 @@ const router = createRouter({
 			name: 'Binding',
 			component: () => import('@/views/personal/Binding.vue'),
 			meta: {
-
+				title: '绑定第三方账号',
 				keepAlive: true,
 				transitionClass: 'back',//前进后退
 				index: 2,

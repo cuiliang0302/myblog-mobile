@@ -63,15 +63,15 @@
           <MyIcon class="logo-icon" type="icon-weibo-logo"/>
           <p>微博</p>
         </span>
-        <span @click="otherLogin('QQ')">
+        <span @click="otherLogin('GITHUB')">
           <MyIcon class="logo-icon" type="icon-github-logo"/>
           <p>GitHub</p>
         </span>
-        <span @click="otherLogin('QQ')">
+        <span @click="otherLogin('BAIDU')">
           <MyIcon class="logo-icon" type="icon-baidu-logo"/>
           <p>百度</p>
         </span>
-        <span @click="otherLogin('QQ')">
+        <span @click="otherLogin('PAY')">
           <MyIcon class="logo-icon" type="icon-alipay-logo"/>
           <p>支付宝</p>
         </span>
@@ -166,6 +166,20 @@ const otherLogin = (kind) => {
       //发生错误时执行的代码
       console.log(response)
       Toast.fail('获取第三方登录ID失败！')
+    });
+  }
+  if (kind === 'PAY') {
+    getOAuthID(kind).then((response) => {
+      console.log(response)
+      let url = 'alipays://platformapi/startapp?appId=' + response.clientId + '&url=https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id' +
+          response.clientId + '&scope=auth_user&redirect_uri=' + domain + '/OAuth/' + kind + '&state=' + Math.random().toString(36).slice(-6)
+      console.log(url)
+      alert(url)
+      window.location.href = url;
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      ElMessage.error('获取第三方登录ID失败！')
     });
   }
 }
