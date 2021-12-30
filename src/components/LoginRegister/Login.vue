@@ -173,7 +173,7 @@ const otherLogin = (kind) => {
       console.log(response)
       let parameter = 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id' +
           response.clientId + '&scope=auth_user&redirect_uri=' + domain + '/OAuth/' + kind + '&state=' + Math.random().toString(36).slice(-6)
-      let url = 'alipays://platformapi/startapp?appId=' + response.clientId + '&url=' + encodeURIComponent(parameter)
+      let url = 'alipays://platformapi/startapp?appId=20000067&url=' + encodeURIComponent(parameter)
       console.log(url)
       alert(url)
       window.location.href = url;
