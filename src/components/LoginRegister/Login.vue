@@ -171,7 +171,7 @@ const otherLogin = (kind) => {
   if (kind === 'PAY') {
     getOAuthID(kind).then((response) => {
       console.log(response)
-      let parameter = 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id' +
+      let parameter = 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=' +
           response.clientId + '&scope=auth_user&redirect_uri=' + domain + '/OAuth/' + kind + '&state=' + Math.random().toString(36).slice(-6)
       let url = 'alipays://platformapi/startapp?appId=20000067&url=' + encodeURIComponent(parameter)
       console.log(url)
