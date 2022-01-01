@@ -59,6 +59,14 @@
           <MyIcon class="logo-icon" type="icon-qq-logo"/>
           <p>QQ</p>
         </span>
+        <span @click="otherLogin('PAY')">
+          <MyIcon class="logo-icon" type="icon-alipay-logo"/>
+          <p>支付宝</p>
+        </span>
+        <span @click="otherLogin('BAIDU')">
+          <MyIcon class="logo-icon" type="icon-baidu-logo"/>
+          <p>百度</p>
+        </span>
         <span @click="otherLogin('WEIBO')">
           <MyIcon class="logo-icon" type="icon-weibo-logo"/>
           <p>微博</p>
@@ -67,13 +75,9 @@
           <MyIcon class="logo-icon" type="icon-github-logo"/>
           <p>GitHub</p>
         </span>
-        <span @click="otherLogin('BAIDU')">
-          <MyIcon class="logo-icon" type="icon-baidu-logo"/>
-          <p>百度</p>
-        </span>
-        <span @click="otherLogin('PAY')">
-          <MyIcon class="logo-icon" type="icon-alipay-logo"/>
-          <p>支付宝</p>
+        <span @click="otherLogin('MICROSOFT')">
+          <MyIcon class="logo-icon" type="icon-microsoft-logo"/>
+          <p>微软</p>
         </span>
       </div>
     </div>
@@ -179,7 +183,20 @@ const otherLogin = (kind) => {
     }).catch(response => {
       //发生错误时执行的代码
       console.log(response)
-      ElMessage.error('获取第三方登录ID失败！')
+      Toast.fail('获取第三方登录ID失败！')
+    });
+  }
+  if (kind === 'GITHUB') {
+    getOAuthID(kind).then((response) => {
+      console.log(response)
+      let url = 'https://github.com/login/oauth/authorize?client_id=' + response.clientId +
+          '&scope=user&redirect_uri=' + domain + '/OAuth/' + kind + '&state=' + Math.random().toString(36).slice(-6)
+      console.log(url)
+      window.location.href = url;
+    }).catch(response => {
+      //发生错误时执行的代码
+      console.log(response)
+      Toast.fail('获取第三方登录ID失败！')
     });
   }
 }
@@ -238,7 +255,7 @@ const otherLogin = (kind) => {
       text-align: center;
 
       span {
-        width: 1.6rem;
+        width: 1.333rem;
 
         .logo-icon {
           font-size: 1.067rem;

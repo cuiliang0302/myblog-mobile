@@ -62,6 +62,9 @@ onMounted(() => {
     case 'BAIDU':
       platform_name.value = '百度'
       break;
+    case 'MICROSOFT':
+      platform_name.value = '微软'
+      break;
     default:
       platform_name.value = '第三方'
   }

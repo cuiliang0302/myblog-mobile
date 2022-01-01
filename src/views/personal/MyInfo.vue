@@ -255,7 +255,7 @@ onMounted(() => {
 .photo {
   text-align: center;
   padding-top: 0.533rem;
-  @include background_color('background_color5');;
+  @include background_color('background_color5');
 
   p {
     font-size: 0.373rem;
