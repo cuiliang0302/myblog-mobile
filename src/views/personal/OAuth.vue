@@ -46,6 +46,7 @@ onMounted(() => {
     OAuthForm.code = router.currentRoute.value.query.code
   }
   console.log(OAuthForm)
+  alert(OAuthForm.code)
   switch (OAuthForm.platform) {
     case 'WEIBO':
       platform_name.value = '新浪微博'
