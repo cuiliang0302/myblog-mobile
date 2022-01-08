@@ -333,7 +333,7 @@ function comment(DetailID, router) {
         console.log(messageForm)
         postArticleComment(messageForm).then((response) => {
           console.log(response)
-          Toast.success('留言成功！');
+          Toast.success('评论成功！');
           messageForm.content = ''
           articleCommentData(DetailID.value)
         }).catch(response => {

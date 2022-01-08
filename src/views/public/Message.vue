@@ -22,7 +22,7 @@
       </div>
     </section>
     <Tabbar></Tabbar>
-    <LoginPopup ref="refLoginPopup"></LoginPopup>
+    <LoginPopup ref="loginPopupRef"></LoginPopup>
   </div>
 </template>
 
@@ -42,8 +42,9 @@ import {getCurrentInstance, onMounted, reactive, ref} from "vue";
 import {Field, Toast, Image as VanImage, Icon} from 'vant'
 import user from "@/utils/user";
 import icon from '@/utils/icon'
+import store from "@/store";
 let {MyIcon} = icon()
-
+import router from "@/router";
 // 事件总线
 const internalInstance = getCurrentInstance();  //当前组件实例
 const $bus = internalInstance.appContext.config.globalProperties.$bus;
@@ -57,7 +58,7 @@ const messageForm = reactive({
   user: '',
 })
 // 提示登录组件对象
-const refLoginPopup = ref()
+const loginPopupRef = ref()
 // 点击发表留言事件
 const clickSend = () => {
   if (isLogin.value) {
@@ -79,7 +80,8 @@ const clickSend = () => {
       Toast("毛都没有，发表个锤子")
     }
   } else {
-    refLoginPopup.value.showPopup()
+    loginPopupRef.value.showPopup()
+    store.commit('setNextPath', router.currentRoute.value.fullPath)
   }
 }
 // 留言点赞事件

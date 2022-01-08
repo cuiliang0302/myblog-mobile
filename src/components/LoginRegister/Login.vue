@@ -87,7 +87,7 @@
 <script setup>
 import {Form, Button, Field, Divider, Icon, Checkbox, Toast} from 'vant';
 import VerifyImgBtn from "@/components/verify/VerifyImgBtn.vue";
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {getOAuthID, postLogin} from '@/api/account'
 import store from "@/store/index";
 import {useRouter} from "vue-router";
@@ -142,7 +142,7 @@ const onSubmit = () => {
 };
 // 第三方登录
 const otherLogin = (kind) => {
-  Toast('第三方登录正在调试中，如遇登录异常请更换其他登录方式！')
+  Toast('正在跳转至第三方平台，请稍候……')
   console.log(kind)
   let domain = window.location.protocol + "//" + window.location.host
   if (kind === 'WEIBO') {

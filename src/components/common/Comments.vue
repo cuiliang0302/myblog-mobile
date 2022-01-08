@@ -20,7 +20,7 @@
           </span>
       </div>
       <div class="comment-content">
-        <p>{{ item.content }}</p>
+        <p v-html=item.content></p>
       </div>
       <div class="comment-action">
           <span class="comment-btn">
@@ -248,7 +248,9 @@ const blur = () => {
 
     .comment-content {
       margin-left: 1.067rem;
-
+      :deep(img) {
+        max-height: 120px;
+      }
       p {
         font-size: 0.373rem;
       }

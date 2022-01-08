@@ -7,7 +7,7 @@
       <SearchInput></SearchInput>
     </template>
     <template #right="props">
-      <MyIcon class="icon" type="icon-menu"/>
+      <MyIcon class="icon" type="icon-menu" @click="fnShowAction"/>
     </template>
   </van-nav-bar>
   <ActionSheet ref="showAction"></ActionSheet>

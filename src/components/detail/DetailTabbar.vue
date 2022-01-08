@@ -92,7 +92,7 @@
       </template>
     </van-image>
   </van-popup>
-  <LoginPopup ref="refLoginPopup"></LoginPopup>
+  <LoginPopup ref="loginPopupRef"></LoginPopup>
   <van-config-provider :theme-vars="themeVars">
     <van-overlay :show="overlay_show">
       <div class="wrapper" @click.stop @click="overlay_show=false">
@@ -199,7 +199,7 @@ let {
 // 调用点赞模块
 let {isLike, likeClick} = fnLike(props, emit)
 // 调用收藏模块
-let {collectionClick, refLoginPopup} = fnCollection(props, emit)
+let {collectionClick, loginPopupRef} = fnCollection(props, emit)
 // 调用评论模块
 let {commentClick} = fnComment()
 // 调用公共模块
@@ -363,7 +363,7 @@ function fnLike(props, emit) {
 function fnCollection(props, emit) {
   const router = useRouter()
   // 提示登录组件对象
-  const refLoginPopup = ref()
+  const loginPopupRef = ref()
   let {isLogin} = user();
   const collectionClick = () => {
     console.log(props.is_collect)
@@ -372,12 +372,12 @@ function fnCollection(props, emit) {
       emit('collectClick')
     } else {
       store.commit('setNextPath', router.currentRoute.value.fullPath)
-      refLoginPopup.value.showPopup()
+      loginPopupRef.value.showPopup()
     }
   };
 
   return {
-    refLoginPopup,
+    loginPopupRef,
     collectionClick,
   };
 }

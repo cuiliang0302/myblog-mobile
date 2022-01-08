@@ -72,7 +72,7 @@
         </van-cell-group>
       </div>
     </div>
-    <LoginPopup ref="refLoginPopup"></LoginPopup>
+    <LoginPopup ref="loginPopupRef"></LoginPopup>
     <Tabbar :activeBar="3"></Tabbar>
   </div>
 </template>
@@ -92,12 +92,12 @@ import {getSiteConfig} from "@/api/management";
 import dark from "@/utils/dark";
 
 // 提示登录组件对象
-const refLoginPopup = ref(null)
+const loginPopupRef = ref(null)
 // 引入公共方法
 let {isLogin, userInfo, userId, toView, logo} = global()
 
 // 引入系统与设置模块
-let {changeFlow, fontType, isDark, changeDark, logout} = setting(userId, userInfo, isLogin, refLoginPopup)
+let {changeFlow, fontType, isDark, changeDark, logout} = setting(userId, userInfo, isLogin, loginPopupRef)
 
 // 公共方法
 function global() {
@@ -114,7 +114,7 @@ function global() {
       console.log(value)
       console.log("没登录呢")
       store.commit('setNextPath', value)
-      refLoginPopup.value.showPopup()
+      loginPopupRef.value.showPopup()
     }
   }
   // 网站logo
@@ -134,10 +134,7 @@ function global() {
       userInfo[i] = userinfo_data[i]
     }
   }
-
   onMounted(() => {
-    console.log(refLoginPopup.value.popupIsShow)
-    console.log(refLoginPopup.value)
     siteConfigData()
     if (isLogin.value) {
       getUserinfo(userId.value)
@@ -152,7 +149,7 @@ function global() {
   }
 }
 
-function setting(userId, userInfo, isLogin, refLoginPopup) {
+function setting(userId, userInfo, isLogin, loginPopupRef) {
   // 引入暗黑模块
   let {setDark} = dark()
   // 引入字体设置模块
@@ -176,7 +173,8 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
     } else {
       console.log("也没登录呀")
       userInfo.is_flow = false
-      refLoginPopup.value.showPopup()
+      store.commit('setNextPath', router.currentRoute.value.fullPath)
+      loginPopupRef.value.showPopup()
       return false
     }
   }
@@ -200,8 +198,8 @@ function setting(userId, userInfo, isLogin, refLoginPopup) {
         confirmButtonText: '确认',
         cancelButtonText: '再想想',
       }).then(() => {
-        window.sessionStorage.clear()
-        window.localStorage.clear()
+        store.commit('setUserLocal', {})
+        store.commit('setUserSession', {})
         Toast.success('成功退出，跳转至登录页')
         router.push('/loginRegister')
       })
