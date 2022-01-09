@@ -162,7 +162,7 @@ let {detail, getDetail, guessLike, getGuessLikeData} = article(DetailID)
 // 调用markdown模块
 let {showImg, setMDFont} = markdown()
 // 调用评论回复模块
-let {messageForm, commentsList, articleCommentData, loginPopupRef} = comment(DetailID, router)
+let {messageForm, commentsList, articleCommentData} = comment(DetailID, router)
 // 调用tabbar模块
 let {
   titleList,
@@ -175,6 +175,8 @@ let {
   getArticleHistoryData,
   postArticleHistoryData
 } = tabbarFn(editor, DetailID)
+// 提示登录组件对象
+const loginPopupRef = ref(null)
 // 点击发表评论事件
 const clickSend = () => {
   alert("点击发送了")
@@ -347,9 +349,6 @@ function comment(DetailID, router) {
     commentsList.value = await getArticleComment(DetailID.value)
     console.log(commentsList.value)
   }
-
-  // 提示登录组件对象
-  const loginPopupRef = ref(null)
   // 评论表单
   const messageForm = reactive({
     content: '',
@@ -402,7 +401,6 @@ function comment(DetailID, router) {
     commentsList,
     articleCommentData,
     messageForm,
-    loginPopupRef,
   }
 }
 
