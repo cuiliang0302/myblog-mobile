@@ -624,7 +624,9 @@ function tabbarFn(editor, DetailID, detail) {
             border-radius: 0.133rem 0 0 0.133rem;
             position: relative;
             .icon {
-              transform: translate(0%,50%);
+              transform: translate(0%, -50%);
+              position: absolute;
+              top: 50%;
             }
           }
 
