@@ -126,6 +126,8 @@ import fontSize from "@/utils/fontSize";
 import user from "@/utils/user";
 import icon from '@/utils/icon'
 let {MyIcon} = icon()
+// 引入用户信息模块
+let {userId, isLogin} = user();
 hljs.registerLanguage('json', json);
 hljs.registerLanguage('python', python);
 hljs.registerLanguage('bash', bash);
@@ -160,7 +162,7 @@ let {detail, getDetail, guessLike, getGuessLikeData} = article(DetailID)
 // 调用markdown模块
 let {showImg, setMDFont} = markdown()
 // 调用评论回复模块
-let {messageForm, commentsList, clickSend, articleCommentData, loginPopupRef} = comment(DetailID, router)
+let {messageForm, commentsList, articleCommentData, loginPopupRef} = comment(DetailID, router)
 // 调用tabbar模块
 let {
   titleList,
@@ -173,6 +175,33 @@ let {
   getArticleHistoryData,
   postArticleHistoryData
 } = tabbarFn(editor, DetailID)
+// 点击发表评论事件
+const clickSend = () => {
+  if (isLogin.value) {
+    if (messageForm.content) {
+      messageForm.user = userId.value
+      messageForm['article_id'] = DetailID.value
+      console.log(messageForm)
+      postArticleComment(messageForm).then((response) => {
+        console.log(response)
+        Toast.success('评论成功！');
+        messageForm.content = ''
+        articleCommentData(DetailID.value)
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        for (let i in response) {
+          Toast.fail(i + response[i][0]);
+        }
+      });
+    } else {
+      Toast("请先输入内容再提交")
+    }
+  } else {
+    store.commit('setNextPath', router.currentRoute.value.fullPath)
+    loginPopupRef.value.showPopup()
+  }
+}
 onMounted(async () => {
   window.scrollTo({top: 0})
   await getDetail(DetailID.value)
@@ -306,8 +335,6 @@ function comment(DetailID, router) {
   // 事件总线
   const internalInstance = getCurrentInstance();  //当前组件实例
   const $bus = internalInstance.appContext.config.globalProperties.$bus;
-  // 引入用户信息模块
-  let {userId, isLogin} = user();
   // 留言评论列表
   const commentsList = ref([])
 
@@ -324,33 +351,6 @@ function comment(DetailID, router) {
     content: '',
     user: '',
   })
-  // 点击发表评论事件
-  const clickSend = () => {
-    if (isLogin.value) {
-      if (messageForm.content) {
-        messageForm.user = userId.value
-        messageForm['article_id'] = DetailID.value
-        console.log(messageForm)
-        postArticleComment(messageForm).then((response) => {
-          console.log(response)
-          Toast.success('评论成功！');
-          messageForm.content = ''
-          articleCommentData(DetailID.value)
-        }).catch(response => {
-          //发生错误时执行的代码
-          console.log(response)
-          for (let i in response) {
-            Toast.fail(i + response[i][0]);
-          }
-        });
-      } else {
-        Toast("一言不发，发个寂寞")
-      }
-    } else {
-      store.commit('setNextPath', router.currentRoute.value.fullPath)
-      loginPopupRef.value.showPopup()
-    }
-  }
   // 评论点赞事件
   if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", messageId => {
     putArticleComment(messageId).then((response) => {
@@ -398,7 +398,6 @@ function comment(DetailID, router) {
     commentsList,
     articleCommentData,
     messageForm,
-    clickSend,
     loginPopupRef,
   }
 }
@@ -595,11 +594,11 @@ function tabbarFn(editor, DetailID) {
             height: 0.533rem;
             display: inline-block;
             border-radius: 0.133rem 0 0 0.133rem;
-
+            position: relative;
             .icon {
-              width: 0.4rem;
-              height: 0.4rem;
-              vertical-align: -4px;
+              transform: translate(0%, -50%);
+              position: absolute;
+              top: 50%;
             }
           }
 
