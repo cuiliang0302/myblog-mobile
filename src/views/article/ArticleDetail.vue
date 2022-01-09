@@ -161,8 +161,10 @@ let {
 let {detail, getDetail, guessLike, getGuessLikeData} = article(DetailID)
 // 调用markdown模块
 let {showImg, setMDFont} = markdown()
+// 提示登录组件对象
+const loginPopupRef = ref(null)
 // 调用评论回复模块
-let {messageForm, commentsList, articleCommentData} = comment(DetailID, router)
+let {messageForm, commentsList, articleCommentData,clickSend} = comment(DetailID, router,loginPopupRef)
 // 调用tabbar模块
 let {
   titleList,
@@ -175,39 +177,6 @@ let {
   getArticleHistoryData,
   postArticleHistoryData
 } = tabbarFn(editor, DetailID)
-// 提示登录组件对象
-const loginPopupRef = ref(null)
-// 点击发表评论事件
-const clickSend = () => {
-  alert("点击发送了")
-  alert(isLogin.value)
-  if (isLogin.value) {
-    alert("登录了")
-    if (messageForm.content) {
-      messageForm.user = userId.value
-      messageForm['article_id'] = DetailID.value
-      console.log(messageForm)
-      postArticleComment(messageForm).then((response) => {
-        console.log(response)
-        Toast.success('评论成功！');
-        messageForm.content = ''
-        articleCommentData(DetailID.value)
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        for (let i in response) {
-          Toast.fail(i + response[i][0]);
-        }
-      });
-    } else {
-      Toast("请先输入内容再提交")
-    }
-  } else {
-    alert("没登录")
-    store.commit('setNextPath', router.currentRoute.value.fullPath)
-    loginPopupRef.value.showPopup()
-  }
-}
 onMounted(async () => {
   window.scrollTo({top: 0})
   await getDetail(DetailID.value)
@@ -337,7 +306,7 @@ function markdown() {
 }
 
 // 评论回复模块
-function comment(DetailID, router) {
+function comment(DetailID, router,loginPopupRef) {
   // 事件总线
   const internalInstance = getCurrentInstance();  //当前组件实例
   const $bus = internalInstance.appContext.config.globalProperties.$bus;
@@ -354,6 +323,33 @@ function comment(DetailID, router) {
     content: '',
     user: '',
   })
+  // 点击发表评论事件
+  const clickSend = () => {
+    if (isLogin.value) {
+      if (messageForm.content) {
+        messageForm.user = userId.value
+        messageForm['article_id'] = DetailID.value
+        console.log(messageForm)
+        postArticleComment(messageForm).then((response) => {
+          console.log(response)
+          Toast.success('评论成功！');
+          messageForm.content = ''
+          articleCommentData(DetailID.value)
+        }).catch(response => {
+          //发生错误时执行的代码
+          console.log(response)
+          for (let i in response) {
+            Toast.fail(i + response[i][0]);
+          }
+        });
+      } else {
+        Toast("请先输入内容再提交")
+      }
+    } else {
+      store.commit('setNextPath', router.currentRoute.value.fullPath)
+      loginPopupRef.value.showPopup()
+    }
+  }
   // 评论点赞事件
   if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", messageId => {
     putArticleComment(messageId).then((response) => {
@@ -401,6 +397,7 @@ function comment(DetailID, router) {
     commentsList,
     articleCommentData,
     messageForm,
+    clickSend
   }
 }
 
