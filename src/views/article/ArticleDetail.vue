@@ -177,7 +177,10 @@ let {
 } = tabbarFn(editor, DetailID)
 // 点击发表评论事件
 const clickSend = () => {
+  alert("点击发送了")
+  alert(isLogin.value)
   if (isLogin.value) {
+    alert("登录了")
     if (messageForm.content) {
       messageForm.user = userId.value
       messageForm['article_id'] = DetailID.value
@@ -198,6 +201,7 @@ const clickSend = () => {
       Toast("请先输入内容再提交")
     }
   } else {
+    alert("没登录")
     store.commit('setNextPath', router.currentRoute.value.fullPath)
     loginPopupRef.value.showPopup()
   }
