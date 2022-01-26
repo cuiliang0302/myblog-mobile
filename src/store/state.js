@@ -13,7 +13,7 @@ const state = {
 	// vant样式变量
 	themeStyle: {},
 	// 登录后跳转页
-	nextPath: '/personal',
+	nextPath: '/personal/myIndex',
 	// 是否保持登录
 	keepLogin: false,
 	// 保持登录用户信息(localStorage)
