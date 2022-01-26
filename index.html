@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href="/favicon.ico"/>
     <meta name="keywords" content="运维开发,自动化运维,k8s,docker,vue,python,prometheus,devops,linux,云计算,虚拟化">
-    <meta name="description" content="崔亮的个人博客，致力于分享运维开发等技术经验，由系统运维、脚本编程、devops等分类组成，涵盖了docker、k8s、vue、python、DevOps、linux、prometheus、自动化运维、云计算、虚拟化等内容。">
+    <meta name="description"
+          content="崔亮的个人博客，致力于分享运维开发等技术经验，由系统运维、脚本编程、devops等分类组成，涵盖了docker、k8s、vue、python、DevOps、linux、prometheus、自动化运维、云计算、虚拟化等内容。">
     <title>崔亮的博客-专注devops自动化运维，传播优秀it运维技术文章</title>
     <style>
         body {
@@ -134,6 +135,17 @@
 		let url = window.location.href
 		console.log(url)
 		location.href = url.replace(/m.cuiliangblog.cn/, "www.cuiliangblog.cn")
+	}
+</script>
+<script>
+	const now = new Date()
+	console.log(now)
+	if (now.getHours() >= 21 || now.getHours() <= 6) {
+		console.log("这是夜间模式")
+		document.bgColor = '#202023';
+	} else {
+		console.log("这是白天模式")
+		document.bgColor = '#ffffff';
 	}
 </script>
 </body>

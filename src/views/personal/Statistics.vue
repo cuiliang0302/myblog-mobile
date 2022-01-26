@@ -91,7 +91,7 @@
 
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
-import {onMounted, reactive, ref} from "vue";
+import {computed, onMounted, reactive, ref} from "vue";
 import {Grid, GridItem, Tag, Toast} from 'vant';
 import * as echarts from 'echarts'
 import {getStatistics} from '@/api/record'
@@ -117,6 +117,16 @@ const color = ref([
 ])
 // 是否开启暗黑模式
 const isDark = store.state.dark
+// 图表背景色
+const bgc = computed(() => {
+  console.log(isDark)
+  if (isDark === true) {
+    return '#1f1f1f'
+  } else {
+    return '#ffffff'
+  }
+})
+
 
 // 浏览趋势折线图
 async function trend() {
@@ -225,7 +235,8 @@ async function trend() {
         },
         data: chartData.section_collect
       }
-    ]
+    ],
+    backgroundColor: bgc.value
   });
   //自适应大小
   window.onresize = function () {
@@ -292,7 +303,8 @@ async function time() {
         },
         data: chartData.section
       }
-    ]
+    ],
+    backgroundColor: bgc.value
   });
   //自适应大小
   window.onresize = function () {
@@ -329,7 +341,8 @@ async function article() {
           }
         }
       }
-    ]
+    ],
+    backgroundColor: bgc.value
   });
   //自适应大小
   window.onresize = function () {
@@ -368,7 +381,8 @@ async function note() {
           name: '笔记统计'
         }
       ]
-    }]
+    }],
+    backgroundColor: bgc.value
   });
   //自适应大小
   window.onresize = function () {
@@ -390,6 +404,7 @@ onMounted(() => {
   time()
   article()
   note()
+  console.log(bgc.value)
 });
 </script>
 

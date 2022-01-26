@@ -21,7 +21,7 @@
         <MyIcon v-else class="icon" type="icon-note"/>
       </template>
     </van-tabbar-item>
-    <van-tabbar-item to="/personal">
+    <van-tabbar-item to="/personal/myIndex">
       <span>我的</span>
       <template #icon="props">
         <MyIcon v-if="props.active" class="icon" type="icon-my-solid"/>

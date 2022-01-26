@@ -162,7 +162,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/personal',
+			path: '/personal/myIndex',
 			name: 'Personal',
 			component: () => import('@/views/personal/Personal.vue'),
 			meta: {
@@ -174,7 +174,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/myHistory',
+			path: '/personal/myHistory',
 			name: 'MyHistory',
 			component: () => import('@/views/personal/MyHistory.vue'),
 			meta: {
@@ -186,7 +186,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/myCollect',
+			path: '/personal/myCollect',
 			name: 'MyCollect',
 			component: () => import('@/views/personal/MyCollect.vue'),
 			meta: {
@@ -198,7 +198,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/myComments',
+			path: '/personal/myComments',
 			name: 'MyComments',
 			component: () => import('@/views/personal/MyComments.vue'),
 			meta: {
@@ -210,7 +210,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/statistics',
+			path: '/personal/statistics',
 			name: 'Statistics',
 			component: () => import('@/views/personal/Statistics.vue'),
 			meta: {
@@ -222,11 +222,11 @@ const router = createRouter({
 			},
 		},
 		{
-			path: '/myInfo',
+			path: '/personal/myInfo',
 			name: 'MyInfo',
 			component: () => import('@/views/personal/MyInfo.vue'),
 			meta: {
-				title: '我的信息',
+				title: '修改信息',
 				keepAlive: true,
 				transitionClass: 'back',//前进后退
 				index: 2,
@@ -234,7 +234,7 @@ const router = createRouter({
 			},
 		},
 		{
-			path: '/changePassword',
+			path: '/personal/changePassword',
 			name: 'ChangePassword',
 			component: () => import('@/views/personal/ChangePassword.vue'),
 			meta: {
@@ -246,7 +246,7 @@ const router = createRouter({
 			},
 		},
 		{
-			path: '/changeEmail',
+			path: '/personal/changeEmail',
 			name: 'ChangeEmail',
 			component: () => import('@/views/personal/ChangeEmail.vue'),
 			meta: {
@@ -258,7 +258,7 @@ const router = createRouter({
 			},
 		},
 		{
-			path: '/changePhone',
+			path: '/personal/changePhone',
 			name: 'ChangePhone',
 			component: () => import('@/views/personal/ChangePhone.vue'),
 			meta: {
@@ -270,7 +270,7 @@ const router = createRouter({
 			},
 		},
 		{
-			path: '/binding',
+			path: '/personal/binding',
 			name: 'Binding',
 			component: () => import('@/views/personal/Binding.vue'),
 			meta: {

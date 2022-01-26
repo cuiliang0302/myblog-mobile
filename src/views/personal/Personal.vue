@@ -28,23 +28,23 @@
       </div>
       <div class="history">
         <span><van-icon name="clock" size="0.8rem" color="#2ecc71"
-                        @click="toView('/myHistory')"/><p>浏览记录</p></span>
+                        @click="toView('/personal/myHistory')"/><p>浏览记录</p></span>
         <span><van-icon name="star" size="0.8rem" color="#f1c40f"
-                        @click="toView('/myCollect')"/><p>我的收藏</p></span>
+                        @click="toView('/personal/myCollect')"/><p>我的收藏</p></span>
         <span><van-icon name="chat" size="0.8rem" color="#9b59b6"
-                        @click="toView('/myComments')"/><p>我的评论</p></span>
+                        @click="toView('/personal/myComments')"/><p>我的评论</p></span>
         <span><van-icon name="todo-list" size="0.8rem" color="#e74c3c"
-                        @click="toView('/statistics')"/><p>数据统计</p></span>
+                        @click="toView('/personal/statistics')"/><p>数据统计</p></span>
       </div>
     </section>
     <div class="cell">
       <div class="cell-item">
         <van-cell-group title="账号与安全">
-          <van-cell title="我的信息" size="large" is-link @click="toView('/myInfo')"/>
-          <van-cell title="修改密码" size="large" is-link @click="toView('/changePassword')"/>
-          <van-cell title="更换邮箱" size="large" is-link @click="toView('/changeEmail')"/>
-          <van-cell title="更换手机" size="large" is-link @click="toView('/changePhone')"/>
-          <van-cell title="绑定第三方账号" size="large" is-link @click="toView('/binding')"/>
+          <van-cell title="我的信息" size="large" is-link @click="toView('/personal/myInfo')"/>
+          <van-cell title="修改密码" size="large" is-link @click="toView('/personal/changePassword')"/>
+          <van-cell title="更换邮箱" size="large" is-link @click="toView('/personal/changeEmail')"/>
+          <van-cell title="更换手机" size="large" is-link @click="toView('/personal/changePhone')"/>
+          <van-cell title="绑定第三方账号" size="large" is-link @click="toView('/personal/binding')"/>
           <van-cell title="博文更新邮件通知" size="large">
             <template #right-icon>
               <van-switch v-model="userInfo.is_flow" @change="changeFlow" size="0.533rem"/>
@@ -201,7 +201,7 @@ function setting(userId, userInfo, isLogin, loginPopupRef) {
         store.commit('setUserLocal', {})
         store.commit('setUserSession', {})
         Toast.success('成功退出，跳转至登录页')
-        router.push('/loginRegister')
+        router.replace('/loginRegister')
       })
     } else {
       Toast('未曾登录，何来退出？')

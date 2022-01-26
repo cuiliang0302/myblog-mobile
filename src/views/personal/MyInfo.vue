@@ -15,6 +15,14 @@
           :rules="[{ validator: checkUsername, message: '请输入其他用户名' }]"
       />
       <van-field
+          v-model="userInfoForm.source"
+          name="用户来源"
+          label="来源："
+          placeholder="用户来源"
+          label-width="1.867rem"
+          readonly
+      />
+      <van-field
           v-model="userInfoForm.sex_name"
           readonly
           clickable
@@ -111,8 +119,8 @@
           v-model="userInfoForm.signature"
           rows="1"
           autosize
-          name="个人简介"
-          label="个人简介："
+          name="个性签名"
+          label="个性签名："
           type="textarea"
           label-width="1.867rem"
           placeholder="请输入个人简介"
@@ -255,7 +263,7 @@ onMounted(() => {
 .photo {
   text-align: center;
   padding-top: 0.533rem;
-  @include background_color('background_color5');
+  @include background_color('background_color6');
 
   p {
     font-size: 0.373rem;
