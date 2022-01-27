@@ -44,7 +44,6 @@
           <van-cell title="修改密码" size="large" is-link @click="toView('/personal/changePassword')"/>
           <van-cell title="更换邮箱" size="large" is-link @click="toView('/personal/changeEmail')"/>
           <van-cell title="更换手机" size="large" is-link @click="toView('/personal/changePhone')"/>
-          <van-cell title="绑定第三方账号" size="large" is-link @click="toView('/personal/binding')"/>
           <van-cell title="博文更新邮件通知" size="large">
             <template #right-icon>
               <van-switch v-model="userInfo.is_flow" @change="changeFlow" size="0.533rem"/>

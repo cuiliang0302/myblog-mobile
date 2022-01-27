@@ -1,8 +1,15 @@
 <template>
   <div>
     <NavBar></NavBar>
-    <TabList :tabList="tabList" :listState="listState" @onClickTab="tabClick" @onLoad="onLoad"
-             @onRefresh="onRefresh" :load="load"></TabList>
+    <TabList :activeTab="Number(categoryID)"
+             :tabList="tabList"
+             :listState="listState"
+             @onClickTab="tabClick"
+             @onLoad="onLoad"
+             @onRefresh="onRefresh"
+             :load="load"
+    >
+    </TabList>
     <Tabbar :activeBar="1"></Tabbar>
   </div>
 </template>
@@ -14,7 +21,11 @@ import TabList from "@/components/common/TabList.vue";
 import {onMounted, reactive, ref} from "vue";
 import {getCategory, getArticle} from "@/api/blog";
 import {Toast} from "vant";
+import {onBeforeRouteUpdate, useRouter} from "vue-router";
 
+const router = useRouter()
+// 当前文章分类id
+const categoryID = ref()
 // 加载动画
 const load = ref(true)
 // Tab 标签分类名
@@ -32,25 +43,14 @@ const listState = reactive({
 });
 // 标签页点击切换
 const tabClick = (index) => {
-  listState.finished = false
-  listState.list = []
-  listState.category = index
-  listState.page = 1
-  load.value = true
-  getArticle(listState.page, listState.order, listState.category).then((response) => {
-    console.log(response)
-    listState.page++
-    listState.list = response.results
-    listState.count = response.count
-    listState.loading = false;
-    load.value = false
-  })
+  categoryID.value = index
+  router.push('/category/' + categoryID.value)
 }
 // 子组件的加载下一页事件
 const onLoad = () => {
   listState.page++
   if (listState.list.length < listState.count) {
-    getArticle(listState.page, listState.order, listState.category).then((response) => {
+    getArticle(listState.page, listState.order, categoryID.value).then((response) => {
       console.log(response)
       listState.list.push(...response.results)
       listState.count = response.count
@@ -63,7 +63,7 @@ const onLoad = () => {
 // 子组件的刷新事件
 const onRefresh = () => {
   listState.page = 1
-  getArticle(listState.page, listState.order, listState.category).then((response) => {
+  getArticle(listState.page, listState.order, categoryID.value).then((response) => {
     console.log(response)
     listState.list = response.results
     listState.count = response.count
@@ -79,19 +79,25 @@ async function categoryData() {
   tabList.value = category_data
 }
 
-// 首屏获取文章列表数据
-async function articleData(page = 1, order = '-created_time', category = 1) {
+// 获取指定分类下的文章列表数据
+async function articleData(page, order, category) {
   const article_data = await getArticle(page, order, category)
-  console.log(article_data)
   load.value = false
   listState.list = article_data.results
   listState.count = article_data.count
+  console.log(listState)
 }
 
 onMounted(() => {
+  categoryID.value = router.currentRoute.value.params.id
+  console.log("categoryID", categoryID.value)
   categoryData()
-  articleData()
+  articleData(1, '-created_time', categoryID.value)
 })
+onBeforeRouteUpdate((to) => {
+  window.scrollTo({top: 0})
+  articleData(1, '-created_time', categoryID.value)
+});
 </script>
 
 <style scoped>

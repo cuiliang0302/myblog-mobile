@@ -38,7 +38,7 @@ const showAction = () => {
 // 跳转标签页
 const toTag = () => {
   show.value = false
-  router.push('/tag')
+  router.push('/tag/1')
 }
 // 跳转归档页
 const toClassify = () => {

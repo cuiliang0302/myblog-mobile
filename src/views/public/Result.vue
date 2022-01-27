@@ -6,7 +6,7 @@
         <div class="title">{{ item.title }}</div>
         <div class="list-main">
         <span class="cover" v-show="searchForm.kind==='article'">
-            <van-image :src="item.cover" alt="" radius="0.4rem" lazy-load height="3.013rem" width="4.533rem">
+            <van-image :src="item.cover" alt="" radius="0.4rem" lazy-load height="3.013rem" width="100%">
               <template v-slot:loading>
                 <van-loading type="spinner" size="20"/>
               </template>
@@ -52,6 +52,7 @@ import {Image as VanImage} from "vant/lib/image";
 import {useRouter} from "vue-router";
 import Tabbar from '@/components/common/Tabbar.vue'
 import icon from '@/utils/icon'
+
 let {MyIcon} = icon()
 const router = useRouter()
 // 引入用户信息模块
@@ -213,7 +214,7 @@ onMounted(() => {
 
     .title {
       font-size: 0.533rem;
-      color: $color-text-primary;
+      @include font_color("font_color1");
     }
 
     .list-main {
@@ -233,7 +234,7 @@ onMounted(() => {
         font-size: 0.373rem;
         margin-left: 0.133rem;
         font-weight: normal;
-        color: $color-text-regular;
+        @include font_color("font_color2");
         display: -webkit-box;
         -webkit-line-clamp: 6;
         -webkit-box-orient: vertical;
@@ -242,6 +243,7 @@ onMounted(() => {
 
     .info {
       display: flex;
+      align-items: center;
       justify-content: space-between;
 
       span {
@@ -250,17 +252,30 @@ onMounted(() => {
         color: $color-text-secondary;
 
         .icon {
-          width: 0.32rem;
-          height: 0.32rem;
           margin-right: 0.08rem;
+          width: 0.347rem;
+          height: 0.347rem;
           vertical-align: -1px;
+          color: $color-text-secondary !important;
+          font-size: 0.32rem;
         }
       }
 
       span:last-child {
         color: white;
+
+        span {
+          margin: 0
+        }
       }
     }
+  }
+}
+
+.van-image {
+  .van-image__img {
+    width: 100%;
+    height: 100%;
   }
 }
 </style>

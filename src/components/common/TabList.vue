@@ -1,5 +1,5 @@
 <template>
-  <van-tabs :active="activeTab" color="#44afe0" @click-tab="onClickTab" animated swipeable>
+  <van-tabs class="article-list" :active="props.activeTab" color="#44afe0" @click-tab="onClickTab" animated swipeable>
     <van-tab v-for="(item,index) in tabList" :key="index" :title="item.name" :name="item.id">
       <van-loading v-show="load" size="0.8rem" text-color="#409EFF" vertical>
         玩命加载中...
@@ -48,14 +48,13 @@
 
 <script setup>
 import {Toast, Tab, Tabs, PullRefresh, Cell, Tag, Image as VanImage, Loading, List} from 'vant';
-import {reactive, ref} from 'vue';
+import {onMounted, reactive, ref} from 'vue';
 import {useRouter} from "vue-router";
 import timeFormat from "@/utils/timeFormat";
 import setColor from "@/utils/setColor";
 import icon from '@/utils/icon'
 
 let {MyIcon} = icon()
-
 const props = defineProps({
   // 加载中动画
   load: {
@@ -74,10 +73,15 @@ const props = defineProps({
     type: Object,
     required: true,
     default: {}
+  },
+  // 当前激活的标签ID
+  activeTab: {
+    type: Number,
+    required: false,
+    default: 1
   }
 })
 const emit = defineEmits(['onRefresh', 'onLoad', 'onClickTab'])
-const activeTab = ref('');
 const router = useRouter()
 // 时间显示几天前
 let {timeAgo} = timeFormat()
@@ -91,7 +95,6 @@ const refresh = reactive({
 // 标签页点击切换事件
 const onClickTab = ({name}) => {
   console.log("子组件点了哦")
-  console.log(name)
   emit('onClickTab', name)
 }
 // 数据刷新事件
@@ -164,7 +167,7 @@ const toDetail = (id) => {
         width: 0.347rem;
         height: 0.347rem;
         vertical-align: -1px;
-        color: $color-text-secondary!important;
+        color: $color-text-secondary !important;
         font-size: 0.32rem;
       }
     }

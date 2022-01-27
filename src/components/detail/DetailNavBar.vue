@@ -34,7 +34,7 @@ const onClickLeft = () => {
   if (props.componentName === 'note') {
     router.push('/note')
   } else {
-    router.push('/article')
+    router.push('/category/1')
   }
 }
 // 点击右侧更多按钮

@@ -20,8 +20,8 @@ function dark() {
 			// }
 			themeVars = {...lightStyle}
 		}
-		console.log(themeVars)
-		console.log(isDark)
+		// console.log(themeVars)
+		// console.log(isDark)
 		store.commit('setThemeStyle', themeVars)
 	}, 500)
 	const darkStyle = {

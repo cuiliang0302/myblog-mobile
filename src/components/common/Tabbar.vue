@@ -7,7 +7,7 @@
         <MyIcon v-else class="icon" type="icon-home"/>
       </template>
     </van-tabbar-item>
-    <van-tabbar-item to="/article">
+    <van-tabbar-item to="/category/1">
       <span>文章</span>
       <template #icon="props">
         <MyIcon v-if="props.active" class="icon" type="icon-article-solid"/>
@@ -35,6 +35,7 @@
 import {Tabbar, TabbarItem} from 'vant';
 import {ref} from 'vue';
 import icon from '@/utils/icon'
+
 let {MyIcon} = icon()
 const props = defineProps({
   // 当前激活的导航栏id
@@ -49,8 +50,8 @@ const active = ref(0)
 </script>
 
 <style lang="scss" scoped>
-.van-tabbar-item{
-  .icon{
+.van-tabbar-item {
+  .icon {
     font-size: 0.533rem;
   }
 }

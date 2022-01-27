@@ -18,11 +18,11 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/article',
-			name: 'Article',
-			component: () => import('@/views/article/Article.vue'),
+			path: '/category/:id',
+			name: 'Category',
+			component: () => import('@/views/article/Category.vue'),
 			meta: {
-				title: '文章列表',
+				title: '文章分类',
 				keepAlive: true,
 				transitionClass: 'gradually',//渐入
 				index: 1,
@@ -78,7 +78,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/tag',
+			path: '/tag/:id',
 			name: 'Tag',
 			component: () => import('@/views/public/Tag.vue'),
 			meta: {
@@ -164,7 +164,7 @@ const router = createRouter({
 		{
 			path: '/personal/myIndex',
 			name: 'Personal',
-			component: () => import('@/views/personal/Personal.vue'),
+			component: () => import('@/views/personal/MyIndex.vue'),
 			meta: {
 				title: '个人中心',
 				keepAlive: true,
@@ -266,18 +266,6 @@ const router = createRouter({
 				keepAlive: true,
 				transitionClass: 'back',//前进后退
 				index: 3,
-				isAuth: true
-			},
-		},
-		{
-			path: '/personal/binding',
-			name: 'Binding',
-			component: () => import('@/views/personal/Binding.vue'),
-			meta: {
-				title: '绑定第三方账号',
-				keepAlive: true,
-				transitionClass: 'back',//前进后退
-				index: 2,
 				isAuth: true
 			},
 		},
