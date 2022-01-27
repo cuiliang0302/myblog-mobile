@@ -44,7 +44,7 @@
           label="网站地址"
           placeholder="请输入完整URL地址"
           label-width="1.6rem"
-          :rules="[{ required: true, message: '请填写网站地址' }]"
+          :rules="[{ validator: checkWeb, message: '请输入正确的web地址' }]"
       />
       <van-field
           v-model="linkForm.describe"
@@ -91,6 +91,18 @@ const webInfo = reactive({
   describe: '',
   domain: ''
 })
+// 校验web地址
+const checkWeb = (val) =>
+    new Promise((resolve) => {
+      console.log(val)
+      const pattern = /[a-zA-z]+:\/\/[^\s]*/
+      console.log(pattern.test(val))
+      if(pattern.test(val)){
+        resolve(true)
+      }else {
+        resolve(false)
+      }
+    });
 // 上传logo完成事件
 const saveImg = (URL) => {
   linkForm.logo = URL

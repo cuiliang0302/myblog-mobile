@@ -114,6 +114,7 @@
           label="个人站点："
           placeholder="完整地址，如https://www.baidu.com/"
           label-width="1.867rem"
+          :rules="[{ validator: checkWeb, message: '请输入正确的web地址' }]"
       />
       <van-field
           v-model="userInfoForm.signature"
@@ -185,6 +186,18 @@ const checkUsername = (val) =>
         resolve(true)
       }
     })
+// 校验web地址
+const checkWeb = (val) =>
+    new Promise((resolve) => {
+      console.log(val)
+      const pattern = /[a-zA-z]+:\/\/[^\s]*/
+      console.log(pattern.test(val))
+      if(pattern.test(val)){
+        resolve(true)
+      }else {
+        resolve(false)
+      }
+    });
 // 性别选择框默认状态
 const showSex = ref(false)
 const columns = ['男', '女'];
