@@ -4,15 +4,6 @@
     <PersonalNavBar :title="'更换邮箱'"></PersonalNavBar>
     <van-form @submit="onSubmit">
       <van-field
-          v-model="emailForm.password"
-          type="password"
-          name="密码"
-          label="密码"
-          placeholder="当前密码"
-          label-width="1.867rem"
-          :rules="[{ required: true, message: '请填写密码' }]"
-      />
-      <van-field
           v-model="emailForm.newEmail"
           name="新邮箱号"
           label="新邮箱号"
@@ -23,7 +14,6 @@
       </van-field>
       <van-field
           v-model="emailForm.code"
-          type="password"
           name="验证码"
           label="验证码"
           placeholder="验证码"
@@ -56,7 +46,6 @@ import user from "@/utils/user";
 let {userName, userId} = user();
 // 更换邮箱表单
 const emailForm = reactive({
-  password: '',
   newEmail: '',
   code: '',
 });

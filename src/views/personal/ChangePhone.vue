@@ -4,15 +4,6 @@
     <PersonalNavBar :title="'更换手机'"></PersonalNavBar>
     <van-form @submit="onSubmit">
       <van-field
-          v-model="phoneForm.password"
-          type="password"
-          name="密码"
-          label="密码"
-          placeholder="密码"
-          label-width="1.867rem"
-          :rules="[{ required: true, message: '请填写密码' }]"
-      />
-      <van-field
           v-model="phoneForm.newPhone"
           name="新手机号"
           label="新手机号"
@@ -55,7 +46,6 @@ import user from "@/utils/user";
 let {userName, userId} = user();
 // 更换手机表单
 const phoneForm = reactive({
-  password: '',
   newPhone: '',
   code: '',
 });

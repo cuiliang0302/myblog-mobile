@@ -19,7 +19,7 @@
           label="新密码"
           placeholder="新密码"
           label-width="1.867rem"
-          :rules="[{ pattern, message: '请填写密码' }]"
+          :rules="[{ pattern, message: '请填写新密码' }]"
       />
       <van-field
           v-model="checkPasswordForm.password2"
@@ -80,7 +80,7 @@ const onSubmit = () => {
     console.log(response)
     Toast.success('修改成功，即将跳转登录页');
     setTimeout(function () {
-      router.push('/loginRegister')
+      router.replace('/loginRegister')
     }, 1500)
   }).catch(response => {
     //发生错误时执行的代码
@@ -98,8 +98,7 @@ async function getUserinfo(userid) {
       message: '您的账号直接使用'+userinfo_data.source+'登录即可，无需修改密码！',
       theme: 'round-button',
     }).then(() => {
-      console.log("点了")
-      router.go(-1)
+      router.push('/personal/myIndex')
     });
   }
 }
