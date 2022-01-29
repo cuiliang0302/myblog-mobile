@@ -41,11 +41,12 @@
 
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
-import {Form, Field, Button, Toast} from 'vant';
-import {reactive} from "vue";
-import {putChangePassword} from "@/api/account";
+import {Form, Field, Button, Toast, Dialog} from 'vant';
+import {onMounted, reactive, ref} from "vue";
+import {getUserinfoId, putChangePassword} from "@/api/account";
 import user from "@/utils/user";
 import {useRouter} from "vue-router";
+
 const router = useRouter()
 // 引入用户信息模块
 let {userId} = user();
@@ -73,20 +74,38 @@ const checkPassword = (val) =>
     })
 
 // 表单提交
-async function onSubmit() {
+const onSubmit = () => {
   passwordForm.newPassword = checkPasswordForm.password1
-  try {
-    let response = await putChangePassword(userId.value, passwordForm)
+  putChangePassword(userId.value, passwordForm).then((response) => {
     console.log(response)
     Toast.success('修改成功，即将跳转登录页');
     setTimeout(function () {
       router.push('/loginRegister')
     }, 1500)
-  } catch (error) {
-    console.log(error)
-    Toast.fail(error.msg);
+  }).catch(response => {
+    //发生错误时执行的代码
+    console.log(response)
+    Toast.fail(response.msg);
+  })
+}
+// 获取用户信息
+async function getUserinfo(userid) {
+  const userinfo_data = await getUserinfoId(userid)
+  console.log(userinfo_data.source)
+  if (userinfo_data.source !== '直接注册'){
+    Dialog.alert({
+      title: '修改密码提示',
+      message: '您的账号直接使用'+userinfo_data.source+'登录即可，无需修改密码！',
+      theme: 'round-button',
+    }).then(() => {
+      console.log("点了")
+      router.go(-1)
+    });
   }
 }
+onMounted(()=>{
+  getUserinfo(userId.value)
+})
 </script>
 
 <style scoped lang="scss">
