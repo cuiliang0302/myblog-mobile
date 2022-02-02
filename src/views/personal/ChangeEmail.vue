@@ -10,7 +10,7 @@
           placeholder="新邮箱号"
           label-width="1.867rem"
           center
-          :rules="[{ validator: checkContact, message: '请填写正确的新邮箱号' }]">
+          :rules="[{ validator: checkContact, message: '请填写新邮箱号' }]">
       </van-field>
       <van-field
           v-model="emailForm.code"
