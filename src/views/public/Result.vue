@@ -67,8 +67,11 @@ const searchForm = reactive({})
 const articleList = reactive({})
 // 点击查看文章详情
 const toDetail = (id) => {
-  console.log(id)
-  router.push({path: `/detail/${id}`, query: {component: 'article'}})
+  if(searchForm.kind==='article'){
+    router.push({path: `/detail/article/${id}`, query: {component: 'article'}})
+  }else {
+    router.push({path: `/detail/section/${id}`, query: {component: 'article'}})
+  }
 }
 
 // 获取搜索结果列表

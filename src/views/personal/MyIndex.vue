@@ -44,7 +44,7 @@
           <van-cell title="修改密码" size="large" is-link @click="toView('/personal/changePassword')"/>
           <van-cell title="更换邮箱" size="large" is-link @click="toView('/personal/changeEmail')"/>
           <van-cell title="更换手机" size="large" is-link @click="toView('/personal/changePhone')"/>
-          <van-cell title="文章发布邮件通知" size="large">
+          <van-cell title="订阅更新" size="large">
             <template #right-icon>
               <van-switch v-model="userInfo.is_flow" @change="changeFlow" size="0.533rem"/>
             </template>
@@ -133,6 +133,7 @@ function global() {
       userInfo[i] = userinfo_data[i]
     }
   }
+
   onMounted(() => {
     siteConfigData()
     if (isLogin.value) {
@@ -156,21 +157,30 @@ function setting(userId, userInfo, isLogin, loginPopupRef) {
   // 切换订阅
   const changeFlow = (value) => {
     if (isLogin.value) {
-      if (value) {
-        Toast('已开启文章订阅功能')
-        userInfo.is_flow = true
+      if (userInfo.email.length === 0) {
+        // console.log("得绑定邮箱啊")
+        Dialog.alert({
+          message: '您的账号未绑定邮箱，请先绑定邮箱后再进行设置！',
+        }).then(() => {
+          router.push('/personal/changeEmail')
+        });
       } else {
-        Toast('已关闭文章订阅功能')
-        userInfo.is_flow = false
+        if (value) {
+          Toast('已开启文章订阅功能')
+          userInfo.is_flow = true
+        } else {
+          Toast('已关闭文章订阅功能')
+          userInfo.is_flow = false
+        }
+        putUserinfoId(userId.value, userInfo).then((response) => {
+          console.log(response)
+        }).catch(response => {
+          //发生错误时执行的代码
+          console.log(response)
+        });
       }
-      putUserinfoId(userId.value, userInfo).then((response) => {
-        console.log(response)
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-      });
     } else {
-      console.log("也没登录呀")
+      // console.log("也没登录呀")
       userInfo.is_flow = false
       store.commit('setNextPath', router.currentRoute.value.fullPath)
       loginPopupRef.value.showPopup()

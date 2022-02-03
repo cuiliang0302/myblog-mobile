@@ -1,5 +1,5 @@
 <template>
-  <van-tabbar v-model="props.activeBar" placeholder safe-area-inset-bottom>
+  <van-tabbar v-model="activeIndex" placeholder safe-area-inset-bottom>
     <van-tabbar-item to="/">
       <span>首页</span>
       <template #icon="props">
@@ -33,7 +33,7 @@
 
 <script setup>
 import {Tabbar, TabbarItem} from 'vant';
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import icon from '@/utils/icon'
 
 let {MyIcon} = icon()
@@ -47,6 +47,10 @@ const props = defineProps({
 })
 
 const active = ref(0)
+const activeIndex = ref()
+onMounted(()=>{
+  activeIndex.value = props.activeBar
+})
 </script>
 
 <style lang="scss" scoped>
