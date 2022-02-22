@@ -198,13 +198,25 @@ let {
 } = fnShare(props, emit)
 // 调用点赞模块
 let {isLike, likeClick} = fnLike(props, emit)
-// 调用收藏模块
-let {collectionClick, loginPopupRef} = fnCollection(props, emit)
 // 调用评论模块
 let {commentClick} = fnComment()
 // 调用公共模块
 let {active} = fnPublic(isLike)
-
+const router = useRouter()
+// 调用收藏模块
+const loginPopupRef = ref()
+let {isLogin} = user();
+const collectionClick = () => {
+  console.log(props.is_collect)
+  if (isLogin.value === true) {
+    console.log("登录了")
+    emit('collectClick')
+  } else {
+    console.log("没登录，弹个窗先")
+    store.commit('setNextPath', router.currentRoute.value.fullPath)
+    loginPopupRef.value.showPopup()
+  }
+};
 // 公共模块
 function fnPublic(isLike) {
   // 当前选中的tabbar
@@ -356,29 +368,6 @@ function fnLike(props, emit) {
   return {
     isLike,
     likeClick,
-  };
-}
-
-// 收藏功能模块
-function fnCollection(props, emit) {
-  const router = useRouter()
-  // 提示登录组件对象
-  const loginPopupRef = ref()
-  let {isLogin} = user();
-  const collectionClick = () => {
-    console.log(props.is_collect)
-    if (isLogin.value === true) {
-      console.log("登录了")
-      emit('collectClick')
-    } else {
-      store.commit('setNextPath', router.currentRoute.value.fullPath)
-      loginPopupRef.value.showPopup()
-    }
-  };
-
-  return {
-    loginPopupRef,
-    collectionClick,
   };
 }
 
