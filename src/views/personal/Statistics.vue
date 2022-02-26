@@ -52,7 +52,7 @@
     </section>
     <section>
       <div class="title">
-        <h2>浏览趋势</h2>
+        <h2>最近七天浏览趋势</h2>
         <span></span>
       </div>
       <div class="chart">
@@ -130,10 +130,23 @@ const bgc = computed(() => {
 
 // 浏览趋势折线图
 async function trend() {
-  let chartData = await getEcharts(userId.value, 'trend')
-  console.log(chartData)
-  for (let i in chartData.xAxis) {
-    chartData.xAxis[i] = chartData.xAxis[i].slice(5)
+  const chartData = await getEcharts(userId.value, 'trend')
+  console.log("trend", chartData)
+  const date = []
+  const article_view = []
+  const article_collect = []
+  const article_comment = []
+  const section_view = []
+  const section_collect = []
+  const section_comment = []
+  for (let i in chartData) {
+    date.push(chartData[i].date.slice(5))
+    article_view.push(chartData[i].article_view)
+    article_collect.push(chartData[i].article_collect)
+    article_comment.push(chartData[i].article_comment)
+    section_view.push(chartData[i].section_view)
+    section_collect.push(chartData[i].section_collect)
+    section_comment.push(chartData[i].section_comment)
   }
   let myChart;
   if (isDark) {
@@ -166,7 +179,7 @@ async function trend() {
       {
         type: 'category',
         boundaryGap: false,
-        data: chartData.xAxis
+        data: date
       }
     ],
     yAxis: [
@@ -183,7 +196,7 @@ async function trend() {
         emphasis: {
           focus: 'series'
         },
-        data: chartData.article_view
+        data: article_view
       },
       {
         name: '收藏文章数',
@@ -193,7 +206,7 @@ async function trend() {
         emphasis: {
           focus: 'series'
         },
-        data: chartData.article_collect
+        data: article_collect
       },
       {
         name: '评论文章数',
@@ -203,7 +216,7 @@ async function trend() {
         emphasis: {
           focus: 'series'
         },
-        data: chartData.article_comment
+        data: article_comment
       },
       {
         name: '浏览笔记数',
@@ -213,7 +226,7 @@ async function trend() {
         emphasis: {
           focus: 'series'
         },
-        data: chartData.section_view
+        data: section_view
       },
       {
         name: '收藏笔记数',
@@ -223,7 +236,7 @@ async function trend() {
         emphasis: {
           focus: 'series'
         },
-        data: chartData.section_comment
+        data: section_comment
       },
       {
         name: '评论笔记数',
@@ -233,7 +246,7 @@ async function trend() {
         emphasis: {
           focus: 'series'
         },
-        data: chartData.section_collect
+        data: section_collect
       }
     ],
     backgroundColor: bgc.value
@@ -242,11 +255,31 @@ async function trend() {
   window.onresize = function () {
     myChart.resize();
   };
-};
+}
 
 // 浏览时间柱形图
 async function time() {
-  let chartData = await getEcharts(userId.value, 'time')
+  const chartData = await getEcharts(userId.value, 'time')
+  console.log("time", chartData)
+  const time = []
+  const article = []
+  const section = []
+  chartData.forEach(function (item, index) {
+    // console.log(item)
+    // console.log(index)
+    let article_count = 0
+    let section_count = 0
+    if (index % 2 === 0) {
+      article_count = chartData[index].article + chartData[index + 1].article
+      section_count = chartData[index].section + chartData[index + 1].section
+    } else {
+      article_count = chartData[index].article + chartData[index - 1].article
+      section_count = chartData[index].section + chartData[index - 1].section
+      time.push(item.time)
+    }
+    article.push(article_count)
+    section.push(section_count)
+  })
   let myChart;
   if (isDark) {
     myChart = echarts.init(document.getElementById("time"), 'dark');
@@ -259,7 +292,12 @@ async function time() {
     tooltip: {
       trigger: 'axis',
       axisPointer: {            // Use axis to trigger tooltip
-        type: 'shadow'        // 'shadow' as default; can also be 'line' or 'shadow'
+        type: 'shadow',
+        label: {
+          formatter: function (params) {
+            return params.value - 1 + ":00-" + params.value + ":59";
+          }
+        }
       }
     },
     legend: {
@@ -273,13 +311,7 @@ async function time() {
     },
     xAxis: {
       type: 'category',
-      data: ['00:00-01:59', '02:00-03:59', '04:00-05:59', '06:00-07:59', '08:00-09:59', '10:00-11:59', '12:00-13:59',
-        '14:00-15:59', '16:00-17:59', '18:00-19:59', '20:00-21:59', '22:00-23:59'],
-      axisLabel: {
-        formatter: function (value) {
-          return value.slice(6, 8);
-        }
-      }
+      data: time,
     },
     yAxis: {
       type: 'value'
@@ -292,7 +324,7 @@ async function time() {
         emphasis: {
           focus: 'series'
         },
-        data: chartData.article
+        data: article
       },
       {
         name: '笔记',
@@ -301,7 +333,7 @@ async function time() {
         emphasis: {
           focus: 'series'
         },
-        data: chartData.section
+        data: section
       }
     ],
     backgroundColor: bgc.value
@@ -310,11 +342,12 @@ async function time() {
   window.onresize = function () {
     myChart.resize();
   };
-};
+}
 
 // 浏览文章饼图
 async function article() {
   let chartData = await getEcharts(userId.value, 'article')
+  console.log("article", chartData)
   let myChart;
   if (isDark) {
     myChart = echarts.init(document.getElementById("article"), 'dark');
@@ -332,7 +365,7 @@ async function article() {
       {
         type: 'pie',
         radius: '50%',
-        data: chartData.data,
+        data: chartData,
         emphasis: {
           itemStyle: {
             shadowBlur: 10,
@@ -348,11 +381,21 @@ async function article() {
   window.onresize = function () {
     myChart.resize();
   };
-};
+}
 
 // 浏览笔记雷达图
 async function note() {
   let chartData = await getEcharts(userId.value, 'note')
+  const indicator = []
+  const data = []
+  for (let i in chartData) {
+    const item = {
+      name : chartData[i].name,
+      max : chartData[i].max
+    }
+    indicator.push(item)
+    data.push(chartData[i].data)
+  }
   let myChart;
   if (isDark) {
     myChart = echarts.init(document.getElementById("note"), 'dark');
@@ -371,13 +414,13 @@ async function note() {
     radar: {
       // shape: 'circle',
       radius: '60%',
-      indicator: chartData.indicator
+      indicator: indicator
     },
     series: [{
       type: 'radar',
       data: [
         {
-          value: chartData.data,
+          value: data,
           name: '笔记统计'
         }
       ]
@@ -388,7 +431,7 @@ async function note() {
   window.onresize = function () {
     myChart.resize();
   };
-};
+}
 
 // 获取数据概览数据
 async function statisticsData() {
@@ -404,7 +447,6 @@ onMounted(() => {
   time()
   article()
   note()
-  console.log(bgc.value)
 });
 </script>
 
