@@ -265,20 +265,15 @@ async function time() {
   const article = []
   const section = []
   chartData.forEach(function (item, index) {
-    // console.log(item)
-    // console.log(index)
     let article_count = 0
     let section_count = 0
     if (index % 2 === 0) {
+      time.push(item.time)
       article_count = chartData[index].article + chartData[index + 1].article
       section_count = chartData[index].section + chartData[index + 1].section
-    } else {
-      article_count = chartData[index].article + chartData[index - 1].article
-      section_count = chartData[index].section + chartData[index - 1].section
-      time.push(item.time)
+      article.push(article_count)
+      section.push(section_count)
     }
-    article.push(article_count)
-    section.push(section_count)
   })
   let myChart;
   if (isDark) {
@@ -295,7 +290,7 @@ async function time() {
         type: 'shadow',
         label: {
           formatter: function (params) {
-            return params.value - 1 + ":00-" + params.value + ":59";
+            return params.value + ":00-" + (parseInt(params.value) + 1) + ":59";
           }
         }
       }
@@ -390,8 +385,8 @@ async function note() {
   const data = []
   for (let i in chartData) {
     const item = {
-      name : chartData[i].name,
-      max : chartData[i].max
+      name: chartData[i].name,
+      max: chartData[i].max
     }
     indicator.push(item)
     data.push(chartData[i].data)
