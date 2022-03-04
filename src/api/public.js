@@ -10,11 +10,6 @@ export function getImgProxy(url) {
 	return import.meta.env.VITE_APP_BASE_URL + '/public/imgProxy/?url=' + url
 }
 
-// 获取echarts数据
-export function getEcharts(user, chart) {
-	return index.get('/public/echarts/?user=' + user + '&chart=' + chart)
-}
-
 // 获取省市代码
 export function getAreaData() {
 	return index.get('/public/areaData/')

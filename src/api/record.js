@@ -152,4 +152,9 @@ export function getUserSectionComment(userId) {
 export function getStatistics(userId) {
 	return index.get('/record/statistics/?user=' + userId)
 }
+// 查询指定用户echarts数据统计
+export function getUserEcharts(params) {
+	const url = '/record/userEcharts/'
+	return index.get(url,params)
+}
 

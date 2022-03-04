@@ -19,7 +19,7 @@ const state = {
 	// 保持登录用户信息(localStorage)
 	userLocal: {},
 	// 临时登录用户信息(sessionStorage)
-	userSession: {}
+	userSession: {},
 }
 export default state
 
