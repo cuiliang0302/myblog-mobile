@@ -124,7 +124,7 @@ import fontSize from "@/utils/fontSize";
 import {getSiteConfig} from "@/api/management";
 import store from "@/store/index";
 import {
-  getCatalogue,
+  getCatalogueList,
   getContext,
   getQRcode, getSectionDetail, putSectionDetail
 } from "@/api/blog";
@@ -462,7 +462,7 @@ function tabbarFn(editor, DetailID, detail) {
 
   // 获取笔记目录数据
   async function getCatalogueData() {
-    catalogList.value = await getCatalogue(detail.note_id)
+    catalogList.value = await getCatalogueList(detail.note_id)
     console.log(catalogList.value)
   }
 

@@ -37,7 +37,7 @@ import NavBar from "@/components/common/NavBar.vue";
 import Tabbar from "@/components/common/Tabbar.vue";
 import {Collapse, CollapseItem, Cell, CellGroup, Tab, Tabs, Loading, Empty} from 'vant';
 import {onMounted, ref} from "vue";
-import {getCatalogue, getNoteDetail} from "@/api/blog";
+import {getCatalogueList, getNoteDetail} from "@/api/blog";
 import {useRouter} from "vue-router";
 import {getSectionHistory} from "@/api/record";
 import user from "@/utils/user";
@@ -96,7 +96,7 @@ async function titleData(catalogueID) {
 
 // 获取笔记目录数据
 async function catalogueData(catalogueID) {
-  catalogList.value = await getCatalogue(catalogueID)
+  catalogList.value = await getCatalogueList(catalogueID)
   console.log(catalogList.value)
 }
 

@@ -70,8 +70,8 @@ export function putSectionDetail(id, params) {
 }
 
 // 获取笔记目录列表
-export function getCatalogue(id) {
-	return index.get('/blog/catalogue/' + id + '/')
+export function getCatalogueList(id) {
+	return index.get('/blog/catalogueList/' + id + '/')
 }
 
 // 获取笔记上下篇
