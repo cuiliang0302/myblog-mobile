@@ -13,7 +13,7 @@
               <span v-if="isLike(item.id)===true" class="comment-like">
                 <MyIcon class="icon" type="icon-like-solid" @click="showShare = true"/>
               </span>
-              <span v-else @click="likeMessage(item.id)" class="comment-like">
+              <span v-else @click="likeMessage(item.id,item.like)" class="comment-like">
                 <MyIcon class="icon" type="icon-like" @click="showShare = true"/>
               </span>
               <p>{{ item.like }}</p>
@@ -87,6 +87,7 @@ import {reactive, ref, getCurrentInstance} from "vue";
 import timeFormat from "@/utils/timeFormat";
 import user from "@/utils/user";
 import icon from '@/utils/icon'
+
 let {MyIcon} = icon()
 const props = defineProps({
   // 评论回复列表
@@ -116,9 +117,13 @@ const isLike = (messageId) => {
   return false;
 }
 // 留言评论点赞
-const likeMessage = (messageId) => {
+const likeMessage = (messageId, likeMessage) => {
   likeList.value.push(messageId)
-  $bus.emit("likeMessage", messageId);
+  const value = {
+    'id': messageId,
+    'like': likeMessage + 1
+  }
+  $bus.emit("likeMessage", value);
 }
 // 判断评论留言能否删除
 const isDelete = (messageUser) => {
@@ -248,9 +253,11 @@ const blur = () => {
 
     .comment-content {
       margin-left: 1.067rem;
+
       :deep(img) {
         max-height: 120px;
       }
+
       p {
         font-size: 0.373rem;
       }

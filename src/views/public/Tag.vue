@@ -22,6 +22,7 @@ import {onMounted, reactive, ref} from "vue";
 import {getArticle, getTag} from "@/api/blog";
 import {Toast} from "vant";
 import {onBeforeRouteUpdate, useRouter} from "vue-router";
+
 const router = useRouter()
 // 当前标签id
 const tagID = ref()
@@ -44,11 +45,20 @@ const listState = reactive({
 const tabClick = (index) => {
   tagID.value = index
   router.push('/tag/' + tagID.value)
+  listState.page = 1
+  listState.tag = tagID.value
 }
 // 子组件的加载下一页事件
 const onLoad = () => {
   if (listState.list.length < listState.count) {
-    getArticle(listState.page, listState.order, NaN, listState.tag).then((response) => {
+    listState.page++
+    const params = {
+      page: listState.page,
+      size: 5,
+      ordering: listState.order,
+      tag: listState.tag
+    }
+    getArticle(params).then((response) => {
       console.log(response)
       listState.list.push(...response.results)
       listState.count = response.count
@@ -61,7 +71,13 @@ const onLoad = () => {
 // 子组件的刷新事件
 const onRefresh = () => {
   listState.page = 1
-  getArticle(listState.page, listState.order, NaN, listState.tag).then((response) => {
+  const params = {
+    page: listState.page,
+    size: 5,
+    ordering: listState.order,
+    tag: listState.tag
+  }
+  getArticle(params).then((response) => {
     console.log(response)
     listState.list = response.results
     listState.count = response.count
@@ -77,7 +93,13 @@ async function tagData() {
 
 // 首屏获取文章列表数据
 async function articleData(page, order, tag) {
-  const article_data = await getArticle(page, order, NaN, tag)
+  const params = {
+    page: page,
+    size: 5,
+    ordering: order,
+    tag: tag
+  }
+  const article_data = await getArticle(params)
   console.log(article_data)
   load.value = false
   listState.list = article_data.results
@@ -88,11 +110,11 @@ onMounted(() => {
   tagID.value = router.currentRoute.value.params.id
   console.log("tagID", tagID.value)
   tagData()
-  articleData(1,'-created_time',1)
+  articleData(1, '-created_time', 1)
 })
 onBeforeRouteUpdate((to) => {
   window.scrollTo({top: 0})
-  articleData(1,'-created_time',tagID.value)
+  articleData(1, '-created_time', tagID.value)
 });
 </script>
 

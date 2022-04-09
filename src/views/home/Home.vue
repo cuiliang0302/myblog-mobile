@@ -2,8 +2,6 @@
   <div v-title="title">
     <NavBar></NavBar>
     <Swipe :carouselList="carouselList"></Swipe>
-    <!--    <TabList :tabList="tabList" :listState="listState" @click="tabClick" @onLoad="onLoad"-->
-    <!--             @onRefresh="onRefresh" :load="load"></TabList>-->
     <TabList :tabList="tabList" :listState="listState" @onClickTab="onClickTab" @onLoad="onLoad"
              @onRefresh="onRefresh" :load="load"></TabList>
     <Tabbar :activeBar="0"></Tabbar>
@@ -66,7 +64,12 @@ const onClickTab = (index) => {
   listState.order = types[index]
   listState.page = 1
   load.value = true
-  getArticle(listState.page, listState.order).then((response) => {
+  const params = {
+    page: listState.page,
+    size: 5,
+    ordering: listState.order,
+  }
+  getArticle(params).then((response) => {
     console.log(response)
     listState.page++
     listState.list = response.results
@@ -79,7 +82,12 @@ const onClickTab = (index) => {
 const onLoad = () => {
   listState.page++
   if (listState.list.length < listState.count) {
-    getArticle(listState.page, listState.order).then((response) => {
+    const params = {
+      page: listState.page,
+      size: 5,
+      ordering: listState.order,
+    }
+    getArticle(params).then((response) => {
       console.log(response)
       listState.list.push(...response.results)
       listState.count = response.count
@@ -91,8 +99,14 @@ const onLoad = () => {
 }
 // 子组件的刷新事件
 const onRefresh = () => {
-  getArticle(listState.page, listState.order).then((response) => {
-    console.log(response)
+  const params = {
+    page: 1,
+    size: 5,
+    ordering: listState.order,
+  }
+  getArticle(params).then((response) => {
+    console.log(listState)
+    listState.page = 1
     listState.list = response.results
     listState.count = response.count
     listState.refreshing = false;
@@ -107,7 +121,12 @@ async function carouselData() {
 
 // 获取文章列表数据
 async function articleData(page = 1, order = '-created_time') {
-  const article_data = await getArticle(page, order)
+  const params = {
+    page: page,
+    size: 5,
+    ordering: order,
+  }
+  const article_data = await getArticle(params)
   load.value = false
   console.log(article_data)
   listState.list = article_data.results

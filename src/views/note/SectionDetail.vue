@@ -132,7 +132,7 @@ import {getImgProxy} from "@/api/public";
 import {
   getSectionComment,
   postSectionComment,
-  putSectionComment,
+  patchSectionComment,
   deleteSectionComment,
   postReplySectionComment, getSectionHistory, postSectionHistory, putSectionHistory
 } from "@/api/record";
@@ -366,8 +366,9 @@ function comment(DetailID, router,loginPopupRef) {
     }
   }
   // 评论点赞事件
-  if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", messageId => {
-    putSectionComment(messageId).then((response) => {
+  if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", value => {
+    const params = {'like': value.like}
+    patchSectionComment(value.id,params).then((response) => {
       console.log(response)
       Toast.success('点赞成功！');
       sectionCommentData(DetailID.value)

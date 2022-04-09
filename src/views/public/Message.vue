@@ -34,7 +34,7 @@ import LoginPopup from "@/components/common/LoginPopup.vue";
 import {
   getLeaveMessage,
   postLeaveMessage,
-  putLeaveMessage,
+  patchLeaveMessage,
   deleteLeaveMessage,
   postReplyLeaveMessage
 } from "@/api/record";
@@ -85,9 +85,9 @@ const clickSend = () => {
   }
 }
 // 留言点赞事件
-if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", messageId => {
-  console.log(messageId)
-  putLeaveMessage(messageId).then((response) => {
+if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", value => {
+  const params = {'like': value.like}
+  patchLeaveMessage(value.id, params).then((response) => {
     console.log(response)
     Toast.success('点赞成功！');
     leaveMessageData()

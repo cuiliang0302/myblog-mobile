@@ -119,7 +119,7 @@ import {
   getArticleComment, getArticleHistory,
   postArticleComment, postArticleHistory,
   postReplyArticleComment,
-  putArticleComment, putArticleHistory
+  patchArticleComment, putArticleHistory
 } from "@/api/record";
 import store from "@/store";
 import fontSize from "@/utils/fontSize";
@@ -351,8 +351,9 @@ function comment(DetailID, router,loginPopupRef) {
     }
   }
   // 评论点赞事件
-  if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", messageId => {
-    putArticleComment(messageId).then((response) => {
+  if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", value => {
+    const params = {'like': value.like}
+    patchArticleComment(value.id, params).then((response) => {
       console.log(response)
       Toast.success('点赞成功！');
       articleCommentData(DetailID.value)

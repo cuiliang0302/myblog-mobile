@@ -78,7 +78,7 @@ const props = defineProps({
   activeTab: {
     type: Number,
     required: false,
-    default: 1
+    default: 0
   }
 })
 const emit = defineEmits(['onRefresh', 'onLoad', 'onClickTab'])

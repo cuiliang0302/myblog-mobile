@@ -83,14 +83,25 @@ async function searchData(key, kind, order) {
   let article_data
   if (isLogin.value) {
     try {
-      article_data = await getSearch(key, kind, order, userId.value)
+      const params = {
+        key:key,
+        kind:kind,
+        order:order,
+        user_id:userId.value
+      }
+      article_data = await getSearch(params)
     } catch (error) {
       console.log(error)
       Toast.fail(error.msg)
     }
   } else {
     try {
-      article_data = await getSearch(key, kind, order, NaN)
+      const params = {
+        key:key,
+        kind:kind,
+        order:order,
+      }
+      article_data = await getSearch(params)
     } catch (error) {
       console.log(error)
       Toast.fail(error.msg)

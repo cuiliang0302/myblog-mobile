@@ -1,15 +1,9 @@
 import index from './index'
 
 // 获取文章列表
-export function getArticle(page = 1, order = '-created_time', category, tag) {
-	if (category) {
-		return index.get('/blog/article/' + '?size=5&page=' + page + '&ordering=' + order + '&category=' + category)
-	}
-	if (tag) {
-		return index.get('/blog/article/' + '?size=5&page=' + page + '&ordering=' + order + '&category=&tags=' + tag)
-	} else {
-		return index.get('/blog/article/' + '?size=5&page=' + page + '&ordering=' + order)
-	}
+export function getArticle(params) {
+	const url = '/blog/article/'
+	return index.get(url,params)
 }
 
 // 获取文章分类列表

@@ -48,9 +48,17 @@ const tabClick = (index) => {
 }
 // 子组件的加载下一页事件
 const onLoad = () => {
+  console.log("加载下一页了啊")
   listState.page++
   if (listState.list.length < listState.count) {
-    getArticle(listState.page, listState.order, categoryID.value).then((response) => {
+    const params = {
+      page: listState.page,
+      size: 5,
+      ordering: listState.order,
+      category: categoryID.value
+    }
+    console.log(params)
+    getArticle(params).then((response) => {
       console.log(response)
       listState.list.push(...response.results)
       listState.count = response.count
@@ -63,7 +71,13 @@ const onLoad = () => {
 // 子组件的刷新事件
 const onRefresh = () => {
   listState.page = 1
-  getArticle(listState.page, listState.order, categoryID.value).then((response) => {
+  const params = {
+    page: listState.page,
+    size: 5,
+    ordering: listState.order,
+    category: categoryID.value
+  }
+  getArticle(params).then((response) => {
     console.log(response)
     listState.list = response.results
     listState.count = response.count
@@ -81,7 +95,13 @@ async function categoryData() {
 
 // 获取指定分类下的文章列表数据
 async function articleData(page, order, category) {
-  const article_data = await getArticle(page, order, category)
+  const params = {
+    page: page,
+    size: 50,
+    ordering: order,
+    category:category,
+  }
+  const article_data = await getArticle(params)
   load.value = false
   listState.list = article_data.results
   listState.count = article_data.count

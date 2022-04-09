@@ -1,54 +1,59 @@
 import axios from 'axios'
 import {Toast} from "vant";
+import store from "@/store/index";
 
 export function request(config) {
-	// 创建axios的实例
-	const instance = axios.create({
-		baseURL: import.meta.env.VITE_APP_BASE_URL,
-		timeout: 20000
-	})
-	// 请求拦截器配置
-	instance.interceptors.request.use(config => {
-			// config.headers.Authorization = window.sessionStorage.getItem('token')
-			return config
-		}, error => {
-			console.log(error)
-			return Promise.error(error)
-		}
-	)
-	// 响应拦截器配置
-	instance.interceptors.response.use(response => {
-		return response.data
-	}, error => {
-		console.log(error)
-		if (error.response) {
-			switch (error.response.status) {
-				case 400:
-					return Promise.reject(error.response.data)
-				case 401:
-					console.log("无权访问")
-					Toast.fail('无权访问此接口')
-					break
-				case 403:
-					break
-				case 404:
-					console.log("404啦")
-					Toast.fail('接口请求地址错误')
-					break
-				case 500:
-					console.log("500啦")
-					Toast.fail('接口请求处理异常')
-					break
-				default:
-					console.log(error.response)
-			}
-		} else {
-			Toast.fail('请求超时，请稍候重试或联系管理员！')
-		}
-		return Promise.reject(error)
-	})
-	// 发送真正的网络请求
-	return instance(config);
+    const token = store.state.userLocal.token || store.state.userSession.token
+    // 创建axios的实例
+    const instance = axios.create({
+        baseURL: import.meta.env.VITE_APP_BASE_URL,
+        timeout: 50000
+    })
+    // 请求拦截器配置
+    instance.interceptors.request.use(config => {
+            if (token) {
+                config.headers.Authorization = 'Bearer ' + token
+            }
+            return config
+        }, error => {
+            console.log(error)
+            return Promise.error(error)
+        }
+    )
+    // 响应拦截器配置
+    instance.interceptors.response.use(response => {
+        return response.data
+    }, error => {
+        console.log(error)
+        if (error.response) {
+            switch (error.response.status) {
+                case 400:
+                    return Promise.reject(error.response.data)
+                case 401:
+                    console.log("无权访问")
+                    Toast.fail('对不起，您暂无权限访问此接口，请登录重试！')
+                    break
+                case 403:
+                    Toast.fail('对不起，您的身份信息已过期，请重新登录！')
+                    window.location.href = "https://m.cuiliangblog.cn/loginRegister?component=Login";
+                    break
+                case 404:
+                    console.log("404啦")
+                    break
+                case 500:
+                    console.log("500啦")
+                    Toast.fail('后端接口异常，请稍候重试！')
+                    break
+                default:
+                    return Promise.reject(error)
+            }
+        } else {
+            Toast.fail('请求超时，请稍候重试或联系管理员！')
+        }
+        return Promise.reject(error)
+    })
+    // 发送真正的网络请求
+    return instance(config);
 }
 
 export default request

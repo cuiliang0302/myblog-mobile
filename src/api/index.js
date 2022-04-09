@@ -34,6 +34,14 @@ const index = {
 		if (params) config.data = params
 		return request(config)
 	},
+	patch(url, params) {
+		const config = {
+			method: 'patch',
+			url: url
+		}
+		if (params) config.data = params
+		return request(config)
+	},
 	delete(url, params) {
 		const config = {
 			method: 'delete',

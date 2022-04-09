@@ -11,14 +11,10 @@ export function getSearchHistory(user_id) {
 }
 
 // 搜索文章
-export function getSearch(key, kind, order, user_id) {
-	if (user_id) {
-		return index.get('/record/search/?key=' + key + '&kind=' + kind + '&order=' + order + '&user_id=' + user_id)
-	} else {
-		return index.get('/record/search/?key=' + key + '&kind=' + kind + '&order=' + order)
-	}
+export function getSearch(params) {
+	const url = '/record/search/'
+	return index.get(url, params)
 }
-
 // 获取留言数据
 export function getLeaveMessage() {
 	return index.get('/record/leaveMessage/')
@@ -30,9 +26,9 @@ export function postLeaveMessage(params) {
 }
 
 // 点赞留言
-export function putLeaveMessage(messageId) {
-	const url = '/record/leaveMessage/' + messageId + '/'
-	return index.put(url, NaN)
+export function patchLeaveMessage(id, params) {
+	const url = '/record/leaveMessage/' + id + '/'
+	return index.patch(url, params)
 }
 
 // 删除留言
@@ -61,9 +57,9 @@ export function deleteArticleComment(messageId) {
 }
 
 // 点赞文章评论
-export function putArticleComment(messageId) {
-	const url = '/record/articleComment/' + messageId + '/'
-	return index.put(url, NaN)
+export function patchArticleComment(id, params) {
+	const url = '/record/articleComment/' + id + '/'
+	return index.patch(url, params)
 }
 
 // 回复文章评论
@@ -87,10 +83,14 @@ export function deleteSectionComment(messageId) {
 }
 
 // 点赞笔记评论
-export function putSectionComment(messageId) {
-	const url = '/record/sectionComment/' + messageId + '/'
-	return index.put(url, NaN)
+export function patchSectionComment(id, params) {
+	const url = '/record/sectionComment/' + id + '/'
+	return index.patch(url, params)
 }
+// export function putSectionComment(messageId) {
+// 	const url = '/record/sectionComment/' + messageId + '/'
+// 	return index.put(url, NaN)
+// }
 
 // 回复笔记评论
 export function postReplySectionComment(params) {
