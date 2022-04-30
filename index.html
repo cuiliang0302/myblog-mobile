@@ -138,14 +138,15 @@
 	}
 </script>
 <script>
-	const now = new Date()
-	if (now.getHours() >= 21 || now.getHours() <= 6) {
-		console.log("这是夜间模式")
-		document.bgColor = '#202023';
-	} else {
-		console.log("这是白天模式")
-		document.bgColor = '#ffffff';
-	}
+    const is_dark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    console.log(is_dark)
+    if (is_dark) {
+        console.log("这是夜间模式")
+        document.bgColor = '#202023';
+    } else {
+        console.log("这是白天模式")
+        document.bgColor = '#ffffff';
+    }
 </script>
 </body>
 </html>
