@@ -51,7 +51,7 @@ defineExpose({
 
 section {
   width: 250px;
-  height: 270px;
+  height: 280px;
   text-align: center;
   position: relative;
 

@@ -12,7 +12,7 @@
               </template>
             </van-image>
         </span>
-          <span class="abstract" v-show="searchForm.kind==='article'">{{ item.abstract }}</span>
+          <span class="abstract">{{ item.abstract }}</span>
         </div>
         <div class="info">
           <span>
@@ -67,9 +67,9 @@ const searchForm = reactive({})
 const articleList = reactive({})
 // 点击查看文章详情
 const toDetail = (id) => {
-  if(searchForm.kind==='article'){
+  if (searchForm.kind === 'article') {
     router.push({path: `/detail/article/${id}`, query: {component: 'article'}})
-  }else {
+  } else {
     router.push({path: `/detail/section/${id}`, query: {component: 'article'}})
   }
 }
@@ -84,12 +84,13 @@ async function searchData(key, kind, order) {
   if (isLogin.value) {
     try {
       const params = {
-        key:key,
-        kind:kind,
-        order:order,
-        user_id:userId.value
+        key: key,
+        kind: kind,
+        order: order,
+        user_id: userId.value
       }
       article_data = await getSearch(params)
+      console.log(article_data)
     } catch (error) {
       console.log(error)
       Toast.fail(error.msg)
@@ -97,9 +98,9 @@ async function searchData(key, kind, order) {
   } else {
     try {
       const params = {
-        key:key,
-        kind:kind,
-        order:order,
+        key: key,
+        kind: kind,
+        order: order,
       }
       article_data = await getSearch(params)
     } catch (error) {
@@ -110,6 +111,11 @@ async function searchData(key, kind, order) {
   console.log(article_data)
   for (let i in article_data) {
     articleList[i] = article_data[i]
+    articleList[i].abstract = article_data[i].body.replace('>', "")
+        .replace('[TOC]', "")
+        .replace(/#/g, " ") // 过滤标题#
+        .replace(/\!\[[\s\S]*?\]\([\s\S]*?\)/, "") // 过滤图片
+        .slice(0, 500)
   }
 }
 

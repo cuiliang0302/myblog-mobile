@@ -91,6 +91,13 @@ onMounted(() => {
 .main{
   .verify-btn{
     width: 5.6rem;
+    .van-overlay{
+      z-index: 2001;
+      width: 105vw;
+      height: 105vh;
+      top: -110px;
+      left: -45px;
+    }
   }
 }
 .verify {
