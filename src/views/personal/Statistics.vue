@@ -56,7 +56,7 @@
         <span></span>
       </div>
       <div class="chart">
-        <div id="trend" :style="{ width: '350px', height: '300px' }"></div>
+        <div id="trend" :style="{ height: '300px' }"></div>
       </div>
     </section>
     <section>
@@ -65,7 +65,7 @@
         <span></span>
       </div>
       <div class="chart">
-        <div id="time" :style="{ width: '350px', height: '300px' }"></div>
+        <div id="time" :style="{ height: '300px' }"></div>
       </div>
     </section>
     <section>
@@ -74,7 +74,7 @@
         <span></span>
       </div>
       <div class="chart">
-        <div id="article" :style="{ width: '350px', height: '350px' }"></div>
+        <div id="article" :style="{ height: '350px' }"></div>
       </div>
     </section>
     <section>
@@ -83,7 +83,7 @@
         <span></span>
       </div>
       <div class="chart">
-        <div id="note" :style="{ width: '350px', height: '360px' }"></div>
+        <div id="note" :style="{ height: '360px' }"></div>
       </div>
     </section>
   </div>
@@ -149,7 +149,7 @@ const setColor = () => {
 
 // 浏览趋势折线图
 async function trend() {
-  const query = {chart: 'trend',user:userId.value}
+  const query = {chart: 'trend', user: userId.value}
   const chartData = await getUserEcharts(query)
   console.log("trend", chartData)
   const date = []
@@ -279,7 +279,7 @@ async function trend() {
 
 // 浏览时间柱形图
 async function time() {
-  const query = {chart: 'time',user:userId.value}
+  const query = {chart: 'time', user: userId.value}
   const chartData = await getUserEcharts(query)
   console.log("time", chartData)
   const time = []
@@ -362,7 +362,7 @@ async function time() {
 
 // 浏览文章饼图
 async function article() {
-  const query = {chart: 'article',user:userId.value}
+  const query = {chart: 'article', user: userId.value}
   const chartData = await getUserEcharts(query)
   console.log("article", chartData)
   let myChart;
@@ -381,6 +381,7 @@ async function article() {
     series: [
       {
         type: 'pie',
+        top: '10%',
         radius: '50%',
         data: chartData,
         emphasis: {
@@ -402,7 +403,7 @@ async function article() {
 
 // 浏览笔记雷达图
 async function note() {
-  const query = {chart: 'note',user:userId.value}
+  const query = {chart: 'note', user: userId.value}
   const chartData = await getUserEcharts(query)
   const indicator = []
   const data = []
