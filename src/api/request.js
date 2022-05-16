@@ -32,9 +32,14 @@ export function request(config) {
                 case 401:
                     console.log("无权访问")
                     Toast.fail('对不起，您暂无权限访问此接口，请登录重试！')
+                    localStorage.clear()
+                    sessionStorage.clear()
+                    window.location.href = "https://m.cuiliangblog.cn/loginRegister?component=Login";
                     break
                 case 403:
                     Toast.fail('对不起，您的身份信息已过期，请重新登录！')
+                    localStorage.clear()
+                    sessionStorage.clear()
                     window.location.href = "https://m.cuiliangblog.cn/loginRegister?component=Login";
                     break
                 case 404:

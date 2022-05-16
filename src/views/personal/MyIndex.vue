@@ -207,8 +207,8 @@ function setting(userId, userInfo, isLogin, loginPopupRef) {
         confirmButtonText: '确认',
         cancelButtonText: '再想想',
       }).then(() => {
-        store.commit('setUserLocal', {})
-        store.commit('setUserSession', {})
+        localStorage.clear()
+        sessionStorage.clear()
         Toast.success('成功退出，跳转至登录页')
         router.replace('/loginRegister')
       })
