@@ -58,9 +58,9 @@ export function getSectionDetail(id) {
 }
 
 // 修改笔记详情(点赞)
-export function putSectionDetail(id, params) {
+export function patchSectionDetail(id, params) {
 	const url = '/blog/section/' + id + '/'
-	return index.put(url, params)
+	return index.patch(url, params)
 }
 
 // 获取笔记目录列表

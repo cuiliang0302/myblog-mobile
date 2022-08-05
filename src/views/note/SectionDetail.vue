@@ -126,7 +126,7 @@ import store from "@/store/index";
 import {
   getCatalogueList,
   getContext,
-  getQRcode, getSectionDetail, putSectionDetail
+  getQRcode, getSectionDetail, patchSectionDetail
 } from "@/api/blog";
 import {getImgProxy} from "@/api/public";
 import {
@@ -526,7 +526,7 @@ function tabbarFn(editor, DetailID, detail) {
   // 点赞笔记
   const likeClick = () => {
     detail.like = detail.like + 1
-    putSectionDetail(DetailID.value, detail).then((response) => {
+    patchSectionDetail(DetailID.value, detail).then((response) => {
       console.log(response)
       Toast.success('点赞成功！');
       getSectionDetail(DetailID.value)
