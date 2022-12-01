@@ -7,7 +7,9 @@ body {
   margin: 0 !important;
   padding: 0 !important;
   box-sizing: border-box;
-  @include background_color('background_color1')
+  //@include background_color('background_color1')
+  filter:progid:DXImageTransform.Microsoft.BasicImage(graysale=1);
+  -webkit-filter: grayscale(100%);
 }
 
 // markdown字体设置样式适配
