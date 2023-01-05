@@ -78,6 +78,10 @@ const toLink = (url) => {
         line-height: 15px;
         margin-bottom: 0;
         @include font_color('font_color2');
+        overflow: hidden;
+        -webkit-line-clamp: 2;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
       }
     }
   }
