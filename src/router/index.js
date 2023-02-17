@@ -10,7 +10,7 @@ const router = createRouter({
 			name: 'Home',
 			component: () => import('@/views/home/Home.vue'),
 			meta: {
-				title: 'blog',
+				title: '崔亮的博客',
 				keepAlive: true,
 				transitionClass: 'gradually',//渐入
 				index: 1,
