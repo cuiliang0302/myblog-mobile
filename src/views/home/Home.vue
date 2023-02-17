@@ -19,7 +19,7 @@ import {onMounted, reactive, ref} from "vue";
 import {Toast} from "vant";
 
 // 首页标题
-const title = ref()
+const title = ref('崔亮的博客')
 // 加载动画
 const load = ref(true)
 // 轮播图数据
