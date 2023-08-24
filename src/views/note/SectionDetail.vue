@@ -126,7 +126,7 @@ import store from "@/store/index";
 import {
   getCatalogueList,
   getContext,
-  getQRcode, getSectionDetail, patchSectionDetail
+  getQRcode, getSectionDetail, postLike
 } from "@/api/blog";
 import {getImgProxy} from "@/api/public";
 import {
@@ -525,11 +525,11 @@ function tabbarFn(editor, DetailID, detail) {
   }
   // 点赞笔记
   const likeClick = () => {
-    detail.like = detail.like + 1
-    patchSectionDetail(DetailID.value, detail).then((response) => {
+    const params = {id: DetailID.value, 'kind': 'section'}
+    postLike(params).then((response) => {
       console.log(response)
-      Toast.success('点赞成功！');
-      getSectionDetail(DetailID.value)
+      Toast.success('笔记点赞成功！');
+      detail.like = detail.like + 1
     }).catch(response => {
       //发生错误时执行的代码
       console.log(response)

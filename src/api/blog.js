@@ -21,12 +21,6 @@ export function getArticleDetail(id) {
 	return index.get('/blog/article/' + id + '/')
 }
 
-// 修改文章详情(点赞)
-export function putArticleDetail(id, params) {
-	const url = '/blog/article/' + id + '/'
-	return index.put(url, params)
-}
-
 // 获取猜你喜欢列表
 export function getGuessLike(id) {
 	return index.get('/blog/guessLike/' + id + '/')
@@ -57,10 +51,9 @@ export function getSectionDetail(id) {
 	return index.get('/blog/section/' + id + '/')
 }
 
-// 修改笔记详情(点赞)
-export function patchSectionDetail(id, params) {
-	const url = '/blog/section/' + id + '/'
-	return index.patch(url, params)
+// 文章或笔记点赞
+export function postLike(params) {
+	return index.post('/blog/like/', params)
 }
 
 // 获取笔记目录列表

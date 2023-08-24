@@ -93,7 +93,7 @@ import DetailNavBar from '@/components/detail/DetailNavBar.vue';
 import DetailTabbar from "@/components/detail/DetailTabbar.vue";
 import LoginPopup from "@/components/common/LoginPopup.vue";
 import {getSiteConfig} from "@/api/management";
-import {getArticleDetail, getGuessLike, getQRcode, putArticleDetail} from "@/api/blog";
+import {getArticleDetail, getGuessLike, getQRcode, postLike} from "@/api/blog";
 import {getCurrentInstance, nextTick, onMounted, reactive, ref, watch} from "vue";
 import timeFormat from "@/utils/timeFormat";
 import {ImagePreview, Toast} from "vant";
@@ -498,11 +498,11 @@ function tabbarFn(editor, DetailID) {
   }
   // 点赞文章
   const likeClick = () => {
-    detail.like = detail.like + 1
-    putArticleDetail(DetailID.value, detail).then((response) => {
+    const params = {id: DetailID.value, 'kind': 'article'}
+    postLike(params).then((response) => {
       console.log(response)
-      Toast.success('点赞成功！');
-      getArticleDetail(DetailID.value)
+      Toast.success('文章点赞成功！');
+      detail.like = detail.like + 1
     }).catch(response => {
       //发生错误时执行的代码
       console.log(response)
