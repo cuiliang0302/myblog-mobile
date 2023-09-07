@@ -103,7 +103,7 @@
         }
     </style>
     <script>
-			var _hmt = _hmt || [];
+        var _hmt = _hmt || [];
     </script>
 </head>
 <body>
@@ -120,19 +120,15 @@
 </div>
 <div id="app"></div>
 <script type="module" src="/src/main.js"></script>
-<script async defer
-        src="https://umami.cuiliangblog.cn/script.js"
-        data-website-id="9447ca81-4839-4b2d-a0e3-f795515a2f3b"
-        data-cache="true"
-        data-auto-track="true"
-></script>
+<script async src="https://umami.cuiliangblog.cn/script.js"
+        data-website-id="9447ca81-4839-4b2d-a0e3-f795515a2f3b"></script>
 <script>
-	if (document.body.clientWidth > 1200) {
-		console.log('PC端访问')
-		let url = window.location.href
-		console.log(url)
-		location.href = url.replace(/m.cuiliangblog.cn/, "www.cuiliangblog.cn")
-	}
+    if (document.body.clientWidth > 1200) {
+        console.log('PC端访问')
+        let url = window.location.href
+        console.log(url)
+        location.href = url.replace(/m.cuiliangblog.cn/, "www.cuiliangblog.cn")
+    }
 </script>
 <script>
     const is_dark = window.matchMedia('(prefers-color-scheme: dark)').matches
