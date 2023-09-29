@@ -18,7 +18,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/category/:id',
+			path: '/category/:id(\\d*)',
 			name: 'Category',
 			component: () => import('@/views/article/Category.vue'),
 			meta: {
@@ -30,7 +30,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/detail/article/:id',
+			path: '/detail/article/:id(\\d*)',
 			name: 'ArticleDetail',
 			component: () => import('@/views/article/ArticleDetail.vue'),
 			meta: {
@@ -54,7 +54,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/catalog/:id',
+			path: '/catalog/:id(\\d*)',
 			name: 'Catalog',
 			component: () => import('@/views/note/Catalog.vue'),
 			meta: {
@@ -66,7 +66,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/detail/section/:id',
+			path: '/detail/section/:id(\\d*)',
 			name: 'SectionDetail',
 			component: () => import('@/views/note/SectionDetail.vue'),
 			meta: {
@@ -78,7 +78,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/tag/:id',
+			path: '/tag/:id(\\d*)',
 			name: 'Tag',
 			component: () => import('@/views/public/Tag.vue'),
 			meta: {
