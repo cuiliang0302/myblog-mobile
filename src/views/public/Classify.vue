@@ -65,7 +65,7 @@ const formatMonth = (value) => {
 }
 // 跳转文章详情页
 const toDetail = (id) => {
-  router.push({path: `/detail/${id}`, query: {component: 'article'}})
+  router.push({path: `/detail/article/${id}`, query: {component: 'article'}})
 }
 onMounted(async () => {
   await classifyData()
