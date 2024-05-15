@@ -1,9 +1,7 @@
 FROM node:14.17.4 AS build
 COPY . /opt/vue
 WORKDIR /opt/vue
-RUN npm install
-RUN npm run build
-
+RUN npm config set registry https://mirrors.cloud.tencent.com/npm/ && npm install && npm run build
 
 FROM nginx:1.20.1
 COPY --from=build /opt/vue/dist /opt/vue/dist
