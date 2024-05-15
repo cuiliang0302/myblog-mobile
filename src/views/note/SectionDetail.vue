@@ -138,6 +138,7 @@ import {
 } from "@/api/record";
 import user from "@/utils/user";
 import icon from '@/utils/icon'
+
 let {MyIcon} = icon()
 // 引入用户信息模块
 let {userId, isLogin} = user();
@@ -171,7 +172,7 @@ let {showImg, setMDFont} = markdown()
 // 提示登录组件对象
 const loginPopupRef = ref(null)
 // 调用评论回复模块
-let {messageForm, commentsList, sectionCommentData,clickSend} = comment(DetailID, router,loginPopupRef)
+let {messageForm, commentsList, sectionCommentData, clickSend} = comment(DetailID, router, loginPopupRef)
 // 调用tabbar模块
 let {
   titleList,
@@ -321,7 +322,7 @@ function markdown() {
 }
 
 // 评论回复模块
-function comment(DetailID, router,loginPopupRef) {
+function comment(DetailID, router, loginPopupRef) {
   // 事件总线
   const internalInstance = getCurrentInstance();  //当前组件实例
   const $bus = internalInstance.appContext.config.globalProperties.$bus;
@@ -333,10 +334,12 @@ function comment(DetailID, router,loginPopupRef) {
     commentsList.value = await getSectionComment(DetailID.value)
     console.log(commentsList.value)
   }
+
   // 评论表单
   const messageForm = reactive({
     content: '',
     user: '',
+    url: '',
   })
   // 点击发表评论事件
   const clickSend = () => {
@@ -344,6 +347,7 @@ function comment(DetailID, router,loginPopupRef) {
       if (messageForm.content) {
         messageForm.user = userId.value
         messageForm['section_id'] = DetailID.value
+        messageForm['url'] = window.location.href
         console.log(messageForm)
         postSectionComment(messageForm).then((response) => {
           console.log(response)
@@ -368,7 +372,7 @@ function comment(DetailID, router,loginPopupRef) {
   // 评论点赞事件
   if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", value => {
     const params = {'like': value.like}
-    patchSectionComment(value.id,params).then((response) => {
+    patchSectionComment(value.id, params).then((response) => {
       console.log(response)
       Toast.success('点赞成功！');
       sectionCommentData(DetailID.value)
@@ -393,6 +397,7 @@ function comment(DetailID, router,loginPopupRef) {
   // 留言回复事件
   if (!$bus.all.get("replySend")) $bus.on("replySend", replyForm => {
     replyForm['section_id'] = DetailID.value
+    replyForm['url'] = window.location.href
     console.log(replyForm)
     postReplySectionComment(replyForm).then((response) => {
       console.log(response)
@@ -624,6 +629,7 @@ function tabbarFn(editor, DetailID, detail) {
             display: inline-block;
             border-radius: 0.133rem 0 0 0.133rem;
             position: relative;
+
             .icon {
               transform: translate(0%, -50%);
               position: absolute;
