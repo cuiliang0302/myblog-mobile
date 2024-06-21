@@ -260,6 +260,7 @@ const blur = () => {
 
       p {
         font-size: 0.373rem;
+        word-wrap:break-word;
       }
     }
 
