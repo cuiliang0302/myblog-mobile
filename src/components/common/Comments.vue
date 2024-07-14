@@ -5,7 +5,6 @@
       <div class="comment-info">
           <span>
             <van-image round lazy-load width="0.8rem" height="0.8rem" :src="item.photo"/>
-<!--            <p class="comment-user">{{ item.username }}</p>-->
             <p v-if="item.username==='admin'" class="comment-user">博主</p>
             <p v-else class="comment-user">{{ item.username }}</p>
             <span v-show="item.father_name" class="reply-text">回复</span>
@@ -255,6 +254,7 @@ const blur = () => {
 
     .comment-content {
       margin-left: 1.067rem;
+      line-height: 0.7rem;
 
       :deep(img) {
         max-height: 120px;
@@ -262,7 +262,7 @@ const blur = () => {
 
       p {
         font-size: 0.373rem;
-        word-wrap:break-word;
+        word-wrap: break-word;
       }
     }
 
