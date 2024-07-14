@@ -5,7 +5,9 @@
       <div class="comment-info">
           <span>
             <van-image round lazy-load width="0.8rem" height="0.8rem" :src="item.photo"/>
-            <p class="comment-user">{{ item.username }}</p>
+<!--            <p class="comment-user">{{ item.username }}</p>-->
+            <p v-if="item.username==='admin'" class="comment-user">博主</p>
+            <p v-else class="comment-user">{{ item.username }}</p>
             <span v-show="item.father_name" class="reply-text">回复</span>
             <p>{{ item.father_name }}</p>
           </span>
