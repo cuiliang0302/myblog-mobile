@@ -7,7 +7,8 @@ body {
   margin: 0 !important;
   padding: 0 !important;
   box-sizing: border-box;
-  @include background_color('background_color1')
+  @include background_color('background_color1');
+  font-family: "Microsoft YaHei","微软雅黑", Arial,Helvetica, sans-serif,"宋体";
   //filter:progid:DXImageTransform.Microsoft.BasicImage(graysale=1);
   //-webkit-filter: grayscale(100%);
 }
