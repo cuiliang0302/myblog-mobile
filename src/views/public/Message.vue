@@ -43,8 +43,11 @@ import {Field, Toast, Image as VanImage, Icon} from 'vant'
 import user from "@/utils/user";
 import icon from '@/utils/icon'
 import store from "@/store";
-let {MyIcon} = icon()
+
 import router from "@/router";
+import { inject } from 'vue';
+const reload = inject("reload");
+let {MyIcon} = icon()
 // 事件总线
 const internalInstance = getCurrentInstance();  //当前组件实例
 const $bus = internalInstance.appContext.config.globalProperties.$bus;
@@ -69,6 +72,7 @@ const clickSend = () => {
         Toast.success('留言成功！');
         messageForm.content = ''
         leaveMessageData()
+        reload()
       }).catch(response => {
         //发生错误时执行的代码
         console.log(response)
@@ -91,6 +95,7 @@ if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", value => {
     console.log(response)
     Toast.success('点赞成功！');
     leaveMessageData()
+    reload()
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
@@ -104,6 +109,7 @@ if (!$bus.all.get("delMessage")) $bus.on("delMessage", messageId => {
     console.log(response)
     Toast.success('留言删除成功！');
     leaveMessageData()
+    reload()
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
@@ -117,6 +123,7 @@ if (!$bus.all.get("replySend")) $bus.on("replySend", replyForm => {
     console.log(response)
     Toast.success('回复成功！');
     leaveMessageData()
+    reload()
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)

@@ -19,13 +19,13 @@
 </template>
 
 <script>
-import {computed, onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch,provide,nextTick} from "vue";
 import {useRoute} from "vue-router";
 import animate from "animate.css";
 import {ConfigProvider, Dialog} from "vant";
 import dark from "@/utils/dark";
 import store from "@/store/index";
-
+const isRouterActive = ref(true)
 export default {
   name: "App",
   components: {
@@ -36,6 +36,12 @@ export default {
     let enterClass = ref('');
     let leaveClass = ref('');
     const route = useRoute();
+    provide('reload', () => {
+      isRouterActive.value = false
+      nextTick(() => {
+        isRouterActive.value = true
+      })
+    })
     let {setDark} = dark()
     // 暗黑模式切换主题变量
     const themeVars = computed(() => store.state.themeStyle)

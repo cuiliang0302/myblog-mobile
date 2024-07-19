@@ -125,6 +125,8 @@ import store from "@/store";
 import fontSize from "@/utils/fontSize";
 import user from "@/utils/user";
 import icon from '@/utils/icon'
+import { inject } from 'vue';
+const reload = inject("reload")
 let {MyIcon} = icon()
 // 引入用户信息模块
 let {userId, isLogin} = user();
@@ -335,6 +337,7 @@ function comment(DetailID, router,loginPopupRef) {
           Toast.success('评论成功！');
           messageForm.content = ''
           articleCommentData(DetailID.value)
+          reload()
         }).catch(response => {
           //发生错误时执行的代码
           console.log(response)
@@ -357,6 +360,7 @@ function comment(DetailID, router,loginPopupRef) {
       console.log(response)
       Toast.success('点赞成功！');
       articleCommentData(DetailID.value)
+      reload()
     }).catch(response => {
       //发生错误时执行的代码
       console.log(response)
@@ -369,6 +373,7 @@ function comment(DetailID, router,loginPopupRef) {
       console.log(response)
       Toast.success('留言删除成功！');
       articleCommentData(DetailID.value)
+      reload()
     }).catch(response => {
       //发生错误时执行的代码
       console.log(response)
@@ -383,6 +388,7 @@ function comment(DetailID, router,loginPopupRef) {
       console.log(response)
       Toast.success('回复成功！');
       articleCommentData(DetailID.value)
+      reload()
     }).catch(response => {
       //发生错误时执行的代码
       console.log(response)
