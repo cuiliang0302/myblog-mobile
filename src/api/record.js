@@ -16,8 +16,13 @@ export function getSearch(params) {
 	return index.get(url, params)
 }
 // 获取留言数据
-export function getLeaveMessage() {
-	return index.get('/record/leaveMessage/')
+export function getLeaveMessage(params) {
+	const url = '/record/leaveMessage/'
+	return index.get(url, params)
+}
+// 获取单个留言数据
+export function getLeaveMessageDetail(id) {
+	return index.get('/record/leaveMessage/' + id + '/')
 }
 
 // 发表留言

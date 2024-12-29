@@ -29,7 +29,7 @@
             <p>{{ timeAgo(item.time) }}</p>
           </span>
         <span class="comment-btn">
-          <span v-if="isReply(item.user)===true" @click="replyMessage(item.id)">
+          <span v-if="isReply(item.user)===true" @click="replyMessage(item.id,item.root)">
             <MyIcon class="icon click-btn" type="icon-comment"/>
             <p>回复</p>
           </span>
@@ -48,8 +48,12 @@
               <p>删除</p>
           </span>
         </span>
+
       </div>
-      <div class="reply" v-if="item.child.length!==0">
+      <div class="reply-action" v-if="item.child_count > 0" @click="replyView(item.id)">
+        ——展开{{ item.child_count }}条回复<van-icon name="arrow-down" />
+      </div>
+      <div class="reply" v-show="item.child">
         <Comments :commentsList="item.child"></Comments>
       </div>
     </ol>
@@ -98,7 +102,7 @@ const props = defineProps({
     default: []
   },
 })
-const emit = defineEmits(['likeMessage', 'delMessage', 'replySend'])
+const emit = defineEmits(['likeMessage', 'delMessage', 'replySend', 'replyView'])
 // 事件总线
 const internalInstance = getCurrentInstance();
 const $bus = internalInstance.appContext.config.globalProperties.$bus;
@@ -116,6 +120,12 @@ const isLike = (messageId) => {
     }
   }
   return false;
+}
+// 查看回复
+const replyView = (messageId) => {
+  console.log("查看回复了啊")
+  $bus.emit("replyView", messageId);
+  console.log(messageId)
 }
 // 留言评论点赞
 const likeMessage = (messageId, likeMessage) => {
@@ -154,10 +164,11 @@ const replyForm = reactive({
   father: ''
 })
 // 点击留言评论回复事件
-const replyMessage = (father) => {
+const replyMessage = (father,root) => {
   textareaShow.value = true
   replyForm.father = father
   replyForm.user = userId.value
+  replyForm.root = root
 }
 // 发送评论留言回复事件
 const replySend = () => {
@@ -250,6 +261,11 @@ const blur = () => {
         margin-left: 0.267rem;
         font-size: 0.4rem;
       }
+
+    }
+
+    .reply-action {
+      margin-left: 1.067rem;
     }
 
     .comment-content {

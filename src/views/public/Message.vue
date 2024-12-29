@@ -18,7 +18,7 @@
         </template>
       </van-field>
       <div class="comment-list">
-        <Comments :commentsList="messageList"></Comments>
+        <Comments :commentsList="messageList.data"></Comments>
       </div>
     </section>
     <Tabbar></Tabbar>
@@ -36,16 +36,18 @@ import {
   postLeaveMessage,
   patchLeaveMessage,
   deleteLeaveMessage,
-  postReplyLeaveMessage
+  postReplyLeaveMessage,
+  getLeaveMessageDetail
 } from "@/api/record";
-import {getCurrentInstance, onMounted, reactive, ref} from "vue";
+import {getCurrentInstance, onMounted, onUnmounted, reactive, ref, computed} from "vue";
 import {Field, Toast, Image as VanImage, Icon} from 'vant'
 import user from "@/utils/user";
 import icon from '@/utils/icon'
 import store from "@/store";
 
 import router from "@/router";
-import { inject } from 'vue';
+import {inject} from 'vue';
+
 const reload = inject("reload");
 let {MyIcon} = icon()
 // 事件总线
@@ -54,7 +56,13 @@ const $bus = internalInstance.appContext.config.globalProperties.$bus;
 // 引入用户信息模块
 let {userId, isLogin} = user();
 // 留言列表
-const messageList = ref([])
+const messageList = reactive({
+  page: 1,
+  count: 0,
+  data: []
+})
+// 加载留言动画
+const loading = ref(false);
 // 留言框表单
 const messageForm = reactive({
   content: '',
@@ -134,13 +142,62 @@ if (!$bus.all.get("replySend")) $bus.on("replySend", replyForm => {
 });
 
 // 获取留言列表
-async function leaveMessageData() {
-  messageList.value = await getLeaveMessage()
+function leaveMessageData() {
+  // console.log(loading.value)
+  if (loading.value) return; // 防止重复加载
+  loading.value = true;
+  getLeaveMessage({'page': messageList.page}).then(response => {
+    messageList.data.push(...response.results)
+    console.log(messageList)
+    messageList.count = response.count
+    loading.value = false;
+    messageList.page += 1//增加页数
+  }).catch(error => {
+    console.log(error)
+    Toast.fail("获取留言列表数据失败")
+  })
 }
 
-
+// 是否还有更多需要加载
+const noMore = computed(() => messageList.data.length !== messageList.count);
+// 处理页面滚动事件
+const handleScroll = () => {
+  const {scrollTop, clientHeight, scrollHeight} = document.documentElement;
+  if (scrollTop + clientHeight >= scrollHeight - 10 && !loading.value && noMore.value) {
+    leaveMessageData();
+  }
+};
+// 留言查看回复事件
+if (!$bus.all.get("replyView")) $bus.on("replyView", (value) => {
+  getLeaveMessageDetail(value).then((response) => {
+    console.log(response)
+    console.log(messageList.data)
+    // 查找 id 为 113 的对象并替换为新的对象
+    let targetIndex = messageList.data.findIndex(item => item.id === value);
+    if (targetIndex !== -1) {
+      messageList.data[targetIndex] = Object.assign({}, response); // 使用 Object.assign() 替换整个对象
+    }
+    // replyList.value = response.child;
+    console.log(messageList.data)
+  }).catch(response => {
+    //发生错误时执行的代码
+    console.log(response)
+    Toast.fail(response.msg)
+  });
+});
 onMounted(() => {
   leaveMessageData()
+  // 监听滚动事件
+  window.addEventListener("scroll", handleScroll);
+  // if (isLogin.value === true) {
+  //   getPhotoData()
+  // } else {
+  //   getLogoData()
+  // }
+})
+onUnmounted(() => {
+  // 组件卸载时，停止监听
+  window.removeEventListener("scroll", handleScroll, false)
 })
 </script>
 
@@ -160,7 +217,8 @@ onMounted(() => {
   right: 0;
   top: 0.267rem;
 }
-.icon-send{
+
+.icon-send {
   font-size: 1.067rem;
   position: absolute;
   right: 0;
