@@ -102,7 +102,7 @@ if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", value => {
   patchLeaveMessage(value.id, params).then((response) => {
     console.log(response)
     Toast.success('点赞成功！');
-    leaveMessageData()
+    leaveMessageDataRefresh()
     reload()
   }).catch(response => {
     //发生错误时执行的代码
@@ -116,7 +116,7 @@ if (!$bus.all.get("delMessage")) $bus.on("delMessage", messageId => {
   deleteLeaveMessage(messageId).then((response) => {
     console.log(response)
     Toast.success('留言删除成功！');
-    leaveMessageData()
+    leaveMessageDataRefresh()
     reload()
   }).catch(response => {
     //发生错误时执行的代码
@@ -130,7 +130,7 @@ if (!$bus.all.get("replySend")) $bus.on("replySend", replyForm => {
   postReplyLeaveMessage(replyForm).then((response) => {
     console.log(response)
     Toast.success('回复成功！');
-    leaveMessageData()
+    leaveMessageDataRefresh()
     reload()
   }).catch(response => {
     //发生错误时执行的代码
@@ -152,6 +152,16 @@ function leaveMessageData() {
     messageList.count = response.count
     loading.value = false;
     messageList.page += 1//增加页数
+  }).catch(error => {
+    console.log(error)
+    Toast.fail("获取留言列表数据失败")
+  })
+}
+// 刷新留言列表
+function leaveMessageDataRefresh() {
+  getLeaveMessage({'page': 1, 'size': 1000}).then(response => {
+    messageList.data = []
+    messageList.data.push(...response.results)
   }).catch(error => {
     console.log(error)
     Toast.fail("获取留言列表数据失败")
