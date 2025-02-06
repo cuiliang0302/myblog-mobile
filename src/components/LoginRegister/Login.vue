@@ -39,7 +39,7 @@
         </van-field>
         <div class="other">
           <div class="remember">
-            <van-checkbox v-model="remember" shape="square">保持登录</van-checkbox>
+            <van-checkbox v-model="remember" shape="square" disabled>保持登录</van-checkbox>
           </div>
           <div class="forget" @click="$router.push('/setPassword')">
             忘记密码

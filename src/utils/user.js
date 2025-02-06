@@ -11,7 +11,7 @@ function user() {
   const userName = ref()
   onMounted(() => {
     if (keepLogin === true) {
-      userId.value = store.state.userLocal.userid
+      userId.value = store.state.userLocal.user_id
       userToken.value = store.state.userLocal.token
       userName.value = store.state.userLocal.username
     } else {
@@ -19,7 +19,7 @@ function user() {
         isLogin.value = false
       } else {
         isLogin.value = true
-        userId.value = store.state.userSession.userid
+        userId.value = store.state.userSession.user_id
         userToken.value = store.state.userSession.token
         userName.value = store.state.userSession.username
       }
