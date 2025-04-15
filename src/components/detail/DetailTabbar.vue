@@ -87,7 +87,7 @@
   </van-popup>
   <van-popup v-model:show="QRcode_show" round>
     <div class="qr-container">
-      <canvas ref="canvasRef" width="328" height="328"></canvas>
+      <canvas ref="canvasRef"></canvas>
     </div>
   </van-popup>
   <LoginPopup ref="loginPopupRef"></LoginPopup>
@@ -254,11 +254,19 @@ const generateQr = async () => {
     showFailToast('生成二维码失败!')
     return
   }
+  // 获取屏幕宽度，按 60% 缩放，最大限制 350px
+  const screenWidth = document.documentElement.clientWidth
+  const canvasSize = Math.min(screenWidth * 0.7, 350)
+
+  // 设置 canvas 尺寸
+  canvas.width = canvasSize
+  canvas.height = canvasSize
   const url = window.location.href
   await QRCode.toCanvas(canvas, url, {
     errorCorrectionLevel: 'H',
-    margin: 2,
-    scale: 8,
+    margin: 1,
+    scale: 1, // 不用放大，让它适配 canvas 的大小
+    width: canvasSize, // 设置生成宽度
     color: {
       dark: '#000000',
       light: '#ffffff',
@@ -268,7 +276,6 @@ const generateQr = async () => {
   const logoImg = new Image()
   logoImg.src = logoUrl
   logoImg.onload = () => {
-    const canvasSize = canvas.width
     const logoSize = canvasSize * 0.2
     const x = (canvasSize - logoSize) / 2
     const y = (canvasSize - logoSize) / 2
