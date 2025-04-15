@@ -142,13 +142,10 @@
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
 import UploadImg from "@/components/common/UploadImg.vue";
 import {onMounted, reactive, ref} from "vue";
-import {storeToRefs} from 'pinia'
-import {useThemeStore, useUserStore} from '@/store';
+import {useUserStore} from '@/store';
 import {showFailToast, showSuccessToast} from "vant";
 import account from "@/api/account";
-import Public from "@/api/public";
 import {areaList} from '@vant/area-data';
-import {route} from "vant/es/composables/use-route";
 import router from "@/router";
 
 const user = useUserStore();

@@ -11,10 +11,10 @@
 </template>
 
 <script setup>
-import {Search, Toast, Icon, NavBar} from 'vant';
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 import SearchInput from "@/components/common/SearchInput.vue";
+import {showToast} from "vant";
 
 const emit = defineEmits(['onSearch'])
 // 搜索输入框输入内容
@@ -30,7 +30,7 @@ const onSearch = () => {
   if (keyWords.value) {
     emit('onSearch', keyWords.value)
   } else {
-    Toast('请先输入搜索内容');
+    showToast('请先输入搜索内容');
   }
 }
 const router = useRouter()

@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import {Grid, GridItem, Loading, Image as VanImage, Toast} from 'vant';
+import {Image as VanImage} from 'vant';
 
 
 const props = defineProps({

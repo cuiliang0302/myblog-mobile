@@ -73,7 +73,7 @@
 
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
-import {Form, Field, Button, Uploader, Cell, CellGroup, Toast, showFailToast, showSuccessToast} from 'vant';
+import {showFailToast, showSuccessToast} from 'vant';
 import {onMounted, reactive} from "vue";
 import UploadImg from "@/components/common/UploadImg.vue";
 import Management from "@/api/management";

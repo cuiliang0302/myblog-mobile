@@ -12,7 +12,6 @@
 </template>
 
 <script setup>
-import {NavBar, Toast, Icon} from 'vant';
 import {useRouter} from "vue-router";
 import SearchInput from '@/components/common/SearchInput.vue'
 import DetailActionSheet from "@/components/detail/DetailActionSheet.vue";

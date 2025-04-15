@@ -36,7 +36,7 @@ import 'vue3-cropper/lib/vue3-cropper.css';
 import {reactive} from "vue";
 import qiniuUpload from "@/utils/qiniuUpload";
 import timeFormat from "@/utils/timeFormat";
-import {Image as VanImage, Loading, Icon, showFailToast, showSuccessToast} from 'vant';
+import {Image as VanImage, showFailToast, showSuccessToast} from 'vant';
 
 const URL = window.URL || window.webkitURL;
 const props = defineProps({

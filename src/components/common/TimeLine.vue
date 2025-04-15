@@ -20,7 +20,6 @@
 </template>
 
 <script setup>
-import {Tag} from 'vant';
 import timeFormat from "@/utils/timeFormat";
 
 

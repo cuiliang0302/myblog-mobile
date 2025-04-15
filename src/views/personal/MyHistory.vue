@@ -19,14 +19,11 @@
 import TimeLine from "@/components/common/TimeLine.vue";
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
 import {onMounted, ref} from "vue";
-import {storeToRefs} from 'pinia'
-import {useThemeStore, useUserStore} from '@/store';
-
-const user = useUserStore();
+import {useUserStore} from '@/store';
 import {useRouter} from "vue-router";
 import record from "@/api/record";
 import {showFailToast} from "vant";
-
+const user = useUserStore();
 const router = useRouter()
 const active = ref(0);
 // 文章浏览记录

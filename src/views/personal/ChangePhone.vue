@@ -35,11 +35,10 @@
 
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
-import {Form, Field, Button, Toast} from 'vant';
 import {reactive, ref} from "vue";
-import {postCode, getRegister, putChangePhone} from "@/api/account";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn.vue";
-import user from "@/utils/user";
+import Account from "@/api/account";
+import {showFailToast, showSuccessToast} from "vant";
 
 
 // 引入用户信息模块
@@ -61,7 +60,7 @@ const codeForm = reactive({
 const pass = () => {
   codeForm.contact = phoneForm.newPhone
   codeForm.username = userName.value
-  postCode(codeForm).then((response) => {
+  Account.postCode(codeForm).then((response) => {
     console.log(response)
     showSuccessToast('验证码发送成功！');
   }).catch(response => {
@@ -75,7 +74,7 @@ const checkContact = (val) =>
     new Promise((resolve) => {
       const objRegExp = /^1[0-9]\d{9}$/;
       if (objRegExp.test(val)) {
-        getRegister(NaN, val).then((response) => {
+        Account.getRegister(NaN, val).then((response) => {
           console.log(response)
           btnDisabled.value = false
           resolve(true)
@@ -93,7 +92,7 @@ const checkContact = (val) =>
     })
 // 表单提交事件
 const onSubmit = () => {
-  putChangePhone(userId.value, phoneForm).then((response) => {
+  Account.putChangePhone(userId.value, phoneForm).then((response) => {
     console.log(response)
     showSuccessToast('手机修改成功！');
   }).catch(response => {

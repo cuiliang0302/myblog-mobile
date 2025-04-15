@@ -87,15 +87,16 @@
 </template>
 
 <script setup>
-import {Form, Button, Field, Divider, Icon, Checkbox, Toast, showSuccessToast, showFailToast, showToast} from 'vant';
+import {Button, showSuccessToast, showFailToast, showToast} from 'vant';
 import VerifyImgBtn from "@/components/verify/VerifyImgBtn.vue";
-import {onMounted, reactive, ref} from "vue";
+import {reactive, ref} from "vue";
 import {storeToRefs} from 'pinia'
 import {useCommonStore, useUserStore} from '@/store';
 
 import {useRouter} from "vue-router";
 import icon from '@/utils/icon'
 import account from "@/api/account";
+
 const common = useCommonStore();
 const user = useUserStore();
 const {MyIcon} = icon()
@@ -251,7 +252,7 @@ const otherLogin = (kind) => {
       display: flex;
       align-items: center;
       justify-content: center;
-      color:var(--font_color1);
+      color: var(--font_color1);
       //@include font_color('font_color1');
       padding: 0 0.8rem;
 

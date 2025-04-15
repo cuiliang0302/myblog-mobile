@@ -37,8 +37,7 @@
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
 import {reactive, ref} from "vue";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn.vue";
-import {storeToRefs} from 'pinia'
-import {useThemeStore,useUserStore} from '@/store';
+import {useUserStore} from '@/store';
 import account from "@/api/account";
 import {showFailToast, showSuccessToast} from "vant";
 const user = useUserStore();

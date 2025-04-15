@@ -32,9 +32,8 @@ import Tabbar from '@/components/common/Tabbar.vue'
 import Comments from "@/components/common/Comments.vue";
 import LoginPopup from "@/components/common/LoginPopup.vue";
 import {getCurrentInstance, onMounted, onUnmounted, reactive, ref, computed} from "vue";
-import {Field, Toast, Image as VanImage, Icon, showSuccessToast, showFailToast, showToast} from 'vant'
+import {showSuccessToast, showFailToast, showToast} from 'vant'
 import icon from '@/utils/icon'
-import {storeToRefs} from 'pinia'
 import {useCommonStore, useUserStore} from '@/store';
 const common = useCommonStore();
 const user = useUserStore();

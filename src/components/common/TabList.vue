@@ -48,7 +48,7 @@
 
 <script setup>
 import {Image as VanImage} from 'vant';
-import {onMounted, reactive, ref} from 'vue';
+import {reactive} from 'vue';
 import {useRouter} from "vue-router";
 import timeFormat from "@/utils/timeFormat";
 import setColor from "@/utils/setColor";

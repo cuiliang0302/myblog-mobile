@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import {Popup, Button} from 'vant';
+import {Button} from 'vant';
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 

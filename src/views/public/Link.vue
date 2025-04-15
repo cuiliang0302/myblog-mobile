@@ -11,7 +11,7 @@
 import NavBar from "@/components/common/NavBar.vue";
 import Tabbar from '@/components/common/Tabbar.vue'
 import LinkContent from "@/components/link/LinkContent.vue";
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, reactive} from "vue";
 import Management from "@/api/management";
 import {showFailToast} from "vant";
 

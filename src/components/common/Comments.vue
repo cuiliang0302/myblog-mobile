@@ -85,7 +85,7 @@
 </template>
 
 <script setup>
-import {Toast, Image as VanImage, Icon, Dialog, Popup, Field, showFailToast, showConfirmDialog} from 'vant'
+import {Image as VanImage, showFailToast, showConfirmDialog} from 'vant'
 import {reactive, ref, getCurrentInstance} from "vue";
 import timeFormat from "@/utils/timeFormat";
 import icon from '@/utils/icon'

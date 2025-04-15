@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import {Image as VanImage, showLoadingToast, Toast} from 'vant';
+import {Image as VanImage, showLoadingToast} from 'vant';
 
 const props = defineProps({
   // 轮播图数据

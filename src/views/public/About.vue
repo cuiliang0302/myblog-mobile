@@ -13,7 +13,6 @@
 <script setup>
 import NavBar from "@/components/common/NavBar.vue";
 import Tabbar from '@/components/common/Tabbar.vue';
-import {Collapse, CollapseItem} from 'vant';
 import {onMounted, ref} from "vue";
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
 import '@kangc/v-md-editor/lib/style/preview.css';

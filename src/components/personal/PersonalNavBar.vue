@@ -14,7 +14,6 @@
 </template>
 
 <script setup>
-import {NavBar, Icon, Toast} from 'vant';
 import {useRouter} from "vue-router";
 
 const props = defineProps({

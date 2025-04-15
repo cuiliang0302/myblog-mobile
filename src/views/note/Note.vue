@@ -5,7 +5,7 @@
       <van-grid-item v-for="(item,index) in noteList" :key="index" @click="router.push({path: `/catalog/${item.id}`})">
         <van-image :src="item.cover">
           <template v-slot:loading>
-            <van-loading type="spinner" size="20"/>
+            <van-loading type="spinner" size="20" />
           </template>
         </van-image>
         <p>{{ item.name }}</p>

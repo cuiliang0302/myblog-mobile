@@ -41,11 +41,10 @@
 
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
-import {Form, Field, Button, Toast, Dialog, showSuccessToast, showFailToast, showDialog} from 'vant';
-import {onMounted, reactive, ref} from "vue";
+import {showSuccessToast, showFailToast, showDialog} from 'vant';
+import {onMounted, reactive} from "vue";
 import {useRouter} from "vue-router";
-import {storeToRefs} from 'pinia'
-import {useThemeStore, useUserStore} from '@/store';
+import {useUserStore} from '@/store';
 import account from "@/api/account";
 
 const user = useUserStore();

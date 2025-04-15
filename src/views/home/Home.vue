@@ -14,7 +14,7 @@ import Swipe from "@/components/home/Swipe.vue";
 import TabList from "@/components/common/TabList.vue";
 import Tabbar from '@/components/common/Tabbar.vue'
 import management from "@/api/management";
-import {showFailToast, Toast} from "vant";
+import {showFailToast} from "vant";
 import Blog from "@/api/blog";
 // 轮播图
 const carousel_list = ref([])

@@ -19,7 +19,7 @@ import NavBar from "@/components/common/NavBar.vue";
 import Tabbar from '@/components/common/Tabbar.vue'
 import TabList from "@/components/common/TabList.vue";
 import {onMounted, reactive, ref} from "vue";
-import {showFailToast, showSuccessToast, Toast} from "vant";
+import {showFailToast, showSuccessToast} from "vant";
 import {onBeforeRouteUpdate, useRouter} from "vue-router";
 import Blog from "@/api/blog";
 

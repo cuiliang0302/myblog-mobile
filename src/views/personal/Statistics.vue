@@ -91,7 +91,7 @@
 
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
-import {computed, onMounted, reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import * as echarts from 'echarts'
 import {storeToRefs} from 'pinia'
 import {useThemeStore, useUserStore} from '@/store';
@@ -100,7 +100,7 @@ import {showFailToast} from "vant";
 
 const user = useUserStore();
 const theme = useThemeStore();
-const {theme_name, is_dark} = storeToRefs(theme)
+const {is_dark} = storeToRefs(theme)
 // 数据概览
 const dataCount = reactive({})
 // echarts明亮模式曲线颜色

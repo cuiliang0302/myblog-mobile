@@ -20,8 +20,7 @@ import TimeLine from "@/components/common/TimeLine.vue";
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
-import {storeToRefs} from 'pinia'
-import {useThemeStore, useUserStore} from '@/store';
+import { useUserStore} from '@/store';
 import record from "@/api/record";
 import {showFailToast} from "vant";
 

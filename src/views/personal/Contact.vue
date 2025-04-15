@@ -34,7 +34,7 @@
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
 import useClipboard from 'vue-clipboard3'
-import {Grid, GridItem, Image as VanImage, showFailToast, showLoadingToast, showSuccessToast, Toast} from 'vant'
+import {Image as VanImage, showFailToast, showLoadingToast, showSuccessToast} from 'vant'
 import {onMounted} from "vue";
 import QQImg from "@/assets/images/qq-round.png";
 import icon from '@/utils/icon'

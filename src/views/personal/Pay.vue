@@ -33,7 +33,7 @@
 
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
-import {Image as VanImage, Loading, showFailToast} from 'vant';
+import {Image as VanImage, showFailToast} from 'vant';
 import {onMounted, reactive} from "vue";
 import Management from "@/api/management";
 

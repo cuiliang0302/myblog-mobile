@@ -24,11 +24,10 @@
 
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
-import {onMounted, watch} from "vue";
 import {useThemeStore} from "@/store";
 import {storeToRefs} from "pinia";
 const theme = useThemeStore();
-const {font_name, is_dark, font_value, theme_name} = storeToRefs(theme)
+const {font_value} = storeToRefs(theme)
 // 字体显示种类
 const fontShow = ['超小', '小号', '默认', '大号', '超大']
 // 更换字体大小事件

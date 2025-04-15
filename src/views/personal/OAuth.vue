@@ -9,10 +9,8 @@
 import {showFailToast, showSuccessToast, Toast} from 'vant';
 import {onMounted, reactive, ref} from "vue";
 import {useRouter} from "vue-router";
-import store from "@/store";
 import Account from "@/api/account";
-import {storeToRefs} from 'pinia'
-import {useThemeStore,useUserStore} from '@/store';
+import {useUserStore} from '@/store';
 const user = useUserStore();
 const router = useRouter()
 // 平台名称

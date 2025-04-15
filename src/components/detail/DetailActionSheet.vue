@@ -41,11 +41,10 @@
 
 <script setup>
 
-import {ref, computed} from "vue";
+import {ref} from "vue";
 import {useThemeStore} from '@/store';
 import {storeToRefs} from 'pinia'
 import {showToast} from "vant";
-
 const theme = useThemeStore();
 const {font_name, is_dark, font_value, theme_name} = storeToRefs(theme)
 // 动作菜单默认状态

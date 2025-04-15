@@ -44,10 +44,7 @@
 
 <script setup>
 import SearchBar from "@/components/search/SearchBar.vue";
-// import {getSearchHistory, getSearchHot} from "@/api/record";
 import {onMounted, reactive, ref} from "vue";
-// import user from "@/utils/user";
-import {Image as VanImage} from "vant/lib/image";
 import {useUserStore} from '@/store';
 const user = useUserStore();
 import {useRouter} from "vue-router";
