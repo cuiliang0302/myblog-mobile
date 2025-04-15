@@ -32,7 +32,6 @@
 </template>
 
 <script setup>
-import {Tabbar, TabbarItem} from 'vant';
 import {onMounted, ref} from 'vue';
 import icon from '@/utils/icon'
 
@@ -53,7 +52,7 @@ onMounted(()=>{
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .van-tabbar-item {
   .icon {
     font-size: 0.533rem;

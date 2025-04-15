@@ -44,7 +44,7 @@ const props = defineProps({
 
 const toLink = (url) => {
   window.location.href = url
-  Toast.loading({
+  showLoadingToast({
     message: '第三方网站跳转中...',
     forbidClick: true,
   });
@@ -52,8 +52,8 @@ const toLink = (url) => {
 
 </script>
 
-<style scoped lang="scss">
-@import "src/assets/style/index.scss";
+<style scoped lang="less">
+//@import "src/assets/style/index.scss";
 
 .link-content {
   margin: 0.4rem 0;
@@ -77,7 +77,8 @@ const toLink = (url) => {
       p {
         line-height: 15px;
         margin-bottom: 0;
-        @include font_color('font_color2');
+        //@include font_color('font_color2');
+        color:var(--font-color2);
         overflow: hidden;
         -webkit-line-clamp: 2;
         display: -webkit-box;

@@ -1,16 +1,26 @@
-import index from './index'
+import {get, post} from '@/utils/request';
 
-// 获取七牛图片上传token
-export function getQiNiuToken() {
-	return index.get('/public/qiniuToken/')
-}
+export default class Public {
+  /**
+   * 登录
+   * @param {String} username 用户名
+   * @param {String} password 密码
+   * @returns
+   */
+  static async login(username, password) {
+    return post('/account/login/', {
+      username,
+      password,
+    });
+  }
 
-// 图片防盗链代理
-export function getImgProxy(url) {
-	return import.meta.env.VITE_APP_BASE_URL + '/public/imgProxy/?url=' + url
-}
+  // 获取七牛图片上传token
+  static async getQiNiuToken() {
+    return get('/public/qiniuToken/')
+  }
 
 // 获取省市代码
-export function getAreaData() {
-	return index.get('/public/areaData/')
+  static async getAreaData() {
+    return get('/public/areaData/')
+  }
 }

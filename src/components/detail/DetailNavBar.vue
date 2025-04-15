@@ -44,7 +44,7 @@ const onClickRight = () => {
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .van-nav-bar__right {
   img {
     width: 25px;

@@ -126,30 +126,19 @@
 
 <script setup>
 import {
-  Tabbar,
-  TabbarItem,
-  ShareSheet,
   Toast,
-  Popup,
-  Tab,
-  Tabs,
-  Empty,
-  Loading,
   Image as VanImage,
-  Overlay,
-  Icon,
-  ConfigProvider
 } from 'vant';
 import {onMounted, ref} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
-import user from "@/utils/user";
 import LoginPopup from "@/components/common/LoginPopup.vue";
-import {getQRcode} from "@/api/blog";
 import useClipboard from "vue-clipboard3";
-import store from "@/store/index";
 import QzoneImg from '@/assets/images/qq-zone.png'
 import icon from '@/utils/icon'
-let {MyIcon} = icon()
+import {useCommonStore, useUserStore} from '@/store';
+const user = useUserStore();
+const common = useCommonStore();
+const {MyIcon} = icon()
 const props = defineProps({
   // 当前显示的组件
   componentName: {
@@ -205,15 +194,14 @@ let {active} = fnPublic(isLike)
 const router = useRouter()
 // 调用收藏模块
 const loginPopupRef = ref()
-let {isLogin} = user();
 const collectionClick = () => {
   console.log(props.is_collect)
-  if (isLogin.value === true) {
+  if (user.isLoggedIn === true) {
     console.log("登录了")
     emit('collectClick')
   } else {
     console.log("没登录，弹个窗先")
-    store.commit('setNextPath', router.currentRoute.value.fullPath)
+    common.setNextPath(router.currentRoute.value.fullPath)
     loginPopupRef.value.showPopup()
   }
 };
@@ -300,9 +288,9 @@ function fnShare(props, emit) {
     if (option.name === '复制链接') {
       try {
         await toClipboard(URL)
-        Toast.success('链接已复制至剪切板')
+        showSuccessToast('链接已复制至剪切板')
       } catch (e) {
-        Toast.fail('剪切板调用异常！')
+        showFailToast('剪切板调用异常！')
         console.error(e)
       }
     }
@@ -314,7 +302,7 @@ function fnShare(props, emit) {
       }).catch(response => {
         //发生错误时执行的代码
         console.log(response)
-        Toast.fail('获取二维码失败');
+        showFailToast('获取二维码失败');
       });
     }
     if (option.name === '微博') {
@@ -387,11 +375,11 @@ function fnComment() {
 
 </script>
 
-<style lang="scss" scoped>
-@import "src/assets/style/index";
+<style lang="less" scoped>
 
 .active {
-  color: $color-primary
+  //color: $color-primary
+  color:var(--van-primary-color);
 }
 
 .directory {
@@ -420,7 +408,8 @@ function fnComment() {
 }
 
 .active-title {
-  color: $color-primary;
+  color: var(--van-primary-color);
+  //color: $color-primary;
 }
 
 .wrapper {

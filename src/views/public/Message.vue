@@ -31,30 +31,25 @@ import NavBar from "@/components/common/NavBar.vue";
 import Tabbar from '@/components/common/Tabbar.vue'
 import Comments from "@/components/common/Comments.vue";
 import LoginPopup from "@/components/common/LoginPopup.vue";
-import {
-  getLeaveMessage,
-  postLeaveMessage,
-  patchLeaveMessage,
-  deleteLeaveMessage,
-  postReplyLeaveMessage,
-  getLeaveMessageDetail
-} from "@/api/record";
 import {getCurrentInstance, onMounted, onUnmounted, reactive, ref, computed} from "vue";
-import {Field, Toast, Image as VanImage, Icon} from 'vant'
-import user from "@/utils/user";
+import {Field, Toast, Image as VanImage, Icon, showSuccessToast, showFailToast, showToast} from 'vant'
 import icon from '@/utils/icon'
+import {storeToRefs} from 'pinia'
+import {useCommonStore, useUserStore} from '@/store';
+const common = useCommonStore();
+const user = useUserStore();
+
 import store from "@/store";
 
 import router from "@/router";
 import {inject} from 'vue';
+import Record from "@/api/record";
 
-const reload = inject("reload");
+// const reload = inject("reload");
 let {MyIcon} = icon()
 // 事件总线
 const internalInstance = getCurrentInstance();  //当前组件实例
 const $bus = internalInstance.appContext.config.globalProperties.$bus;
-// 引入用户信息模块
-let {userId, isLogin} = user();
 // 留言列表
 const messageList = reactive({
   page: 1,
@@ -72,71 +67,69 @@ const messageForm = reactive({
 const loginPopupRef = ref()
 // 点击发表留言事件
 const clickSend = () => {
-  if (isLogin.value) {
+  if (user.isLoggedIn) {
     if (messageForm.content) {
-      messageForm.user = userId.value
-      postLeaveMessage(messageForm).then((response) => {
+      messageForm.user = user.user_id
+      Record.postLeaveMessage(messageForm).then((response) => {
         console.log(response)
-        Toast.success('留言成功！');
+        showSuccessToast('留言成功！');
         messageForm.content = ''
-        leaveMessageData()
-        reload()
+        leaveMessageDataRefresh()
+        // reload()
       }).catch(response => {
         //发生错误时执行的代码
         console.log(response)
-        for (let i in response) {
-          Toast.fail(i + response[i][0]);
-        }
+        showFailToast("留言发布失败!")
       });
     } else {
-      Toast("毛都没有，发表个锤子")
+      showToast("请先填写内容再发表吧!")
     }
   } else {
+    common.setNextPath(router.currentRoute.value.fullPath)
     loginPopupRef.value.showPopup()
-    store.commit('setNextPath', router.currentRoute.value.fullPath)
   }
 }
 // 留言点赞事件
 if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", value => {
   const params = {'like': value.like}
-  patchLeaveMessage(value.id, params).then((response) => {
+  Record.patchLeaveMessage(value.id, params).then((response) => {
     console.log(response)
-    Toast.success('点赞成功！');
+    showSuccessToast('点赞成功！');
     leaveMessageDataRefresh()
-    reload()
+    // reload()
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    Toast.fail(response.msg);
+    showFailToast(response.msg);
   });
 });
 // 留言删除事件
 if (!$bus.all.get("delMessage")) $bus.on("delMessage", messageId => {
   console.log(messageId)
-  deleteLeaveMessage(messageId).then((response) => {
+  Record.deleteLeaveMessage(messageId).then((response) => {
     console.log(response)
-    Toast.success('留言删除成功！');
+    showSuccessToast('留言删除成功！');
     leaveMessageDataRefresh()
-    reload()
+    // reload()
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    Toast.fail(response.msg);
+    showFailToast(response.msg);
   });
 });
 // 留言回复事件
 if (!$bus.all.get("replySend")) $bus.on("replySend", replyForm => {
   console.log(replyForm)
-  postReplyLeaveMessage(replyForm).then((response) => {
+  Record.postReplyLeaveMessage(replyForm).then((response) => {
     console.log(response)
-    Toast.success('回复成功！');
+    showSuccessToast('回复成功！');
     leaveMessageDataRefresh()
-    reload()
+    // reload()
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
     for (let i in response) {
-      Toast.fail(i + response[i][0]);
+      showFailToast(i + response[i][0]);
     }
   });
 });
@@ -146,7 +139,7 @@ function leaveMessageData() {
   // console.log(loading.value)
   if (loading.value) return; // 防止重复加载
   loading.value = true;
-  getLeaveMessage({'page': messageList.page}).then(response => {
+  Record.getLeaveMessage({'page': messageList.page}).then(response => {
     messageList.data.push(...response.results)
     console.log(messageList)
     messageList.count = response.count
@@ -154,17 +147,18 @@ function leaveMessageData() {
     messageList.page += 1//增加页数
   }).catch(error => {
     console.log(error)
-    Toast.fail("获取留言列表数据失败")
+    showFailToast("获取留言列表数据失败")
   })
 }
+
 // 刷新留言列表
 function leaveMessageDataRefresh() {
-  getLeaveMessage({'page': 1, 'size': 1000}).then(response => {
+  Record.getLeaveMessage({'page': 1, 'size': 1000}).then(response => {
     messageList.data = []
     messageList.data.push(...response.results)
   }).catch(error => {
     console.log(error)
-    Toast.fail("获取留言列表数据失败")
+    showFailToast("获取留言列表数据失败")
   })
 }
 
@@ -179,7 +173,7 @@ const handleScroll = () => {
 };
 // 留言查看回复事件
 if (!$bus.all.get("replyView")) $bus.on("replyView", (value) => {
-  getLeaveMessageDetail(value).then((response) => {
+  Record.getLeaveMessageDetail(value).then((response) => {
     console.log(response)
     console.log(messageList.data)
     // 查找 id 为 113 的对象并替换为新的对象
@@ -192,7 +186,7 @@ if (!$bus.all.get("replyView")) $bus.on("replyView", (value) => {
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    Toast.fail(response.msg)
+    showFailToast(response.msg)
   });
 });
 onMounted(() => {
@@ -211,16 +205,18 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
-@import "src/assets/style/index.scss";
+<style scoped lang="less">
+//@import "src/assets/style/index.scss";
 
 .comment-list {
   padding: 0.267rem;
-  @include background_color("background_color3");
+  background-color: var(--background_color3);
+  //@include background_color("background_color3");
 }
 
 .click-send {
-  color: $color-primary;
+  color: var(--van-primary-color);
+  //color: $color-primary;
   width: 0.933rem;
   height: 0.933rem;
   position: absolute;
@@ -233,5 +229,6 @@ onUnmounted(() => {
   position: absolute;
   right: 0;
   top: 0;
+  color: var(--van-primary-color);
 }
 </style>

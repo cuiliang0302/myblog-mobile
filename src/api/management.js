@@ -1,31 +1,33 @@
-import index from './index'
+import {get, post} from '@/utils/request';
 
-// 获取轮播图
-export function getCarousel() {
-  return index.get('/management/carousel/')
-}
+export default class Management {
+  // 获取网站配置信息
+  static async getSiteConfig() {
+    return get('/management/siteConfig/1/', {});
+  }
 
-// 获取关于页内容
-export function getAbout() {
-  return index.get('/management/about/')
-}
+  // 获取轮播图
+  static async getCarousel() {
+    return get('/management/carousel/', {});
+  }
 
-// 获取友情链接内容
-export function getLink() {
-  return index.get('/management/link/')
-}
+  // 获取友情链接内容
+  static async getLink() {
+    return get('/management/link/')
+  }
+
 // 申请友情链接
-export function postLink(params) {
-  return index.post('/management/link/',params)
-}
+  static async postLink(params) {
+    return post('/management/link/', params)
+  }
 
 // 获取博主信息
-export function getInfo() {
-  return index.get('/management/info/1/')
-}
+  static async getInfo() {
+    return get('/management/info/1/')
+  }
 
-// 获取网站配置信息
-export function getSiteConfig() {
-  return index.get('/management/siteConfig/1/')
+  // 获取关于页内容
+  static async getAbout() {
+    return get('/management/about/')
+  }
 }
-

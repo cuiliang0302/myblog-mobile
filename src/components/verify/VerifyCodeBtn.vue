@@ -77,7 +77,7 @@ const reimg = () => {
   getImgId()
 }
 const pass = () => {
-  Toast.success('滑动验证成功！');
+  showSuccessToast('滑动验证成功！');
   getCode()
   emit('pass')
   setTimeout(() => {
@@ -95,7 +95,7 @@ onMounted(() => {
 
 </script>
 
-<style lang="scss">
+<style lang="less">
 
 .verify {
   padding: 20px

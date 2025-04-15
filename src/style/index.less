@@ -1,0 +1,43 @@
+@import "./normalize.css";
+@import "./variables.less";
+@import "./vant.less";
+// 加速动画
+:root {
+  --animate-duration: 0.4s!important;
+}
+// 全局样式
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+  background-color:var(--background_color1);
+  font-family: "Microsoft YaHei","微软雅黑", Arial,Helvetica, sans-serif,"宋体";
+  color: var(--font_color1);
+  font-size: 14px!important;
+}
+// markdown
+.v-md-editor-preview {
+  padding: 0;
+
+  .github-markdown-body {
+    padding: 0!important;
+    h1{
+      font-size: 25px!important;
+    }
+    h2{
+      font-size: 20px!important;
+    }
+    h3{
+      font-size: 15px!important;
+    }
+    blockquote{
+      margin: 5px !important;
+    }
+  }
+}
+// 评论内容自动换行
+pre {
+  white-space: pre-wrap;  /* 保留空格和换行，同时允许自动换行 */
+  word-break: break-word; /* 超长单词/地址也能换行 */
+  overflow-wrap: break-word;
+}

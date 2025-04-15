@@ -73,10 +73,10 @@
 
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
-import {Form, Field, Button, Uploader, Cell, CellGroup, Toast} from 'vant';
+import {Form, Field, Button, Uploader, Cell, CellGroup, Toast, showFailToast, showSuccessToast} from 'vant';
 import {onMounted, reactive} from "vue";
 import UploadImg from "@/components/common/UploadImg.vue";
-import {getSiteConfig, postLink} from "@/api/management";
+import Management from "@/api/management";
 
 
 const linkForm = reactive({
@@ -97,9 +97,9 @@ const checkWeb = (val) =>
       console.log(val)
       const pattern = /[a-zA-z]+:\/\/[^\s]*/
       console.log(pattern.test(val))
-      if(pattern.test(val)){
+      if (pattern.test(val)) {
         resolve(true)
-      }else {
+      } else {
         resolve(false)
       }
     });
@@ -111,12 +111,12 @@ const saveImg = (URL) => {
 const onSubmit = () => {
   console.log(linkForm);
   if (linkForm.logo.length === 0) {
-    Toast.fail('请上传logo图片');
+    showFailToast('请上传logo图片');
     return false
   }
-  postLink(linkForm).then((response) => {
+  Management.postLink(linkForm).then((response) => {
     console.log(response)
-    Toast.success('申请提交成功！');
+    showSuccessToast('申请提交成功！');
     linkForm.url = ''
     linkForm.name = ''
     linkForm.describe = ''
@@ -125,19 +125,24 @@ const onSubmit = () => {
     //发生错误时执行的代码
     console.log(response)
     for (let i in response) {
-      Toast.fail(i + response[i][0]);
+      showFailToast(i + response[i][0]);
     }
   });
 };
 
 // 获取网站配置数据
-async function siteConfigData() {
-  let siteConfig_data = await getSiteConfig()
-  console.log(siteConfig_data)
-  webInfo.name = siteConfig_data.name
-  webInfo.logo = siteConfig_data.logo
-  webInfo.describe = siteConfig_data.title.slice(6)
-  webInfo.domain = siteConfig_data.domain
+const siteConfigData = async () => {
+  try {
+    const siteConfig_data = await Management.getSiteConfig()
+    console.log(siteConfig_data)
+    webInfo.name = siteConfig_data.name
+    webInfo.logo = siteConfig_data.logo
+    webInfo.describe = siteConfig_data.title.slice(6)
+    webInfo.domain = siteConfig_data.domain
+  } catch (error) {
+    console.log(error)
+    showFailToast("获取网站配置数据失败")
+  }
 }
 
 onMounted(() => {
@@ -145,7 +150,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 .link {
   .title {
     margin: 0.4rem;

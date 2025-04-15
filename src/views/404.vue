@@ -35,8 +35,8 @@
 
 </script>
 
-<style lang="scss">
-@import "src/assets/style/index";
+<style lang="less">
+//@import "src/assets/style/index";
 *, *:after, *:before {
   box-sizing: border-box;
 }
@@ -379,7 +379,7 @@ body {
 
 .tips h2 {
   text-align: center;
-  @include font_color('font_color2');
+  color:var(--font_color2);
   font-size: 40px;
   margin-top: 35px;
   margin-bottom: 43px;

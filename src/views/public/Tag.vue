@@ -19,9 +19,9 @@ import NavBar from "@/components/common/NavBar.vue";
 import Tabbar from '@/components/common/Tabbar.vue'
 import TabList from "@/components/common/TabList.vue";
 import {onMounted, reactive, ref} from "vue";
-import {getArticle, getTag} from "@/api/blog";
-import {Toast} from "vant";
+import {showFailToast, showSuccessToast, Toast} from "vant";
 import {onBeforeRouteUpdate, useRouter} from "vue-router";
+import Blog from "@/api/blog";
 
 const router = useRouter()
 // 当前标签id
@@ -77,33 +77,43 @@ const onRefresh = () => {
     ordering: listState.order,
     tag: listState.tag
   }
-  getArticle(params).then((response) => {
+  Blog.getArticle(params).then((response) => {
     console.log(response)
     listState.list = response.results
     listState.count = response.count
     listState.refreshing = false;
-    Toast.success('刷新成功');
+    showSuccessToast('刷新成功');
   })
 }
 
 // 获取文章标签数据
-async function tagData() {
-  tabList.value = await getTag()
+const tagData = async () => {
+  try {
+    tabList.value = await Blog.getTag()
+  } catch (error) {
+    console.log(error)
+    showFailToast("获取文章标签数据失败")
+  }
 }
 
 // 首屏获取文章列表数据
-async function articleData(page, order, tag) {
+const articleData = async (page, order, tag) => {
   const params = {
     page: page,
     size: 5,
     ordering: order,
     tag: tag
   }
-  const article_data = await getArticle(params)
-  console.log(article_data)
-  load.value = false
-  listState.list = article_data.results
-  listState.count = article_data.count
+  try {
+    const article_data = await Blog.getArticle(params)
+    console.log(article_data)
+    load.value = false
+    listState.list = article_data.results
+    listState.count = article_data.count
+  } catch (e) {
+    console.log(e)
+    showFailToast("获取文章列表数据失败")
+  }
 }
 
 onMounted(() => {

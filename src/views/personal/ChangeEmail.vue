@@ -35,15 +35,13 @@
 
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
-import {Form, Field, Button, Toast} from 'vant';
 import {reactive, ref} from "vue";
-import {getRegister, postCode, putChangeEmail} from "@/api/account";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn.vue";
-import user from "@/utils/user";
-
-
-// 引入用户信息模块
-let {userName, userId} = user();
+import {storeToRefs} from 'pinia'
+import {useThemeStore,useUserStore} from '@/store';
+import account from "@/api/account";
+import {showFailToast, showSuccessToast} from "vant";
+const user = useUserStore();
 // 更换邮箱表单
 const emailForm = reactive({
   newEmail: '',
@@ -60,14 +58,14 @@ const codeForm = reactive({
 // 获取验证码
 const pass = () => {
   codeForm.contact = emailForm.newEmail
-  codeForm.username = userName.value
-  postCode(codeForm).then((response) => {
+  codeForm.username = user.username
+  account.postCode(codeForm).then((response) => {
     console.log(response)
-    Toast.success('验证码发送成功！');
+    showSuccessToast('验证码发送成功！');
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    Toast.fail(response.msg);
+    showFailToast(response.msg);
   });
 }
 // 异步校验邮箱号
@@ -75,14 +73,14 @@ const checkContact = (val) =>
     new Promise((resolve) => {
       const objRegExp = /^.+@.+$/;
       if (objRegExp.test(val)) {
-        getRegister(NaN, val).then((response) => {
+        account.getRegister(NaN, val).then((response) => {
           console.log(response)
           btnDisabled.value = false
           resolve(true)
         }).catch(response => {
           //发生错误时执行的代码
           console.log(response)
-          Toast.fail(response.msg);
+          showFailToast(response.msg);
           btnDisabled.value = true
           resolve(false)
         });
@@ -93,18 +91,18 @@ const checkContact = (val) =>
     })
 // 表单提交事件
 const onSubmit = () => {
-  putChangeEmail(userId.value, emailForm).then((response) => {
+  account.putChangeEmail(user.user_id, emailForm).then((response) => {
     console.log(response)
-    Toast.success('邮箱修改成功！');
+    showSuccessToast('邮箱修改成功！');
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    Toast.fail(response.msg);
+    showFailToast(response.msg);
   });
 };
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 .pay {
   .title {
     margin: 0.4rem;

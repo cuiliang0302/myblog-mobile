@@ -12,7 +12,7 @@
                              :title="'第'+(index+1)+'章：'+chapter.name"
                              :name="chapter.id">
             <van-cell v-for="(title,index) in chapter.child" :key="index" :title="title.name"
-                      @click="$router.push({path:`/detail/section/${title.section_id}`})">
+                      @click="router.push({path:`/detail/section/${title.section_id}`})">
               <template #icon>
                 <span class="number">{{ index + 1 }}.</span>
               </template>
@@ -35,16 +35,13 @@
 <script setup>
 import NavBar from "@/components/common/NavBar.vue";
 import Tabbar from "@/components/common/Tabbar.vue";
-import {Collapse, CollapseItem, Cell, CellGroup, Tab, Tabs, Loading, Empty} from 'vant';
 import {onMounted, ref} from "vue";
-import {getCatalogueList, getNoteDetail} from "@/api/blog";
+import Blog from "@/api/blog";
+import record from "@/api/record";
 import {useRouter} from "vue-router";
-import {getSectionHistory} from "@/api/record";
-import user from "@/utils/user";
-
-
-// 引入用户信息模块
-let {userId, isLogin} = user();
+import {useUserStore} from "@/store";
+import {showFailToast} from "vant";
+const user = useUserStore();
 const router = useRouter();
 // 笔记名称
 const title = ref()
@@ -66,59 +63,74 @@ const toDetail = (detailId) => {
 }
 
 // 获取笔记收藏数据
-async function sectionCollectData() {
-  if (isLogin.value === true) {
-    let collectHistory_data = await getSectionHistory(NaN, userId.value)
-    console.log(collectHistory_data)
-    let collect_data = []
-    for (let index in collectHistory_data) {
-      if (collectHistory_data[index]['is_collect'] === true) {
-        collect_data.push(collectHistory_data[index])
+const sectionCollectData = async () => {
+  if (user.isLoggedIn === true) {
+    try {
+      const response = await record.getSectionHistory(NaN, user.user_id)
+      console.log(response)
+      let collect_data = []
+      for (let index in response) {
+        if (response[index]['is_collect'] === true) {
+          collect_data.push(response[index])
+        }
       }
+      collectList.value = collect_data.map((item) => {
+        return {
+          id: item['section_id'],
+          name: item['section'],
+          time: item['time']
+        }
+      })
+    } catch (error) {
+      showFailToast("获取笔记收藏数据失败！")
     }
-    collectList.value = collect_data.map((item) => {
-      return {
-        id: item['section_id'],
-        name: item['section'],
-        time: item['time']
-      }
-    })
   } else {
     collectList.value = []
   }
 }
 
 // 获取笔记名称
-async function titleData(catalogueID) {
-  let note_data = await getNoteDetail(catalogueID)
-  title.value = note_data.name
+const titleData = async (catalogueID) => {
+  try{
+    const response = await Blog.getNoteDetail(catalogueID)
+    console.log(response)
+    title.value = response.name
+  }catch (error) {
+    showFailToast("获取笔记名称失败!")
+  }
 }
 
 // 获取笔记目录数据
-async function catalogueData(catalogueID) {
-  catalogList.value = await getCatalogueList(catalogueID)
-  console.log(catalogList.value)
+const catalogueData = async (catalogueID) => {
+  try {
+    const response = await Blog.getCatalogueList(catalogueID)
+    console.log(response)
+    catalogList.value = response
+  }catch (error) {
+    showFailToast("获取笔记目录数据失败！")
+  }
 }
 
-onMounted(async () => {
-  let catalogueID = router.currentRoute.value.params.id
-  await titleData(catalogueID)
-  await catalogueData(catalogueID)
-  await sectionCollectData()
+onMounted( () => {
+  const catalogueID = router.currentRoute.value.params.id
+  titleData(catalogueID)
+  catalogueData(catalogueID)
+  sectionCollectData()
   load.value = false
 })
 
 </script>
 
-<style scoped lang="scss">
-@import "src/assets/style/index";
+<style scoped lang="less">
 
 .number {
   margin-right: 15px;
-  @include font_color('font_color2');
+  color: var(--font_color2);
+  //@include font_color('font_color2');
 }
 
 .van-collapse {
-  @include background_color('background_color3')
+  background-color: var(--background_color3);
+  //@include background_color('background_color3')
 }
 </style>

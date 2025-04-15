@@ -2,7 +2,7 @@
   <div>
     <NavBar></NavBar>
     <van-grid :column-num="2" square :gutter="5" clickable>
-      <van-grid-item v-for="(item,index) in noteList" :key="index" @click="$router.push({path: `/catalog/${item.id}`})">
+      <van-grid-item v-for="(item,index) in noteList" :key="index" @click="router.push({path: `/catalog/${item.id}`})">
         <van-image :src="item.cover">
           <template v-slot:loading>
             <van-loading type="spinner" size="20"/>
@@ -18,17 +18,21 @@
 <script setup>
 import NavBar from "@/components/common/NavBar.vue";
 import Tabbar from '@/components/common/Tabbar.vue'
-import {Grid, GridItem, Image as VanImage, Loading} from 'vant';
+import {Image as VanImage, showFailToast} from 'vant';
 import {onMounted, ref} from "vue";
-import {getNote} from "@/api/blog";
-
+import blog from "@/api/blog";
+import {useRouter} from "vue-router";
+const router = useRouter()
 const noteList = ref([])
-
 // 获取笔记列表数据
-async function noteData() {
-  const article_data = await getNote()
-  console.log(article_data)
-  noteList.value = article_data
+const noteData = async () => {
+  try {
+    const response = await blog.getNote()
+    console.log(response)
+    noteList.value = response
+  } catch (error) {
+    showFailToast("获取笔记列表失败")
+  }
 }
 
 onMounted(() => {
@@ -37,7 +41,7 @@ onMounted(() => {
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .van-grid {
   p {
     font-size: 15px;

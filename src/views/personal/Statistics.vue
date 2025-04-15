@@ -92,14 +92,15 @@
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
 import {computed, onMounted, reactive, ref} from "vue";
-import {Grid, GridItem, Tag, Toast} from 'vant';
 import * as echarts from 'echarts'
-import {getStatistics, getUserEcharts} from "@/api/record";
-import user from "@/utils/user";
-import store from "@/store/index";
+import {storeToRefs} from 'pinia'
+import {useThemeStore, useUserStore} from '@/store';
+import record from "@/api/record";
+import {showFailToast} from "vant";
 
-// 引入用户信息模块
-let {userId, isLogin} = user()
+const user = useUserStore();
+const theme = useThemeStore();
+const {theme_name, is_dark} = storeToRefs(theme)
 // 数据概览
 const dataCount = reactive({})
 // echarts明亮模式曲线颜色
@@ -128,16 +129,14 @@ const echartsDark = ref([
   '#5db0b3',
   '#1abc9c',
 ])
-// 是否开启暗黑模式
-const isDark = computed(() => store.state.dark)
+
 // echarts背景色
 const bgc = ref()
 // echarts颜色
 const color = ref()
 // 设置echarts主题色
 const setColor = () => {
-  console.log(isDark.value)
-  if (isDark.value === true) {
+  if (is_dark.value === true) {
     bgc.value = '#1f1f1f'
     color.value = echartsDark.value
   } else {
@@ -148,10 +147,8 @@ const setColor = () => {
 }
 
 // 浏览趋势折线图
-async function trend() {
-  const query = {chart: 'trend', user: userId.value}
-  const chartData = await getUserEcharts(query)
-  console.log("trend", chartData)
+const trend = async () => {
+  const query = {chart: 'trend', user: user.user_id}
   const date = []
   const article_view = []
   const article_collect = []
@@ -159,17 +156,23 @@ async function trend() {
   const section_view = []
   const section_collect = []
   const section_comment = []
-  for (let i in chartData) {
-    date.push(chartData[i].date.slice(5))
-    article_view.push(chartData[i].article_view)
-    article_collect.push(chartData[i].article_collect)
-    article_comment.push(chartData[i].article_comment)
-    section_view.push(chartData[i].section_view)
-    section_collect.push(chartData[i].section_collect)
-    section_comment.push(chartData[i].section_comment)
+  try {
+    const chartData = await record.getUserEcharts(query)
+    for (let i in chartData) {
+      date.push(chartData[i].date.slice(5))
+      article_view.push(chartData[i].article_view)
+      article_collect.push(chartData[i].article_collect)
+      article_comment.push(chartData[i].article_comment)
+      section_view.push(chartData[i].section_view)
+      section_collect.push(chartData[i].section_collect)
+      section_comment.push(chartData[i].section_comment)
+    }
+  } catch (e) {
+    console.log(e)
+    showFailToast("获取浏览趋势数据失败")
   }
   let myChart;
-  if (isDark.value) {
+  if (is_dark.value === true) {
     myChart = echarts.init(document.getElementById("trend"), 'dark');
   } else {
     myChart = echarts.init(document.getElementById("trend"));
@@ -278,26 +281,31 @@ async function trend() {
 }
 
 // 浏览时间柱形图
-async function time() {
-  const query = {chart: 'time', user: userId.value}
-  const chartData = await getUserEcharts(query)
-  console.log("time", chartData)
+const time = async () => {
+  const query = {chart: 'time', user: user.user_id}
   const time = []
   const article = []
   const section = []
-  chartData.forEach(function (item, index) {
-    let article_count = 0
-    let section_count = 0
-    if (index % 2 === 0) {
-      time.push(item.time)
-      article_count = chartData[index].article + chartData[index + 1].article
-      section_count = chartData[index].section + chartData[index + 1].section
-      article.push(article_count)
-      section.push(section_count)
-    }
-  })
+  try {
+    const chartData = await record.getUserEcharts(query)
+    console.log("time", chartData)
+    chartData.forEach(function (item, index) {
+      let article_count = 0
+      let section_count = 0
+      if (index % 2 === 0) {
+        time.push(item.time)
+        article_count = chartData[index].article + chartData[index + 1].article
+        section_count = chartData[index].section + chartData[index + 1].section
+        article.push(article_count)
+        section.push(section_count)
+      }
+    })
+  } catch (e) {
+    console.log(e)
+    showFailToast("获取浏览时间失败")
+  }
   let myChart;
-  if (isDark.value) {
+  if (is_dark.value === true) {
     myChart = echarts.init(document.getElementById("time"), 'dark');
   } else {
     myChart = echarts.init(document.getElementById("time"));
@@ -361,62 +369,73 @@ async function time() {
 }
 
 // 浏览文章饼图
-async function article() {
-  const query = {chart: 'article', user: userId.value}
-  const chartData = await getUserEcharts(query)
-  console.log("article", chartData)
-  let myChart;
-  if (isDark.value) {
-    myChart = echarts.init(document.getElementById("article"), 'dark');
-  } else {
-    myChart = echarts.init(document.getElementById("article"));
-  }
-  // 绘制图表
-  myChart.setOption({
-    color: color.value,
-    tooltip: {
-      trigger: 'item'
-    },
-    legend: {},
-    series: [
-      {
-        type: 'pie',
-        top: '10%',
-        radius: '50%',
-        data: chartData,
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)'
+const article = async () => {
+  const query = {chart: 'article', user: user.user_id}
+  try {
+    const chartData = await record.getUserEcharts(query)
+    console.log("article", chartData)
+    let myChart;
+    console.log(is_dark.value)
+    if (is_dark.value === true) {
+      myChart = echarts.init(document.getElementById("article"), 'dark');
+    } else {
+      myChart = echarts.init(document.getElementById("article"));
+    }
+    // 绘制图表
+    myChart.setOption({
+      color: color.value,
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {},
+      series: [
+        {
+          type: 'pie',
+          top: '10%',
+          radius: '50%',
+          data: chartData,
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
           }
         }
-      }
-    ],
-    backgroundColor: bgc.value
-  });
-  //自适应大小
-  window.onresize = function () {
-    myChart.resize();
-  };
+      ],
+      backgroundColor: bgc.value
+    });
+    //自适应大小
+    window.onresize = function () {
+      myChart.resize();
+    };
+  } catch (e) {
+    console.log(e)
+    showFailToast("获取浏览文章数据失败")
+  }
 }
 
 // 浏览笔记雷达图
-async function note() {
-  const query = {chart: 'note', user: userId.value}
-  const chartData = await getUserEcharts(query)
+const note = async () => {
+  const query = {chart: 'note', user: user.user_id}
   const indicator = []
   const data = []
-  for (let i in chartData) {
-    const item = {
-      name: chartData[i].name,
-      max: chartData[i].max
+  try {
+    const chartData = await record.getUserEcharts(query)
+    for (let i in chartData) {
+      const item = {
+        name: chartData[i].name,
+        max: chartData[i].max
+      }
+      indicator.push(item)
+      data.push(chartData[i].data)
     }
-    indicator.push(item)
-    data.push(chartData[i].data)
+  } catch (e) {
+    console.log(e)
+    showFailToast("获取笔记数据失败")
   }
   let myChart;
-  if (isDark.value) {
+  if (is_dark.value === true) {
     myChart = echarts.init(document.getElementById("note"), 'dark');
   } else {
     myChart = echarts.init(document.getElementById("note"));
@@ -453,10 +472,15 @@ async function note() {
 }
 
 // 获取数据概览数据
-async function statisticsData() {
-  let statistics_data = await getStatistics(userId.value)
-  for (let i in statistics_data) {
-    dataCount[i] = statistics_data[i]
+const statisticsData = async () => {
+  try {
+    const statistics_data = await record.getStatistics(user.user_id)
+    for (let i in statistics_data) {
+      dataCount[i] = statistics_data[i]
+    }
+  } catch (e) {
+    console.log(e)
+    showFailToast("获取数据概览失败")
   }
 }
 
@@ -470,11 +494,11 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang="scss">
-@import "src/assets/style/index.scss";
+<style scoped lang="less">
 
 section {
-  @include background_color('background_color3');
+  //@include background_color('background_color3');
+  background-color: var(--background_color3);
   margin: 0.267rem;
   border-radius: 0.267rem;
 

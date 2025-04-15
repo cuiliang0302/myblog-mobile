@@ -33,29 +33,36 @@
 
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
-import {Image as VanImage, Loading} from 'vant';
+import {Image as VanImage, Loading, showFailToast} from 'vant';
 import {onMounted, reactive} from "vue";
-import {getInfo} from "@/api/management";
+import Management from "@/api/management";
 
-    const info = reactive({
-      'wechat_pay': '',
-      'ali_pay': ''
-    })
-    // 获取博主信息数据
-    async function infoData() {
-      let info_data = await getInfo()
-      console.log(info_data)
-      info.wechat_pay = info_data.wechat_pay
-      info.ali_pay = info_data.ali_pay
-    }
+const info = reactive({
+  'wechat_pay': '',
+  'ali_pay': ''
+})
 
-    onMounted(() => {
-      infoData()
-    })
+// 获取博主信息数据
+const infoData = async () => {
+  try{
+    let info_data = await Management.getInfo()
+    console.log(info_data)
+    info.wechat_pay = info_data.wechat_pay
+    info.ali_pay = info_data.ali_pay
+  }catch(error){
+    console.log(error)
+    showFailToast("获取博主信息失败")
+  }
+
+}
+
+onMounted(() => {
+  infoData()
+})
 
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 .pay {
   .title {
     margin: 0.4rem;

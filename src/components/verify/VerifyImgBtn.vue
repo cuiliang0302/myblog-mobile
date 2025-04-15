@@ -33,7 +33,7 @@
 // 图片滑块组件(拼图)
 import dragVerifyImgChip from "@/components/verify/dragVerifyImgChip.vue";
 import {onMounted, ref} from "vue";
-import {Button, Popup, Toast, Icon} from 'vant';
+import {Button, Popup, Toast, Icon, showSuccessToast} from 'vant';
 import verify1 from '@/assets/verify/verify-1.jpg'
 import verify2 from '@/assets/verify/verify-2.jpg'
 import verify3 from '@/assets/verify/verify-3.jpg'
@@ -69,7 +69,7 @@ const reimg = () => {
   getImgId()
 }
 const pass = () => {
-  Toast.success('验证成功！');
+  showSuccessToast('验证成功！');
   emit('pass')
   // props.isPassing.value = true
   setTimeout(() => {
@@ -86,8 +86,8 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss">
-@import "src/assets/style/index";
+<style lang="less">
+//@import "src/assets/style/index";
 .main{
   .verify-btn{
     width: 5.6rem;

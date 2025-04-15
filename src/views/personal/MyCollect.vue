@@ -18,55 +18,66 @@
 <script setup>
 import TimeLine from "@/components/common/TimeLine.vue";
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
-import {Tab, Tabs, Toast, Empty} from 'vant';
 import {onMounted, ref} from "vue";
-import user from "@/utils/user";
 import {useRouter} from "vue-router";
-import {getArticleHistory, getSectionHistory} from "@/api/record";
-
-// 引入用户信息模块
-let {userId, isLogin} = user();
+import {storeToRefs} from 'pinia'
+import {useThemeStore,useUserStore} from '@/store';
+import {showFailToast} from "vant";
+import record from "@/api/record";
+const user = useUserStore();
 const router = useRouter()
 const active = ref(0);
 // 文章收藏记录
 const collectList = ref([])
 
-// 获取文章浏览记录
-async function getArticleHistoryData() {
-  let collectHistory_data = await getArticleHistory(NaN, userId.value)
-  console.log(collectHistory_data)
-  let collect_data = []
-  for (let index in collectHistory_data) {
-    if (collectHistory_data[index]['is_collect'] === true) {
-      collect_data.push(collectHistory_data[index])
+// 获取文章收藏记录
+const getArticleHistoryData = async () => {
+  try{
+    const collectHistory_data = await record.getArticleHistory(NaN, user.user_id)
+    console.log(collectHistory_data)
+    let collect_data = []
+    for (let index in collectHistory_data) {
+      if (collectHistory_data[index]['is_collect'] === true) {
+        collect_data.push(collectHistory_data[index])
+      }
     }
+    collectList.value = collect_data.map((item) => {
+      return {
+        id: item['article_id'],
+        name: item['article'],
+        time: item['time']
+      }
+    })
+  }catch(e){
+    console.log(e)
+    showFailToast("获取文章收藏记录失败")
   }
-  collectList.value = collect_data.map((item) => {
-    return {
-      id: item['article_id'],
-      name: item['article'],
-      time: item['time']
-    }
-  })
+
 }
 
-// 获取笔记浏览记录
-async function getSectionHistoryData() {
-  let collectHistory_data = await getSectionHistory(NaN, userId.value)
-  console.log(collectHistory_data)
-  let collect_data = []
-  for (let index in collectHistory_data) {
-    if (collectHistory_data[index]['is_collect'] === true) {
-      collect_data.push(collectHistory_data[index])
+// 获取笔记收藏记录
+const getSectionHistoryData = async () => {
+  try{
+    const collectHistory_data = await record.getSectionHistory(NaN, user.user_id)
+    console.log(collectHistory_data)
+    let collect_data = []
+    for (let index in collectHistory_data) {
+      if (collectHistory_data[index]['is_collect'] === true) {
+        collect_data.push(collectHistory_data[index])
+      }
     }
+    collectList.value = collect_data.map((item) => {
+      return {
+        id: item['section_id'],
+        name: item['section'],
+        time: item['time']
+      }
+    })
+  }catch(e){
+    console.log(e)
+    showFailToast("获取笔记收藏数据失败")
   }
-  collectList.value = collect_data.map((item) => {
-    return {
-      id: item['section_id'],
-      name: item['section'],
-      time: item['time']
-    }
-  })
+
 }
 
 // tab切换事件

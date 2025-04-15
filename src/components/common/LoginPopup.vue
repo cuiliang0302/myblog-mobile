@@ -46,8 +46,8 @@ defineExpose({
 })
 </script>
 
-<style lang="scss" scoped>
-@import "src/assets/style/index";
+<style lang="less" scoped>
+//@import "src/assets/style/index";
 
 section {
   width: 250px;
@@ -68,14 +68,16 @@ section {
     padding-top: 2.533rem;
 
     h3 {
-      @include font_color('font_color1');
+      color:var(--font_color1);
+      //@include font_color('font_color1');
       font-size: 0.48rem;
       margin: 0;
       font-weight: normal;
     }
 
     p {
-      @include font_color('font_color2');
+      color: var(--font_color2);
+      //@include font_color('font_color2');
     }
   }
 

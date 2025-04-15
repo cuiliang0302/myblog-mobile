@@ -20,7 +20,6 @@
 </template>
 
 <script setup>
-import {Toast, ActionSheet, Slider} from 'vant';
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 
@@ -65,8 +64,7 @@ defineExpose({
 })
 </script>
 
-<style lang="scss" scoped>
-@import "/src/assets/style/index";
+<style lang="less" scoped>
 
 .content {
   padding: 0.533rem;
@@ -87,7 +85,7 @@ defineExpose({
 
       p {
         font-size: 0.373rem;
-        @include font_color("font_color2");
+        color:var(--font_color2)
       }
     }
   }

@@ -12,39 +12,45 @@ import NavBar from "@/components/common/NavBar.vue";
 import Tabbar from '@/components/common/Tabbar.vue'
 import LinkContent from "@/components/link/LinkContent.vue";
 import {onMounted, reactive, ref} from "vue";
-import {getLink} from "@/api/management";
+import Management from "@/api/management";
+import {showFailToast} from "vant";
 
-    const recommend = reactive(
-        {
-          title: '🔥 强烈推荐',
-          link_list: []
-        })
-    const link = reactive(
-        {
-          title: '⚓ 友情链接',
-          link_list: []
-        })
+const recommend = reactive(
+    {
+      title: '🔥 强烈推荐',
+      link_list: []
+    })
+const link = reactive(
+    {
+      title: '⚓ 友情链接',
+      link_list: []
+    })
 
-    // 获取友情链接数据
-    async function linkData() {
-      let link_data = await getLink()
-      for (let i in link_data) {
-        if (link_data[i].type === "2") {
-          recommend.link_list.push(link_data[i])
-        } else {
-          link.link_list.push(link_data[i])
-        }
+// 获取友情链接数据
+const linkData = async ()=> {
+  try{
+    const link_data = await Management.getLink()
+    for (let i in link_data) {
+      if (link_data[i].type === "2") {
+        recommend.link_list.push(link_data[i])
+      } else {
+        link.link_list.push(link_data[i])
       }
     }
+  }catch(err){
+    console.log(err)
+    showFailToast("获取友情链接数据失败")
+  }
+}
 
-    onMounted(() => {
-      linkData()
-    })
+onMounted(() => {
+  linkData()
+})
 </script>
 
-<style scoped lang="scss">
-@import "src/assets/style/index.scss";
+<style scoped lang="less">
+//@import "src/assets/style/index.scss";
 
-.message {
-}
+//.message {
+//}
 </style>

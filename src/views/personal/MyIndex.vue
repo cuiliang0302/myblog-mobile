@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="my-index">
     <section>
       <div class="wave wave1"></div>
       <div class="wave wave2"></div>
@@ -7,11 +7,11 @@
       <div class="wave wave4"></div>
       <div class="photo">
         <div class="username">
-          <p v-if="isLogin">{{ userInfo.username }}</p>
+          <p v-if="user.isLoggedIn">{{ userInfo.username }}</p>
           <p v-else>点击头像登录/注册</p>
         </div>
         <div>
-          <van-image v-if="isLogin" :src="userInfo.photo" width="1.867rem" height="1.867rem" round>
+          <van-image v-if="user.isLoggedIn" :src="userInfo.photo" width="1.867rem" height="1.867rem" round>
             <template v-slot:loading>
               <van-loading type="spinner" size="20"/>
             </template>
@@ -43,7 +43,7 @@
           <van-cell title="我的信息" size="large" is-link @click="toView('/personal/myInfo')"/>
           <van-cell title="修改密码" size="large" is-link @click="toView('/personal/changePassword')"/>
           <van-cell title="更换邮箱" size="large" is-link @click="toView('/personal/changeEmail')"/>
-          <van-cell title="更换手机" size="large" is-link @click="toView('/personal/changePhone')"/>
+          <!--          <van-cell title="更换手机" size="large" is-link @click="toView('/personal/changePhone')"/>-->
           <van-cell title="订阅更新" size="large">
             <template #right-icon>
               <van-switch v-model="userInfo.is_flow" @change="changeFlow" size="0.533rem"/>
@@ -61,12 +61,21 @@
       </div>
       <div class="cell-item">
         <van-cell-group title="系统与设置">
-          <van-cell title="字体大小" size="large" is-link :value="fontType" to="/fontSize"/>
+          <van-cell title="字体大小" size="large" is-link :value="font_name" to="/fontSize"/>
           <van-cell title="深色模式" size="large">
             <template #right-icon>
-              <van-switch v-model="isDark" @change="changeDark" size="0.533rem"/>
+              <van-switch v-model="is_dark" @change="changeDark" size="0.533rem"/>
             </template>
           </van-cell>
+          <van-cell title="主题颜色" size="large" is-link :value="theme_name" @click="clickTheme"/>
+          <van-popup v-model:show="show_theme_picker" destroy-on-close round position="bottom">
+            <van-picker
+                :model-value="theme_value"
+                :columns="columns"
+                @cancel="show_theme_picker = false"
+                @confirm="onConfirm"
+            />
+          </van-popup>
           <van-cell title="退出登录" size="large" is-link @click="logout"/>
         </van-cell-group>
       </div>
@@ -77,153 +86,160 @@
 </template>
 
 <script setup>
+import {onMounted, reactive, ref} from "vue";
+import {
+  Image as VanImage,
+  showFailToast,
+  showSuccessToast, showConfirmDialog, showToast, showDialog
+} from 'vant';
+import {useCommonStore, useThemeStore, useUserStore} from '@/store';
 import Tabbar from "@/components/common/Tabbar.vue";
 import LoginPopup from "@/components/common/LoginPopup.vue";
-import {Image as VanImage, Loading, Icon, Cell, CellGroup, Switch, Dialog, Toast} from 'vant';
-import {computed, onMounted, reactive, ref} from "vue";
-import store from "@/store/index";
-import {useRouter} from "vue-router";
 import router from "@/router";
-import user from "@/utils/user";
-import {getUserinfoId, putUserinfoId} from "@/api/account";
-import fontSize from "@/utils/fontSize";
-import {getSiteConfig} from "@/api/management";
-import dark from "@/utils/dark";
+import account from "@/api/account";
+import management from "@/api/management";
+import {storeToRefs} from 'pinia'
 
+const user = useUserStore();
+const common = useCommonStore();
+const theme = useThemeStore();
+const {font_name, is_dark, theme_name, theme_color} = storeToRefs(theme)
 // 提示登录组件对象
 const loginPopupRef = ref(null)
-// 引入公共方法
-let {isLogin, userInfo, userId, toView, logo} = global()
-
-// 引入系统与设置模块
-let {changeFlow, fontType, isDark, changeDark, logout} = setting(userId, userInfo, isLogin, loginPopupRef)
-
-// 公共方法
-function global() {
-  const router = useRouter()
-  // 引入用户信息模块
-  let {userId, isLogin} = user();
-  // 用户信息
-  const userInfo = reactive({})
-  // 跳转到记录消息页
-  const toView = (value) => {
-    if (isLogin.value) {
-      router.push(value)
-    } else {
-      console.log(value)
-      console.log("没登录呢")
-      store.commit('setNextPath', value)
-      loginPopupRef.value.showPopup()
-    }
-  }
-  // 网站logo
-  const logo = ref()
-
-  // 获取网站logo
-  async function siteConfigData() {
-    let siteConfig_data = await getSiteConfig()
-    logo.value = siteConfig_data.logo
-  }
-
-  // 获取用户信息
-  async function getUserinfo(userid) {
-    const userinfo_data = await getUserinfoId(userid)
+// 用户信息
+const userInfo = reactive({})
+// 获取用户信息
+const getUserinfo = async (userid) => {
+  try {
+    const userinfo_data = await account.getUserinfoId(userid)
     console.log(userinfo_data)
     for (let i in userinfo_data) {
       userInfo[i] = userinfo_data[i]
     }
-  }
-
-  onMounted(() => {
-    siteConfigData()
-    if (isLogin.value) {
-      getUserinfo(userId.value)
-    }
-  })
-  return {
-    logo,
-    isLogin,
-    userId,
-    toView,
-    userInfo
+  } catch (error) {
+    console.log(error)
+    showFailToast('获取个人信息失败!')
   }
 }
+// 跳转到记录消息页
+const toView = (value) => {
+  if (user.isLoggedIn) {
+    router.push(value)
+  } else {
+    console.log(value)
+    common.setNextPath(router.currentRoute.value.fullPath)
+    loginPopupRef.value.showPopup()
+  }
+}
+// 网站logo
+const logo = ref('')
 
-function setting(userId, userInfo, isLogin, loginPopupRef) {
-  // 引入暗黑模块
-  let {setDark} = dark()
-  // 引入字体设置模块
-  let {fontType} = fontSize()
-  // 切换订阅
-  const changeFlow = (value) => {
-    if (isLogin.value) {
-      if (userInfo.email.length === 0) {
-        // console.log("得绑定邮箱啊")
-        Dialog.alert({
-          message: '您的账号未绑定邮箱，请先绑定邮箱后再进行设置！',
-        }).then(() => {
-          router.push('/personal/changeEmail')
-        });
-      } else {
-        if (value) {
-          Toast('已开启文章订阅功能')
-          userInfo.is_flow = true
-        } else {
-          Toast('已关闭文章订阅功能')
-          userInfo.is_flow = false
-        }
-        putUserinfoId(userId.value, userInfo).then((response) => {
-          console.log(response)
-        }).catch(response => {
-          //发生错误时执行的代码
-          console.log(response)
-        });
-      }
-    } else {
-      // console.log("也没登录呀")
-      userInfo.is_flow = false
-      store.commit('setNextPath', router.currentRoute.value.fullPath)
-      loginPopupRef.value.showPopup()
-      return false
-    }
+// 获取网站logo
+const siteConfigData = async () => {
+  try {
+    let siteConfig_data = await management.getSiteConfig()
+    logo.value = siteConfig_data.logo
+  } catch (error) {
+    console.log(error)
+    showFailToast('获取网站logo失败！');
   }
-  // 是否开启暗黑模式
-  const isDark = computed(() => store.state.dark)
-  // 切换夜间模式
-  const changeDark = (value) => {
-    setDark(value)
-    if (value) {
-      Toast('已开启深色模式')
-    } else {
-      Toast('已关闭深色模式')
-    }
-  }
-  // 注销
-  const logout = () => {
-    if (isLogin.value) {
-      Dialog.confirm({
-        title: '注销',
-        message: '真的要退出登录吗？',
-        confirmButtonText: '确认',
-        cancelButtonText: '再想想',
+}
+// 切换订阅
+const changeFlow = (value) => {
+  if (user.isLoggedIn) {
+    if (userInfo.email.length === 0) {
+      // console.log("得绑定邮箱啊")
+      showDialog({
+        message: '您的账号未绑定邮箱，请先绑定邮箱后再进行设置！',
       }).then(() => {
-        localStorage.clear()
-        sessionStorage.clear()
-        Toast.success('成功退出，跳转至登录页')
-        router.replace('/loginRegister')
-      })
+        router.push('/personal/changeEmail')
+      });
     } else {
-      Toast('未曾登录，何来退出？')
-      return false
+      if (value) {
+        showToast({message: '已开启文章订阅，发布新文章后您将收到邮件提醒', duration: 5000})
+        userInfo.is_flow = true
+      } else {
+        showToast({message: '已关闭文章订阅，发布新文章后您将不再收到邮件提醒', duration: 5000})
+        userInfo.is_flow = false
+      }
+      account.putUserinfoId(user.user_id, userInfo).then((response) => {
+        console.log(response)
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+      });
     }
+  } else {
+    // console.log("也没登录呀")
+    userInfo.is_flow = false
+    common.setNextPath(router.currentRoute.value.fullPath)
+    loginPopupRef.value.showPopup()
+    return false
   }
-  return {fontType, isDark, changeDark, logout, changeFlow}
 }
+// 切换夜间模式
+const changeDark = (value) => {
+  console.log(value)
+  if (value) {
+    showToast('已开启深色模式')
+  } else {
+    showToast('已关闭深色模式')
+  }
+}
+// 切换主题色弹窗是否显示
+const show_theme_picker = ref(false);
+// 主题色值
+const theme_value = ref([])
+// 主题色选项
+const columns = [
+  {text: '拂晓蓝(默认)', value: '#409eff'},
+  {text: '薄暮红', value: '#e74c3c'},
+  {text: '火山橘', value: '#e67e22'},
+  {text: '日暮黄', value: '#f1c40f'},
+  {text: '极光绿', value: '#16a085'},
+  {text: '酱样紫', value: '#9b59b6'},
+];
+// 点击切换主题色事件
+const clickTheme = () => {
+  theme_value.value = Array.of(theme_color);
+  show_theme_picker.value = true
+}
+// 主题换肤确认事件
+const onConfirm = ({selectedValues, selectedOptions}) => {
+  theme.toggleTheme(selectedOptions[0].text, selectedValues[0])
+  show_theme_picker.value = false;
+  theme_value.value = selectedValues;
+};
+// 注销
+const logout = () => {
+  if (user.isLoggedIn) {
+    showConfirmDialog({
+      title: '注销',
+      message: '真的要退出登录吗？',
+      confirmButtonText: '确认',
+      cancelButtonText: '再想想',
+    }).then(() => {
+      user.logout()
+      showSuccessToast('成功退出，跳转至登录页')
+      router.replace('/loginRegister')
+    })
+  } else {
+    showToast('未曾登录，何来退出？')
+    return false
+  }
+}
+onMounted(() => {
+  if (user.isLoggedIn) {
+    console.log(user.user_id)
+    getUserinfo(user.user_id)
+  } else {
+    siteConfigData()
+  }
+})
 </script>
-<style scoped lang="scss">
-@import "src/assets/style/index.scss";
+<style lang="less" scoped>
+//@import "src/assets/style/index.scss";
 //水波纹特效和背景图
-
 section {
   position: relative;
   width: 100%;
@@ -239,7 +255,8 @@ section {
     position: absolute;
     bottom: 0;
     left: 0;
-    @include background_img('background_img1');
+    //background-image: url("/src/assets/images/wave-light.png");
+    background-image: var(--background_img);
     background-size: 26.667rem 2.667rem;
   }
 
@@ -277,7 +294,7 @@ section {
 
   .history {
     display: flex;
-    @include background_color("background_color3");
+    background-color: var(--background_color3);
     padding: 0.8rem 0 0.267rem 0;
     border-radius: 0.4rem;
     position: absolute;
@@ -286,7 +303,7 @@ section {
     left: 50%;
     bottom: -22.5%;
     z-index: 4;
-    @include border_shadow("border_color2");
+    box-shadow: var(--box_shadow);
 
     span {
       flex: 1;
@@ -315,7 +332,7 @@ section {
     }
 
     .van-image {
-      @include border_shadow("border_color1");
+      color: var(--border_color1)
     }
   }
 
@@ -344,10 +361,20 @@ section {
 
   .cell-item {
     margin: 0.267rem;
-    @include background-color("cell-item-color");
+    //@include background-color("cell-item-color");
     box-shadow: 0 0.027rem 0.107rem rgb(0 0 0 / 10%);
   }
 }
 
+.van-theme-light .wave {
+  background-image: url("/src/assets/images/wave-light.png");
+}
 
+.van-theme-dark .wave {
+  background-image: url("/src/assets/images/wave-dark.png");
+}
+
+:deep(.van-cell-group__title) {
+  color: var(--van-primary-color)
+}
 </style>

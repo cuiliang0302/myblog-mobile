@@ -6,11 +6,14 @@
 </template>
 
 <script setup>
-import { Toast } from 'vant';
+import {showFailToast, showSuccessToast, Toast} from 'vant';
 import {onMounted, reactive, ref} from "vue";
 import {useRouter} from "vue-router";
-import {postOAuthCallback} from "@/api/account";
 import store from "@/store";
+import Account from "@/api/account";
+import {storeToRefs} from 'pinia'
+import {useThemeStore,useUserStore} from '@/store';
+const user = useUserStore();
 const router = useRouter()
 // 平台名称
 const platform_name = ref('')
@@ -23,17 +26,16 @@ const OAuthForm = reactive({
 })
 // 向后端发送登录回调请求
 const postCallback = () => {
-  postOAuthCallback(OAuthForm).then((response) => {
+  Account.postOAuthCallback(OAuthForm).then((response) => {
     console.log(response)
-    Toast.success('登录成功！');
-    store.commit('setKeepLogin', false)
-    store.commit('setUserSession', response)
-    console.log(store.state.nextPath)
-    router.push(store.state.nextPath)
+    showSuccessToast('登录成功！');
+    user.login(response.user_id, response.token, response.username)
+    console.log(user.user_id)
+    router.push("/personal/myIndex")
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    Toast.fail('自动登录出现异常，请重试！');
+    showFailToast('自动登录出现异常，请重试！');
     router.push('/loginRegister')
   });
 }
@@ -72,7 +74,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 .oauth {
   margin-top: 40vh;
   text-align: center;

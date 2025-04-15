@@ -8,7 +8,8 @@
         <div class="icon"></div>
         <div class="label">
           <p @click="toDetail(item.id)">
-            {{ item.content }}
+            <span v-html="item.content"></span>
+<!--            {{ item.content }}-->
             <br v-show="item.content">
             <span><van-tag round type="primary" size="medium" plain>{{ item.name }}</van-tag></span>
           </p>
@@ -40,12 +41,12 @@ const toDetail = (detailId) => {
 }
 </script>
 
-<style scoped lang="scss">
-@import "src/assets/style/index";
+<style scoped lang="less">
 
 .timeline {
   padding: 10px 20px;
-  @include background_color('background_color2');
+  background-color: var(--background_color2);
+  //@include background_color('background_color2');
 
   ul {
     position: relative;
@@ -55,19 +56,20 @@ const toDetail = (detailId) => {
 
       .time {
         display: block;
-        width: 25%;
-        padding-right: 100px;
+        width: 100px;
         position: absolute;
         text-align: center;
+        left:-15px;
 
         span:first-child {
-          font-size: 16px;
+          font-size: 15px;
           color: gray;
         }
 
         span:last-child {
           font-size: 20px;
-          color: $color-primary;
+          color:var(--van-primary-color);
+          //color: $color-primary;
           line-height: 30px;
         }
       }
@@ -79,7 +81,8 @@ const toDetail = (detailId) => {
         color: #fff;
         background: white;
         border-radius: 50%;
-        box-shadow: 0 0 0 2px $color-primary;
+        box-shadow:  0 0 0 2px var(--van-primary-color);
+        //box-shadow: 0 0 0 2px $color-primary;
         text-align: center;
         left: 35%;
         top: 3%;
@@ -87,19 +90,21 @@ const toDetail = (detailId) => {
       }
 
       .label {
-        margin: 0 0 30px 35%;
-        @include background_color('background_color3');
-        @include font_color('font_color1');
+        margin: 0 0 30px 110px;
+        background-color: var(--background_color3);
+        color: var(--font_color1);
+        //@include background_color('background_color3');
+        //@include font_color('font_color1');
         padding: 10px;
         font-weight: 300;
         line-height: 1.4;
         position: relative;
         border-radius: 5px;
+        word-break: break-all;
 
         p {
           margin: 0;
           font-size: 14px;
-
           span:first-child {
             font-weight: 400;
           }
@@ -112,13 +117,14 @@ const toDetail = (detailId) => {
 
       .label::after {
         right: 100%;
-        border: solid transparent;
+        //border: solid transparent;
         content: " ";
         height: 0;
         width: 0;
         position: absolute;
         pointer-events: none;
-        @include label_after('background_color3');
+        background-color: var(--background_color3);
+        //@include label_after('background_color3');
         border-width: 10px;
         top: 4px;
       }
@@ -131,7 +137,8 @@ const toDetail = (detailId) => {
     top: 0;
     bottom: 0;
     width: 2px;
-    background: $color-primary;
+    background-color: var(--van-primary-color);
+    //background: $color-primary;
     left: 31.25%;
     margin-left: -10px;
   }

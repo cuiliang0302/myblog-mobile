@@ -52,11 +52,12 @@ let switchLogin = () => {
   component.comp = Login
 }
 </script>
-<style lang="scss" scoped>
-@import "src/assets/style/index.scss";
+<style lang="less" scoped>
+//@import "src/assets/style/index.scss";
 
 .bgc {
-  @include background_color('background_color4');
+  background-color: var(--background_color4);
+  //@include background_color('background_color4');
   height: 100vh;
   position: relative;
   overflow: hidden;
@@ -77,7 +78,7 @@ section {
     position: absolute;
     bottom: 0;
     left: 0;
-    @include background_img('background_img1');
+    //@include background_img('background_img1');
     background-size: 26.667rem 2.667rem;
   }
 
@@ -164,6 +165,12 @@ section {
 .animated {
   animation-duration: 1s !important;
 }
+.van-theme-light .wave {
+  background-image: url("/src/assets/images/wave-light.png");
+}
 
+.van-theme-dark .wave {
+  background-image: url("/src/assets/images/wave-dark.png");
+}
 
 </style>

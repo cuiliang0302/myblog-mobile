@@ -8,6 +8,7 @@
             placeholder="请输入用户名"
             label-width="20"
             validate-first
+            clearable
             :rules="[{ validator: checkUsername, message: '请填写正确的用户名' }]"
         >
           <template #label>
@@ -16,11 +17,12 @@
         </van-field>
         <van-field
             v-model="registerForm.contact"
-            name="邮箱号/手机号"
-            placeholder="请输入邮箱号/手机号"
+            name="邮箱号"
+            placeholder="请输入邮箱号"
             label-width="20"
             validate-first
-            :rules="[{ validator: checkContact, message: '请填写正确的邮箱号/手机号' }]"
+            clearable
+            :rules="[{ validator: checkContact, message: '请填写正确的邮箱号' }]"
         >
           <template #label>
             <MyIcon class="icon" type="icon-email"/>
@@ -32,6 +34,7 @@
             label-width="20"
             validate-first
             placeholder="请输入验证码"
+            clearable
             :rules="[{ required: true, message: '请填写验证码' }]"
         >
           <template #label>
@@ -65,16 +68,19 @@
 </template>
 <script setup>
 import {reactive, ref} from "vue";
-import {Form, Button, Field, Icon, Toast} from 'vant';
+import {showFailToast, showSuccessToast} from 'vant';
 import {useRouter} from "vue-router";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn.vue";
-import {getRegister, postCode, postLogin, postRegister} from '@/api/account'
-import store from "@/store/index";
+import {storeToRefs} from 'pinia'
+import {useCommonStore, useUserStore} from '@/store';
 import icon from '@/utils/icon'
-
-let {MyIcon} = icon()
-
+import account from "@/api/account";
+const {MyIcon} = icon()
+const user = useUserStore();
+const common = useCommonStore();
 const router = useRouter()
+// 登录后跳转页面
+const {next_path} = storeToRefs(common)
 // 注册表单
 const registerForm = reactive({
   username: '',
@@ -93,34 +99,41 @@ const pattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
 const checkUsername = (val) =>
     new Promise((resolve) => {
       if (val) {
-        getRegister(val, NaN).then((response) => {
+        account.getRegister(val, NaN).then((response) => {
           console.log(response)
           resolve(true)
         }).catch(response => {
           //发生错误时执行的代码
           console.log(response)
-          Toast.fail(response.msg);
+          showFailToast("此用户名已存在!");
           resolve(false)
         });
       }
     })
-// 异步校验邮箱/手机号
-const checkContact = (val) =>
-    new Promise((resolve) => {
-      if (val) {
-        getRegister(NaN, val).then((response) => {
-          console.log(response)
-          btnDisabled.value = false
-          resolve(true)
-        }).catch(response => {
-          //发生错误时执行的代码
-          console.log(response)
-          Toast.fail(response.msg);
-          btnDisabled.value = true
-          resolve(false)
-        });
-      }
-    })
+// 异步校验邮箱
+const checkContact = (val) => {
+  console.log(val)
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  new Promise((resolve) => {
+    if (val && re.test(val)) {
+      account.getRegister(NaN, val).then((response) => {
+        console.log(response)
+        btnDisabled.value = false
+        resolve(true)
+      }).catch(response => {
+        //发生错误时执行的代码
+        console.log(response)
+        showFailToast("此邮箱号已存在!");
+        btnDisabled.value = true
+        resolve(false)
+      });
+    } else {
+      showFailToast("请输入正确的邮箱号!");
+      btnDisabled.value = true
+      resolve(false)
+    }
+  })
+}
 const onFailed = (errorInfo) => {
   console.log('failed', errorInfo);
 };
@@ -136,67 +149,71 @@ const codeForm = reactive({
 const pass = () => {
   console.log("通过验证了,获取验证码")
   codeForm.contact = registerForm.contact
-  postCode(codeForm).then((response) => {
+  account.postCode(codeForm).then((response) => {
     console.log(response)
-    Toast.success('验证码发送成功！');
+    showSuccessToast('验证码发送成功！');
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    Toast.fail(response.msg);
+    showFailToast("验证码发送失败!");
   });
 }
 const onSubmit = (values) => {
   console.log('submit', values);
-  postRegister(registerForm).then((response) => {
+  account.postRegister(registerForm).then((response) => {
     console.log(response)
-    Toast.success('注册成功');
+    showSuccessToast('注册成功,已为您自动登录!');
     loginForm.username = registerForm.username
     loginForm.password = registerForm.password
-    postLogin(loginForm).then((response) => {
+    account.postLogin(loginForm).then((response) => {
       console.log(response)
-      store.commit('setKeepLogin', false)
-      store.commit('setUserSession', response)
-      router.push(store.state.nextPath)
+      // store.commit('setKeepLogin', false)
+      // store.commit('setUserSession', response)
+      user.login(response.user_id, response.token, response.username)
+      router.push(common.next_path)
     }).catch(response => {
       //发生错误时执行的代码
       console.log(response)
-      Toast.fail('登录异常！');
+      showFailToast('登录异常！');
     });
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    Toast.fail('账号注册失败！');
+    showFailToast('账号注册失败！');
   });
 };
 </script>
 
-<style lang="scss" scoped>
-@import "src/assets/style/index";
+<style lang="less" scoped>
+//@import "src/assets/style/index";
 
 .main {
 
   .form {
     padding: 0.533rem;
-    @include background_color('background_color2');
+    background-color: var(--background_color2);
+    //@include background_color('background_color2');
     border-radius: 0.267rem;
-    height: 9.333rem;
+    height: 380px;
     z-index: 4;
     box-shadow: 0 0.08rem 0.133rem rgb(0 0 0 / 35%);
     margin-top: 1.067rem;
 
     .submit {
       button {
-        margin-top: 1.067rem;
+        margin: 35px auto;
         font-size: 0.533rem;
+        width: 88%
       }
     }
   }
 
   .van-cell {
-    height: 1.333rem;
-    padding: 0.8rem 0rem;
+    height: 70px;
+    padding: 20px 0;
     display: flex;
     align-items: center;
+    background-color: var(--background_color2);
   }
 }
 </style>

@@ -1,5 +1,3 @@
-@import "variable";
-@import "theme";
 //顶部导航栏最大宽度限制
 .van-nav-bar--fixed {
   z-index: 2 !important;
@@ -10,10 +8,9 @@
   position: sticky;
   top: 1.067rem;
   z-index: 2;
-  position: -webkit-sticky;
-  border-bottom: 1px solid $color-border-base;
+  //position: -webkit-sticky;
+  border-bottom: 1px solid var(--border_color1);
 }
-
 //导航栏最大宽度限制
 .van-nav-bar__title {
   max-width: 85% !important;
@@ -27,7 +24,8 @@
 
 //导航栏左侧图标颜色和大小
 .van-nav-bar .van-icon {
-  @include font_color('font_color1');
+  color:var(--font_color1);
+//@include font_color('font_color1');
   font-size: 25px !important;
 }
 
@@ -66,12 +64,14 @@
 
 // 步骤条暗黑模式适配
 .van-step--horizontal .van-step__circle-container {
-  @include background_color('background_color2')
+  background-color: var(--background_color2);
+//@include background_color('background_color2')
 }
 
 // 分享菜单适配暗黑模式
 .van-share-sheet__cancel::before {
-  @include background_color('background_color4')
+  background-color: var(--background_color4);
+//@include background_color('background_color4')
 }
 
 // 弹窗菜单适配暗黑模式
@@ -87,4 +87,9 @@
 // 评论输入框宽度
 .van-field__control {
   width: 80% !important;
+}
+
+// 标签页激活颜色
+.van-tabs__line{
+  background-color: var(--van-primary-color)!important;
 }

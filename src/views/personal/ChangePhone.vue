@@ -63,11 +63,11 @@ const pass = () => {
   codeForm.username = userName.value
   postCode(codeForm).then((response) => {
     console.log(response)
-    Toast.success('验证码发送成功！');
+    showSuccessToast('验证码发送成功！');
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    Toast.fail(response.msg);
+    showFailToast(response.msg);
   });
 }
 // 异步校验手机号
@@ -82,7 +82,7 @@ const checkContact = (val) =>
         }).catch(response => {
           //发生错误时执行的代码
           console.log(response)
-          Toast.fail(response.msg);
+          showFailToast(response.msg);
           btnDisabled.value = true
           resolve(false)
         });
@@ -95,11 +95,11 @@ const checkContact = (val) =>
 const onSubmit = () => {
   putChangePhone(userId.value, phoneForm).then((response) => {
     console.log(response)
-    Toast.success('手机修改成功！');
+    showSuccessToast('手机修改成功！');
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    Toast.fail(response.msg);
+    showFailToast(response.msg);
   });
 };
 </script>

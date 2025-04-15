@@ -1,12 +1,12 @@
 <template>
   <van-nav-bar fixed placeholder>
-    <template #left="props">
+    <template #left>
       <img :src="logo" alt="">
     </template>
-    <template #title="props">
+    <template #title>
       <SearchInput></SearchInput>
     </template>
-    <template #right="props">
+    <template #right>
       <MyIcon class="icon" type="icon-menu" @click="fnShowAction"/>
     </template>
   </van-nav-bar>
@@ -14,47 +14,47 @@
 </template>
 
 <script setup>
-import {NavBar, Icon, Search} from 'vant';
 import {onMounted, ref} from "vue";
 import ActionSheet from "@/components/common/ActionSheet.vue";
 import SearchInput from "@/components/common/SearchInput.vue"
-import {getSiteConfig} from "@/api/management";
+import Management from "@/api/management";
 import icon from '@/utils/icon'
-let {MyIcon} = icon()
-const key = ref('')
-const active = ref(0);
+import {showFailToast} from "vant";
+const {MyIcon} = icon()
 const showAction = ref();
 const fnShowAction = () => {
   showAction.value.showAction();
 };
 // 网站logo
-const logo = ref()
-
-// 获取网站logo
-async function siteConfigData() {
-  let siteConfig_data = await getSiteConfig()
-  logo.value = siteConfig_data.logo
+const logo = ref('')
+// 获取网站数据
+const siteConfigData = async () => {
+  try {
+    const response = await Management.getSiteConfig();
+    console.log(response);
+    logo.value = response.logo;
+  } catch (error) {
+    showFailToast("获取网站数据失败！");
+  }
 }
-
 onMounted(() => {
   siteConfigData()
 })
 </script>
 
-<style lang="scss" scoped>
-@import "src/assets/style/index";
-
-.van-nav-bar__left {
-  img {
-    width: 0.8rem;
-    height: 0.8rem;
+<style lang="less" scoped>
+:deep(.van-nav-bar__left){
+  img{
+    width: 35px;
+    height: 35px;
   }
 }
-
-
-.van-nav-bar__right {
-  .icon {
-    font-size: 0.933rem;
-  }
+:deep(.van-nav-bar__title) {
+  max-width: 80%;
+}
+:deep(.van-nav-bar__right) {
+    .icon {
+      font-size: 40px;
+    }
 }
 </style>

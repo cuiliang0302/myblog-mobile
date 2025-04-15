@@ -20,11 +20,11 @@
         <van-field
             v-show="active===0"
             v-model="verifyForm.contact"
-            name="邮箱/手机号"
-            label="邮箱/手机号"
-            placeholder="邮箱/手机号"
+            name="邮箱"
+            label="邮箱"
+            placeholder="邮箱"
             label-width="20"
-            :rules="[{ validator: checkContact, message: '填写正确的邮箱/手机号' }]"
+            :rules="[{ validator: checkContact, message: '填写正确的邮箱' }]"
         >
           <template #label>
             <MyIcon class="icon" type="icon-email"/>
@@ -103,11 +103,11 @@
 </template>
 
 <script setup>
-import {Step, Steps, Form, Button, Field, Toast} from 'vant';
+import {showFailToast, showSuccessToast} from 'vant';
 import {reactive, ref} from "vue";
-import {getRegister, postCode, postSetPassword} from "@/api/account";
 import VerifyCodeBtn from "@/components/verify/VerifyCodeBtn.vue";
 import icon from '@/utils/icon'
+import Account from "@/api/account";
 let {MyIcon} = icon()
 
 const active = ref(0);
@@ -121,7 +121,7 @@ const verifyForm = reactive({
 const checkContact = (val) =>
     new Promise((resolve) => {
       if (val) {
-        getRegister(NaN, val).then((response) => {
+        Account.getRegister(NaN, val).then((response) => {
           console.log(response)
           resolve(false)
         }).catch(response => {
@@ -147,13 +147,13 @@ const codeForm = reactive({
 const pass = () => {
   console.log("通过验证了,获取验证码")
   codeForm.contact = verifyForm.contact
-  postCode(codeForm).then((response) => {
+  Account.postCode(codeForm).then((response) => {
     console.log(response)
-    Toast.success('验证码发送成功！');
+    showSuccessToast('验证码发送成功！');
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    Toast.fail(response.msg);
+    showFailToast(response.msg);
   });
 }
 // 用户验证表单提交
@@ -183,22 +183,21 @@ const passwordForm = reactive({
 async function passwordSubmit() {
   verifyForm.password = passwordForm.password1
   try {
-    let response = await postSetPassword(verifyForm)
+    let response = await Account.postSetPassword(verifyForm)
     console.log(response)
     active.value = 2
   } catch (error) {
     console.log(error)
-    Toast.fail(error.msg);
+    showFailToast(error.msg);
     active.value = 0
   }
 }
 </script>
 
-<style scoped lang="scss">
-@import "src/assets/style/index";
+<style scoped lang="less">
 
 .password {
-  height: 100%;
+  height: 100vh;
   background-size: 100%;
   background-image: linear-gradient(#5aa6f8, #1d6ef9);
 
@@ -218,7 +217,8 @@ async function passwordSubmit() {
       position: absolute;
       bottom: 0;
       left: 0;
-      @include background_img('background_img1');
+      //background-image: var(--background_img);
+      //@include background_img('background_img1');
       background-size: 26.667rem 4rem;
     }
 
@@ -277,7 +277,8 @@ async function passwordSubmit() {
     position: absolute;
     width: 75%;
     height: 10rem;
-    @include background_color('background_color2');
+    //@include background_color('background_color2');
+    background-color: var(--background_color3);
     box-shadow: 0 0.08rem 0.133rem rgb(0 0 0 / 35%);
     border-radius: 0.267rem;
     left: 50%;
@@ -288,7 +289,7 @@ async function passwordSubmit() {
     padding: 0.533rem;
 
     .title {
-      color: $color-primary;
+      color: var(--van-primary-color);
       width: 8rem;
       text-align: center;
       font-size: 0.48rem;
@@ -317,13 +318,13 @@ async function passwordSubmit() {
       font-size: 0.427rem;
       text-align: center;
       margin: 1.067rem 0;
-      @include font_color('font_color1');
+      color:var(--font_color1);
 
       .icon {
         width: 1.333rem;
         height: 1.333rem;
         margin-bottom: 0.533rem;
-        color: $color-other-emerald;
+        //color: $color-other-emerald;
       }
     }
   }
@@ -340,5 +341,12 @@ async function passwordSubmit() {
 
 .van-form {
   margin-top: 0.533rem;
+}
+.van-theme-light .wave {
+  background-image: url("/src/assets/images/wave-light.png");
+}
+
+.van-theme-dark .wave {
+  background-image: url("/src/assets/images/wave-dark.png");
 }
 </style>

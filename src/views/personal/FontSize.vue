@@ -5,17 +5,18 @@
     <div class="font">
       <div class="preview" id="setFont" style="font-size: 37px">
         <h1>拖动下面的滑块，可实现预览字体大小的变化</h1>
-        <p>你可以根据阅读习惯，拖动下面的滑块，设置字体大小。设置后会改变文章详情页、笔记详情页的字体大小，注销登录后恢复默认值。</p>
+        <p>
+          你可以根据阅读习惯，拖动下面的滑块，设置字体大小。设置后会改变文章详情页、笔记详情页的字体大小，注销登录后恢复默认值。</p>
         <p>如果在使用过程中存在问题或意见，欢迎反馈。</p>
       </div>
       <div class="slider">
         <div class="slider-scale">
         <span v-for="(item,index) in fontShow" :key="index"
-              :class="{'active': index===fontValue/25}">
+              :class="{'active': index===font_value/25}">
           {{ item }}
         </span>
         </div>
-        <van-slider v-model="fontValue" :step="25" @change="changeSize"/>
+        <van-slider v-model="font_value" :step="25" @change="changeSize"/>
       </div>
     </div>
   </div>
@@ -23,25 +24,32 @@
 
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
-import {Slider, Toast} from 'vant';
-import {onMounted,watch} from "vue";
-import fontSize from "@/utils/fontSize";
-
-    // 引入字体设置模块
-    let {fontShow, fontValue, changeSize, rootSize, fontType} = fontSize()
-    onMounted(() => {
-      const html = document.querySelector('#setFont')
-      html.style.fontSize = rootSize.value + 'px'
-    })
-    watch(rootSize, (newSize) => {
-      const html = document.querySelector('#setFont')
-      html.style.fontSize = newSize + 'px'
-    });
+import {onMounted, watch} from "vue";
+import {useThemeStore} from "@/store";
+import {storeToRefs} from "pinia";
+const theme = useThemeStore();
+const {font_name, is_dark, font_value, theme_name} = storeToRefs(theme)
+// 字体显示种类
+const fontShow = ['超小', '小号', '默认', '大号', '超大']
+// 更换字体大小事件
+const changeSize = ()=>{
+  console.log(font_value);
+  theme.toggleSize(font_value.value)
+}
+// 引入字体设置模块
+// let {fontShow, fontValue, changeSize, rootSize, fontType} = fontSize()
+// onMounted(() => {
+//   const html = document.querySelector('#setFont')
+//   html.style.fontSize = rootSize.value + 'px'
+// })
+// watch(rootSize, (newSize) => {
+//   const html = document.querySelector('#setFont')
+//   html.style.fontSize = newSize + 'px'
+// });
 
 </script>
 
-<style lang="scss">
-@import "src/assets/style/index";
+<style lang="less">
 
 .font {
   padding: 0 0.267rem;
@@ -50,20 +58,20 @@ import fontSize from "@/utils/fontSize";
     height: 80vh;
 
     h1 {
-      font-size: 1.5em;
+      font-size: 20px;
       padding: 0.533rem 0;
       margin: 0;
     }
 
     p {
-      font-size: 1em;
+      font-size: 16px;
       line-height: 1.5em;
     }
   }
 
   .slider {
     .active {
-      color: $color-primary;
+      color: var(--van-primary-color);
       font-weight: bold;
     }
 

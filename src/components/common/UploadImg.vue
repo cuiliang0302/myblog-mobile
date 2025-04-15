@@ -34,10 +34,9 @@
 import Cropper from "vue3-cropper";
 import 'vue3-cropper/lib/vue3-cropper.css';
 import {reactive} from "vue";
-import {Toast} from "vant";
 import qiniuUpload from "@/utils/qiniuUpload";
 import timeFormat from "@/utils/timeFormat";
-import {Image as VanImage, Loading, Icon} from 'vant';
+import {Image as VanImage, Loading, Icon, showFailToast, showSuccessToast} from 'vant';
 
 const URL = window.URL || window.webkitURL;
 const props = defineProps({
@@ -78,11 +77,11 @@ const onSave = (res) => {
   upload(props.dir, file).then((response) => {
     console.log(response)
     emit('saveImg', response)
-    Toast.success('图片上传成功！');
+    showSuccessToast('图片上传成功！');
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    Toast.fail('图片上传失败！');
+    showFailToast('图片上传失败！');
   });
   photoCrop.cropperVisible = false
 };
@@ -91,7 +90,7 @@ const onCancel = () => {
   photoCrop.cropperVisible = false
 };
 </script>
-<style lang="scss">
+<style lang="less">
 .photo {
   position: relative;
 

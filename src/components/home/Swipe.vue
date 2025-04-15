@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import {Swipe, SwipeItem, Image as VanImage, Loading, Toast} from 'vant';
+import {Image as VanImage, showLoadingToast, Toast} from 'vant';
 
 const props = defineProps({
   // 轮播图数据
@@ -24,14 +24,14 @@ const props = defineProps({
 })
 const toView = (url) => {
   window.location.href = url
-  Toast.loading({
+  showLoadingToast({
     message: '第三方站点跳转中...',
     forbidClick: true,
   });
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .van-swipe {
   margin: 0.133rem 0;
 }

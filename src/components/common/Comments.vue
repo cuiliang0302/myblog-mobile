@@ -51,7 +51,8 @@
 
       </div>
       <div class="reply-action" v-if="item.child_count > 0" @click="replyView(item.id)">
-        ——展开{{ item.child_count }}条回复<van-icon name="arrow-down" />
+        ——展开{{ item.child_count }}条回复
+        <van-icon name="arrow-down"/>
       </div>
       <div class="reply" v-show="item.child">
         <Comments :commentsList="item.child"></Comments>
@@ -72,14 +73,11 @@
           type="textarea"
           maxlength="50"
           label-width="0"
-          placeholder="请输入留言"
+          placeholder="请输入回复内容"
           show-word-limit
-          @focus="focus"
-          @blur="blur"
-          @click-right-icon="replySend"
       >
-        <template #right-icon>
-          <MyIcon class="icon click-send" type="icon-send"/>
+        <template #button>
+          <van-button type="primary" size="small" @click="replySend">发布</van-button>
         </template>
       </van-field>
     </van-popup>
@@ -87,13 +85,14 @@
 </template>
 
 <script setup>
-import {Toast, Image as VanImage, Icon, Dialog, Popup, Field} from 'vant'
+import {Toast, Image as VanImage, Icon, Dialog, Popup, Field, showFailToast, showConfirmDialog} from 'vant'
 import {reactive, ref, getCurrentInstance} from "vue";
 import timeFormat from "@/utils/timeFormat";
-import user from "@/utils/user";
 import icon from '@/utils/icon'
+import {useUserStore} from '@/store';
 
-let {MyIcon} = icon()
+const user = useUserStore();
+const {MyIcon} = icon()
 const props = defineProps({
   // 评论回复列表
   commentsList: {
@@ -106,8 +105,6 @@ const emit = defineEmits(['likeMessage', 'delMessage', 'replySend', 'replyView']
 // 事件总线
 const internalInstance = getCurrentInstance();
 const $bus = internalInstance.appContext.config.globalProperties.$bus;
-// 引入用户信息模块
-let {userId, isLogin} = user();
 // 时间显示几天前
 let {timeAgo} = timeFormat()
 // 已点赞列表
@@ -138,17 +135,11 @@ const likeMessage = (messageId, likeMessage) => {
 }
 // 判断评论留言能否删除
 const isDelete = (messageUser) => {
-  if (!isLogin.value) {
-    return false
-  }
-  if (messageUser !== userId.value) {
-    return false
-  }
-  return true
+  return user.isLoggedIn && String(messageUser) === user.user_id;
 }
 // 评论留言删除
 const delMessage = (messageId) => {
-  Dialog.confirm({
+  showConfirmDialog({
     title: '删除确认',
     message: '当真要删除这条宝贵的记录吗？',
   }).then(() => {
@@ -164,16 +155,17 @@ const replyForm = reactive({
   father: ''
 })
 // 点击留言评论回复事件
-const replyMessage = (father,root) => {
+const replyMessage = (father, root) => {
   textareaShow.value = true
   replyForm.father = father
-  replyForm.user = userId.value
+  replyForm.user = user.user_id
   replyForm.root = root
 }
 // 发送评论留言回复事件
 const replySend = () => {
+  console.log(replyForm)
   if (replyForm.content === '') {
-    Toast.fail("请输入内容！")
+    showFailToast("请输入内容！")
     return false
   } else {
     $bus.emit("replySend", replyForm);
@@ -183,44 +175,40 @@ const replySend = () => {
   }
 }
 // 判断是否可回复留言
-const isReply = (user) => {
-  if (isLogin.value === true && userId.value !== user) {
-    return true
-  } else {
-    return false
-  }
+const isReply = (messageUser) => {
+  return user.isLoggedIn && String(messageUser) !== user.user_id;
 }
-// 判断浏览器是否为miui
-const isMIUI = () => {
-  let UA = window.navigator.userAgent
-  if (UA.includes('MiuiBrowser')) {
-    if (window.screen.height / window.screen.width >= 2) {
-      console.log("是小米全面屏手机")
-      return true
-    }
-  } else {
-    console.log("不是小米全面屏手机")
-    return false
-  }
-}
+// // 判断浏览器是否为miui
+// const isMIUI = () => {
+//   let UA = window.navigator.userAgent
+//   if (UA.includes('MiuiBrowser')) {
+//     if (window.screen.height / window.screen.width >= 2) {
+//       console.log("是小米全面屏手机")
+//       return true
+//     }
+//   } else {
+//     console.log("不是小米全面屏手机")
+//     return false
+//   }
+// }
 // 评论框获得焦点事件
-const focus = () => {
-  if (isMIUI() === true) {
-    let textareaDom = document.querySelector('.textarea>.van-popup--bottom')
-    textareaDom.style.bottom = '38vh';
-  }
-}
-// 评论框失去焦点事件
-const blur = () => {
-  if (isMIUI() === true) {
-    let textareaDom = document.querySelector('.textarea>.van-popup--bottom')
-    textareaDom.style.bottom = '0.533rem';
-  }
-}
+// const focus = () => {
+//   if (isMIUI() === true) {
+//     let textareaDom = document.querySelector('.textarea>.van-popup--bottom')
+//     textareaDom.style.bottom = '38vh';
+//   }
+// }
+// // 评论框失去焦点事件
+// const blur = () => {
+//   if (isMIUI() === true) {
+//     let textareaDom = document.querySelector('.textarea>.van-popup--bottom')
+//     textareaDom.style.bottom = '0.533rem';
+//   }
+// }
 </script>
 
-<style lang="scss" scoped>
-@import "src/assets/style/index";
+<style lang="less" scoped>
+//@import "src/assets/style/index";
 
 .comments {
 
@@ -287,7 +275,8 @@ const blur = () => {
       justify-content: space-between;
       padding: 0 1.067rem 0.267rem 1.067rem;
       margin: 0 auto;
-      @include font_color('font_color2');
+      color: var(--font_color2);
+      //@include font_color('font_color2');
 
       .comment-btn {
         display: flex;
@@ -298,7 +287,8 @@ const blur = () => {
         }
 
         .click-btn {
-          color: $color-primary
+          color: var(--van-primary-color);
+          //color: $
         }
       }
 
@@ -312,7 +302,7 @@ const blur = () => {
 }
 
 .click-send {
-  color: $color-primary;
+  color: var(--van-primary-color);
   height: 0.933rem;
   width: 0.933rem;
   position: absolute;
@@ -320,7 +310,18 @@ const blur = () => {
   top: 40px;
 }
 
-.textarea > .van-popup--bottom {
-  bottom: 0.533rem;
+.reply {
+  margin-left: 45px;
+  background-color: var(--background_color6);
+
+  .textarea > .van-popup--bottom {
+    bottom: 0.533rem;
+  }
 }
+
+:deep(.van-field__button) {
+  padding-left: 40px;
+  padding-top: 30px;
+}
+
 </style>

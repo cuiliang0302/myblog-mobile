@@ -43,18 +43,21 @@
 </template>
 
 <script setup>
-import {Tag, Empty, List, Loading, Toast, DropdownMenu, DropdownItem} from 'vant';
 import SearchBar from "@/components/search/SearchBar.vue";
-import {getSearchHistory, getSearchHot} from "@/api/record";
+// import {getSearchHistory, getSearchHot} from "@/api/record";
 import {onMounted, reactive, ref} from "vue";
-import user from "@/utils/user";
+// import user from "@/utils/user";
 import {Image as VanImage} from "vant/lib/image";
+import {useUserStore} from '@/store';
+const user = useUserStore();
 import {useRouter} from "vue-router";
+import {showFailToast} from "vant";
+import record from "@/api/record";
 
 
 const router = useRouter()
 // 引入用户信息模块
-let {userId, isLogin} = user();
+// let {userId, isLogin} = user();
 // 搜索历史列表
 let historyList = ref([])
 // 热门搜索列表
@@ -84,26 +87,36 @@ const clickSearch = (key) => {
 }
 
 // 获取搜索热词
-async function searchKeyHotData() {
-  hotList.value = await getSearchHot()
+const searchKeyHotData = async () => {
+  try {
+    const response = await record.getSearchHot()
+    console.log(response)
+    hotList.value = response
+  } catch (error) {
+    showFailToast('获取搜素热词失败!')
+  }
 }
 
 // 获取搜索记录
-async function getSearchKeyHistoryData(user_id) {
-  let SearchKeyHistoryData = await getSearchHistory(user_id)
-  historyList.value = SearchKeyHistoryData.keys
+const searchKeyHistoryData = async () => {
+  try{
+    const response = await record.getSearchHistory(user.user_id)
+    console.log(response)
+    historyList.value = response.keys
+  }catch (error) {
+    showFailToast("")
+  }
 }
 
 onMounted(() => {
   searchKeyHotData()
-  if (isLogin.value) {
-    getSearchKeyHistoryData(userId.value)
+  if (user.isLoggedIn) {
+    searchKeyHistoryData()
   }
 })
 </script>
 
-<style lang="scss">
-@import "src/assets/style/index.scss";
+<style lang="less">
 
 .search {
   .history {
@@ -201,15 +214,18 @@ onMounted(() => {
   }
 
   .list-item {
-    @include background_color('background_color3');
+    background-color: var(--background_color3);
+    //@include background_color('background_color3');
     padding: 0.267rem;
-    @include border_shadow("border_color1");
+    box-shadow: var(--shadow_color3);
+    //@include border_shadow("border_color1");
     margin: 0 0.133rem 0.267rem 0.133rem;
     border-radius: 0.267rem;
 
     .title {
       font-size: 0.533rem;
-      color: $color-text-primary;
+      //color: var(--van-primary-color);
+      //color: $color-text-primary;
     }
 
     .list-main {
@@ -229,7 +245,7 @@ onMounted(() => {
         font-size: 0.373rem;
         margin-left: 0.133rem;
         font-weight: normal;
-        color: $color-text-regular;
+        //color: $color-text-regular;
         display: -webkit-box;
         -webkit-line-clamp: 6;
         -webkit-box-orient: vertical;
@@ -243,7 +259,7 @@ onMounted(() => {
       span {
         flex: 1;
         text-align: center;
-        color: $color-text-secondary;
+        //color: $color-text-secondary;
 
         img {
           opacity: 0.6;

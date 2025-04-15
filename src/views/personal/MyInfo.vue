@@ -42,18 +42,18 @@
             @confirm="chooseSex"
         />
       </van-popup>
-      <van-field
-          v-model="userInfoForm.phone"
-          name="手机号"
-          label="手机号："
-          placeholder="点击按钮绑定手机号"
-          label-width="1.867rem"
-          readonly
-      >
-        <template #button>
-          <van-button size="small" plain type="primary" @click="$router.push('/changePhone')">更换手机</van-button>
-        </template>
-      </van-field>
+      <!--      <van-field-->
+      <!--          v-model="userInfoForm.phone"-->
+      <!--          name="手机号"-->
+      <!--          label="手机号："-->
+      <!--          placeholder="点击按钮绑定手机号"-->
+      <!--          label-width="1.867rem"-->
+      <!--          readonly-->
+      <!--      >-->
+      <!--        <template #button>-->
+      <!--          <van-button size="small" plain type="primary" @click="$router.push('/changePhone')">更换手机</van-button>-->
+      <!--        </template>-->
+      <!--      </van-field>-->
       <van-field
           v-model="userInfoForm.email"
           name="邮箱"
@@ -63,7 +63,8 @@
           readonly
       >
         <template #button>
-          <van-button size="small" plain type="primary" @click="$router.push('/changeEmail')">更换邮箱</van-button>
+          <van-button size="small" plain type="primary" @click="router.push('/personal/changeEmail')">更换邮箱
+          </van-button>
         </template>
       </van-field>
       <van-field
@@ -99,7 +100,7 @@
                  close-on-popstate
                  safe-area-inset-bottom
                  overlay-class="my-overlay">
-        <van-datetime-picker
+        <van-date-picker
             type="date"
             title="选择生日"
             :min-date="new Date(1980, 0, 1)"
@@ -115,6 +116,7 @@
           placeholder="完整地址，如https://www.baidu.com/"
           label-width="1.867rem"
           :rules="[{ validator: checkWeb, message: '请输入正确的web地址' }]"
+          clearable
       />
       <van-field
           v-model="userInfoForm.signature"
@@ -124,7 +126,8 @@
           label="个性签名："
           type="textarea"
           label-width="1.867rem"
-          placeholder="请输入个人简介"
+          placeholder="请输入个性签名"
+          clearable
       />
       <div style="margin: 0.427rem;">
         <van-button round block type="primary" native-type="submit">
@@ -138,28 +141,20 @@
 <script setup>
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
 import UploadImg from "@/components/common/UploadImg.vue";
-import {
-  Form,
-  Field,
-  Button,
-  Cell,
-  CellGroup,
-  Toast,
-  Picker,
-  Popup,
-  Image as VanImage,
-  Area,
-  DatetimePicker
-} from 'vant';
 import {onMounted, reactive, ref} from "vue";
-import {getRegister, getUserinfoId, putUserinfoId} from "@/api/account";
-import {getAreaData} from "@/api/public";
-import user from "@/utils/user";
-// import {areaList} from "@vant/area-data";
+import {storeToRefs} from 'pinia'
+import {useThemeStore, useUserStore} from '@/store';
+import {showFailToast, showSuccessToast} from "vant";
+import account from "@/api/account";
+import Public from "@/api/public";
+import {areaList} from '@vant/area-data';
+import {route} from "vant/es/composables/use-route";
+import router from "@/router";
+
+const user = useUserStore();
 
 
 // 引入用户信息模块
-let {userId, isLogin} = user();
 // 我的信息表单
 const userInfoForm = reactive({});
 // 上传头像完成事件
@@ -173,13 +168,13 @@ const checkUsername = (val) =>
     new Promise((resolve) => {
       console.log(val)
       if (val !== oldUsername.value) {
-        getRegister(val, NaN).then((response) => {
+        account.getRegister(val, NaN).then((response) => {
           console.log(response)
           resolve(true)
         }).catch(response => {
           //发生错误时执行的代码
           console.log(response)
-          Toast.fail(response.msg);
+          showFailToast(response.msg);
           resolve(false)
         });
       } else {
@@ -192,45 +187,42 @@ const checkWeb = (val) =>
       console.log(val)
       const pattern = /[a-zA-z]+:\/\/[^\s]*/
       console.log(pattern.test(val))
-      if(pattern.test(val)){
+      console.log(val.length)
+      if (pattern.test(val) || val.length === 0) {
         resolve(true)
-      }else {
+      } else {
         resolve(false)
       }
     });
 // 性别选择框默认状态
 const showSex = ref(false)
-const columns = ['男', '女'];
+const columns = [
+  { text: '男', value: '1' },
+  { text: '女', value: '2' },
+]
 // 性别选择框确认事件
-const chooseSex = (value, index) => {
-  // Toast(`当前值: ${value}, 当前索引: ${index}`);
-  userInfoForm.sex = index + 1
-  userInfoForm.sex_name = value
+const chooseSex = (value) => {
+  console.log(value['selectedOptions'][0]);
+  userInfoForm.sex = value['selectedOptions'][0]['value']
+  userInfoForm.sex_name = value['selectedOptions'][0]['text']
   showSex.value = false
 };
-// 地区数据
-const areaList = reactive({})
-
-// 获取地区数据
-async function getArea() {
-  let data = await getAreaData()
-  Object.assign(areaList, data.areaList);
-  console.log(areaList)
-}
-
 // 地区选择框默认状态
 const showArea = ref(false);
 // 地区选择框确认事件
 const chooseArea = (ConfirmResult) => {
-  userInfoForm.area_code = ConfirmResult[1].code
-  userInfoForm.area_name = ConfirmResult[0].name + ConfirmResult[1].name
+  console.log(ConfirmResult);
+  userInfoForm.area_code = ConfirmResult['selectedOptions'][1]['value']
+  userInfoForm.area_name = ConfirmResult['selectedOptions'][0]['text'] + ConfirmResult['selectedOptions'][1]['text']
+  console.log(userInfoForm)
   showArea.value = false
 }
 // 生日选择框默认状态
 const showBirthday = ref(false)
 // 生日选择框确认事件
 const chooseBirthday = (value) => {
-  userInfoForm.birthday = value.getFullYear() + '-' + (parseInt(value.getMonth()) + 1) + '-' + value.getDate()
+  console.log(value['selectedValues'])
+  userInfoForm.birthday = value['selectedValues'][0] + '-' + value['selectedValues'][1] + '-' + value['selectedValues'][2]
   showBirthday.value = false
 }
 // 修改信息表单提交
@@ -242,47 +234,48 @@ const onSubmit = (values) => {
       userInfoForm[i] = null
     }
   }
-  putUserinfoId(userId.value, userInfoForm).then((response) => {
+  account.putUserinfoId(user.user_id, userInfoForm).then((response) => {
     console.log(response)
-    Toast.success('信息修改成功！');
+    showSuccessToast('信息修改成功！');
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    for (let i in response) {
-      Toast.fail(i + response[i][0]);
-    }
+    showFailToast('修改信息失败!');
   });
 };
 
 // 获取用户信息
-async function getUserinfo(userid) {
-  const userinfo_data = await getUserinfoId(userid)
-  console.log(userinfo_data)
-  for (let i in userinfo_data) {
-    userInfoForm[i] = userinfo_data[i]
+const getUserinfo = async (userid) => {
+  try {
+    const userinfo_data = await account.getUserinfoId(userid)
+    console.log(userinfo_data)
+    for (let i in userinfo_data) {
+      userInfoForm[i] = userinfo_data[i]
+    }
+    oldUsername.value = userInfoForm.username
+  } catch (e) {
+    console.log(e)
+    showFailToast("获取用户信息失败")
   }
-  oldUsername.value = userInfoForm.username
 }
 
 onMounted(() => {
-  getUserinfo(userId.value)
-  getArea()
+  getUserinfo(user.user_id)
 })
 </script>
 
-<style scoped lang="scss">
-@import "src/assets/style/index";
-
+<style scoped lang="less">
+//@import "src/assets/style/index";
 .photo {
   text-align: center;
   padding-top: 0.533rem;
-  @include background_color('background_color6');
+  //@include background_color('background_color6');
 
   p {
     font-size: 0.373rem;
     margin: 0;
     padding: 0.267rem 0;
-    @include font_color('font_color1')
+    //@include font_color('font_color1')
   }
 }
 </style>

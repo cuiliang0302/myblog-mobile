@@ -1,19 +1,19 @@
 // 七牛文件上传
 import * as qiniu from "qiniu-js";
-import {getQiNiuToken} from "@/api/public";
-import {Toast} from "vant";
+import Public from "@/api/public";
+import {showFailToast} from "vant";
 
 function qiniuUpload() {   //file是选择的文件对象
   const upload = (dir, file) => {
     return new Promise((resolve, reject) => {
-      getQiNiuToken().then((response) => {
+      Public.getQiNiuToken().then((response) => {
         let domain = response.domain
         let token = response.token
         let key = dir + '/' + file.name.substring(0, file.name.lastIndexOf('.')) + '-' + new Date().getTime()
           + file.name.substring(file.name.lastIndexOf('.'))
         let config = {
           useCdnDomain: true,   //表示是否使用 cdn 加速域名，为布尔值，true 表示使用，默认为 false。
-          region: qiniu.region.z1     // 根据具体提示修改上传地区,当为 null 或 undefined 时，自动分析上传域名区域
+          region: null     // 根据具体提示修改上传地区,当为 null 或 undefined 时，自动分析上传域名区域
         }
         let putExtra = {
           fname: "",  //文件原文件名
@@ -41,6 +41,7 @@ function qiniuUpload() {   //file是选择的文件对象
       }).catch(response => {
         //发生错误时执行的代码
         console.log(response)
+        showFailToast('获取上传图片token失败!');
       });
     })
   }

@@ -1,10 +1,10 @@
 <template>
   <div class="search" v-title="searchForm.key+'-搜索结果'">
     <NavBar></NavBar>
-    <van-list>
-      <div class="list-item" v-for="(item,index) in articleList" :key="index" @click="toDetail(item.id)">
-        <div class="title">{{ item.title }}</div>
-        <div class="list-main">
+        <van-list>
+    <div class="list-item" v-for="(item,index) in articleList" :key="index" @click="toDetail(item.id)">
+      <div class="title">{{ item.title }}</div>
+      <div class="list-main">
         <span class="cover" v-show="searchForm.kind==='article'">
             <van-image :src="item.cover" alt="" radius="0.4rem" lazy-load height="3.013rem" width="100%">
               <template v-slot:loading>
@@ -12,51 +12,49 @@
               </template>
             </van-image>
         </span>
-          <span class="abstract">{{ item.abstract }}</span>
-        </div>
-        <div class="info">
-          <span>
-            <MyIcon class="icon" type="icon-time"/>{{ timeAgo(item.created_time) }}
-          </span>
-          <span>
-            <MyIcon class="icon" type="icon-view"/>{{ item.view }}
-          </span>
-          <span>
-            <MyIcon class="icon" type="icon-like"/>{{ item.like }}
-          </span>
-          <span>
-            <MyIcon class="icon" type="icon-comment"/>{{ item.comment }}
-          </span>
-          <span v-if="searchForm.kind==='article'">
-            <van-tag round :color="tagColor(item.category_id)">{{ item.category }}</van-tag>
-          </span>
-          <span v-else>
-            <van-tag round :color="tagColor(item.note_id)">{{ item.note }}</van-tag>
-          </span>
-        </div>
+        <span class="abstract">{{ item.abstract }}</span>
       </div>
+      <div class="info">
+        <span>
+          <MyIcon class="icon" type="icon-time"/>{{ timeAgo(item.created_time) }}
+        </span>
+        <span>
+          <MyIcon class="icon" type="icon-view"/>{{ item.view }}
+        </span>
+        <span>
+          <MyIcon class="icon" type="icon-like"/>{{ item.like }}
+        </span>
+        <span>
+          <MyIcon class="icon" type="icon-comment"/>{{ item.comment }}
+        </span>
+        <span v-if="searchForm.kind==='article'">
+          <van-tag round :color="tagColor(item.category_id)">{{ item.category }}</van-tag>
+        </span>
+        <span v-else>
+          <van-tag round :color="tagColor(item.note_id)">{{ item.note }}</van-tag>
+        </span>
+      </div>
+    </div>
     </van-list>
-    <Tabbar :activeBar="1"></Tabbar>
+    <Tabbar v-if="searchForm.kind==='article'" :activeBar="1"></Tabbar>
+    <Tabbar v-if="searchForm.kind==='note'" :activeBar="2"></Tabbar>
   </div>
 </template>
 
 <script setup>
-import {Tag, Empty, List, Loading, Toast} from 'vant';
 import NavBar from "@/components/common/NavBar.vue";
-import {getSearch} from "@/api/record";
 import {onMounted, reactive, ref} from "vue";
-import user from "@/utils/user";
 import timeFormat from "@/utils/timeFormat";
 import setColor from "@/utils/setColor";
 import {Image as VanImage} from "vant/lib/image";
 import {useRouter} from "vue-router";
 import Tabbar from '@/components/common/Tabbar.vue'
 import icon from '@/utils/icon'
+import record from "@/api/record";
+import {showFailToast, showLoadingToast} from "vant";
 
 let {MyIcon} = icon()
 const router = useRouter()
-// 引入用户信息模块
-let {userId, isLogin} = user();
 // 时间显示几天前
 let {timeAgo} = timeFormat()
 // 标签颜色
@@ -64,7 +62,7 @@ let {tagColor} = setColor()
 // 搜索关键词
 const searchForm = reactive({})
 // 搜索结果列表
-const articleList = reactive({})
+const articleList = ref([])
 // 点击查看文章详情
 const toDetail = (id) => {
   if (searchForm.kind === 'article') {
@@ -75,48 +73,35 @@ const toDetail = (id) => {
 }
 
 // 获取搜索结果列表
-async function searchData(key, kind, order) {
-  Toast.loading({
+const searchData = async (key, kind, order) => {
+  console.log(key, kind, order)
+  showLoadingToast({
     message: '玩命加载中...',
     forbidClick: true,
   });
-  let article_data
-  if (isLogin.value) {
-    try {
-      const params = {
-        key: key,
-        kind: kind,
-        order: order,
-        user_id: userId.value
-      }
-      article_data = await getSearch(params)
-      console.log(article_data)
-    } catch (error) {
-      console.log(error)
-      Toast.fail(error.msg)
-    }
-  } else {
-    try {
-      const params = {
-        key: key,
-        kind: kind,
-        order: order,
-      }
-      article_data = await getSearch(params)
-    } catch (error) {
-      console.log(error)
-      Toast.fail(error.msg)
-    }
+  const params = {
+    key: key,
+    kind: kind,
+    order: order,
   }
-  console.log(article_data)
-  for (let i in article_data) {
-    articleList[i] = article_data[i]
-    articleList[i].abstract = article_data[i].body.replace('>', "")
-        .replace('[TOC]', "")
-        .replace(/#/g, " ") // 过滤标题#
-        .replace(/\!\[[\s\S]*?\]\([\s\S]*?\)/, "") // 过滤图片
-        .slice(0, 500)
-  }
+  record.getSearch(params).then((res) => {
+    console.log(res)
+    articleList.value = res
+    if (searchForm.kind === 'note'){
+      for (let i in articleList.value) {
+        articleList[i] = articleList.value[i]
+        articleList[i].abstract = articleList.value[i].body.replace('>', "")
+            .replace('[TOC]', "")
+            .replace(/#/g, " ") // 过滤标题#
+            .replace(/\!\[[\s\S]*?\]\([\s\S]*?\)/, "") // 过滤图片
+            .slice(0, 500)
+      }
+    }
+  }).catch(response => {
+    //发生错误时执行的代码
+    console.log(response)
+    showFailToast('获取结果列表失败！');
+  });
 }
 
 onMounted(() => {
@@ -127,8 +112,8 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss">
-@import "src/assets/style/index.scss";
+<style lang="less">
+//@import "src/assets/style/index.scss";
 
 .search {
   .history {
@@ -226,15 +211,15 @@ onMounted(() => {
   }
 
   .list-item {
-    @include background_color('background_color3');
+    background-color: var(--background_color3);
     padding: 0.267rem;
-    @include border_shadow("border_color1");
+    box-shadow: var(--box_shadow);
     margin: 0 0.133rem 0.267rem 0.133rem;
     border-radius: 0.267rem;
 
     .title {
       font-size: 0.533rem;
-      @include font_color("font_color1");
+      color: var(--font_color1);
     }
 
     .list-main {
@@ -254,7 +239,7 @@ onMounted(() => {
         font-size: 0.373rem;
         margin-left: 0.133rem;
         font-weight: normal;
-        @include font_color("font_color2");
+        color: var(--font_color2);
         display: -webkit-box;
         -webkit-line-clamp: 6;
         -webkit-box-orient: vertical;
@@ -269,14 +254,14 @@ onMounted(() => {
       span {
         flex: 1;
         text-align: center;
-        color: $color-text-secondary;
+        color: var(--font_color2);
 
         .icon {
           margin-right: 0.08rem;
           width: 0.347rem;
           height: 0.347rem;
           vertical-align: -1px;
-          color: $color-text-secondary !important;
+          color: var(--font_color2) !important;
           font-size: 0.32rem;
         }
       }

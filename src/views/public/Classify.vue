@@ -29,12 +29,11 @@
 
 import NavBar from "@/components/common/NavBar.vue";
 import Tabbar from '@/components/common/Tabbar.vue'
-import {Step, Steps, Sidebar, SidebarItem, Toast} from 'vant';
 import {onMounted, ref, reactive} from "vue";
-import Search from "@/views/public/Search.vue";
-import {getClassify, getClassifyArticle} from "@/api/blog";
 import timeFormat from "@/utils/timeFormat";
 import {useRouter} from "vue-router";
+import Blog from "@/api/blog";
+import {showFailToast} from "vant";
 
 
 const router = useRouter()
@@ -54,9 +53,9 @@ const onChange = (index) => {
 }
 
 // 获取归档月份列表数据
-function classifyData() {
+const classifyData = ()=> {
   // classifyList.value = await getClassify()
-  getClassify().then((response) => {
+  Blog.getClassify().then((response) => {
     console.log(response)
     Object.keys(response).forEach((key) => {
       classifyList[key] = response[key];
@@ -64,13 +63,18 @@ function classifyData() {
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    // ElMessage.error('获取归档数据失败！')
+    showFailToast('获取归档数据失败！')
   });
 }
 
 // 获取最近月份文章列表
-async function classifyArticleData(month) {
-  articleList.value = await getClassifyArticle(month)
+const classifyArticleData = async (month) => {
+  try {
+    articleList.value = await Blog.getClassifyArticle(month)
+  } catch (e) {
+    console.log(e)
+    showFailToast("获取最近月份文章列表失败")
+  }
 }
 
 // 格式化显示年月
@@ -85,15 +89,15 @@ const toDetail = (value) => {
     router.push('/detail/section/' + value['id'])
   }
 }
-onMounted(async () => {
-  await classifyData()
+onMounted(() => {
+  classifyData()
   const date = new Date();
   const year = date.getFullYear(); // 获取年份
   const month = String(date.getMonth() + 1).padStart(2, '0')
-  await classifyArticleData(year + "-" + month)
+  classifyArticleData(year + "-" + month)
 })
 </script>
-<style lang="scss" scoped>
+<style lang="less" scoped>
 
 section {
   display: flex;

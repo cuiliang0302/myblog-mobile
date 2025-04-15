@@ -5,10 +5,11 @@
         <van-field
             v-model="loginForm.username"
             name="username"
-            placeholder="用户名/邮箱号/手机号"
+            placeholder="用户名/邮箱号"
             label-width="20"
             validate-first
-            :rules="[{ required: true, message: '请填写用户名/邮箱号/手机号' }]"
+            clearable
+            :rules="[{ required: true, message: '请填写用户名/邮箱号' }]"
         >
           <template #label>
             <MyIcon class="icon" type="icon-username"/>
@@ -21,6 +22,7 @@
             label-width="20"
             validate-first
             placeholder="密码"
+            clearable
             :rules="[{ required: true, message: '请填写密码' }]"
         >
           <template #label>
@@ -39,9 +41,9 @@
         </van-field>
         <div class="other">
           <div class="remember">
-            <van-checkbox v-model="remember" shape="square" disabled>保持登录</van-checkbox>
+            <van-checkbox v-model="keep_login" shape="square">保持登录</van-checkbox>
           </div>
-          <div class="forget" @click="$router.push('/setPassword')">
+          <div class="forget" @click="router.push('/setPassword')">
             忘记密码
           </div>
         </div>
@@ -85,19 +87,21 @@
 </template>
 
 <script setup>
-import {Form, Button, Field, Divider, Icon, Checkbox, Toast} from 'vant';
+import {Form, Button, Field, Divider, Icon, Checkbox, Toast, showSuccessToast, showFailToast, showToast} from 'vant';
 import VerifyImgBtn from "@/components/verify/VerifyImgBtn.vue";
 import {onMounted, reactive, ref} from "vue";
-import {getOAuthID, postLogin} from '@/api/account'
-import store from "@/store/index";
+import {storeToRefs} from 'pinia'
+import {useCommonStore, useUserStore} from '@/store';
+
 import {useRouter} from "vue-router";
 import icon from '@/utils/icon'
-
-let {MyIcon} = icon()
-
+import account from "@/api/account";
+const common = useCommonStore();
+const user = useUserStore();
+const {MyIcon} = icon()
 const router = useRouter()
 // 保持登录复选框
-const remember = ref(false);
+const {keep_login} = storeToRefs(user)
 // 用户登录表单
 const loginForm = reactive({
   username: '',
@@ -118,23 +122,16 @@ const onSubmit = () => {
     btnType.value = 'danger'
     return
   }
-  postLogin(loginForm).then((response) => {
+  account.postLogin(loginForm).then((response) => {
     console.log(response)
-    Toast.success('登录成功！');
-    if (remember.value) {
-      console.log('记住了')
-      store.commit('setKeepLogin', true)
-      store.commit('setUserLocal', response)
-    } else {
-      console.log('记不住')
-      store.commit('setKeepLogin', false)
-      store.commit('setUserSession', response)
-    }
-    router.push(store.state.nextPath)
+    showSuccessToast('登录成功！');
+    user.login(response.user_id, response.token, response.username)
+    console.log(common.next_path)
+    router.push(common.next_path)
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)
-    Toast.fail('账号或密码错误！');
+    showFailToast('账号或密码错误！');
     loginForm.username = ''
     loginForm.password = ''
     isPassing.value = false
@@ -142,11 +139,11 @@ const onSubmit = () => {
 };
 // 第三方登录
 const otherLogin = (kind) => {
-  Toast('正在跳转至第三方平台，请稍候……')
+  showToast('正在跳转至第三方平台，请稍候……')
   console.log(kind)
   let domain = window.location.protocol + "//" + window.location.host
   if (kind === 'WEIBO') {
-    getOAuthID(kind).then((response) => {
+    account.getOAuthID(kind).then((response) => {
       console.log(response)
       let url = 'https://open.weibo.cn/oauth2/authorize?client_id=' + response.clientId +
           '&response_type=code&redirect_uri=' + domain + '/OAuth/' + kind + '&display=mobile'
@@ -155,11 +152,11 @@ const otherLogin = (kind) => {
     }).catch(response => {
       //发生错误时执行的代码
       console.log(response)
-      Toast.fail('获取第三方登录ID失败！')
+      showFailToast('获取第三方登录ID失败！')
     });
   }
   if (kind === 'QQ') {
-    getOAuthID(kind).then((response) => {
+    account.getOAuthID(kind).then((response) => {
       console.log(response)
       let url = 'https://graph.qq.com/oauth2.0/authorize?client_id=' + response.clientId +
           '&response_type=code&redirect_uri=' + domain + '/OAuth/' + kind + '&display=mobile'
@@ -169,11 +166,11 @@ const otherLogin = (kind) => {
     }).catch(response => {
       //发生错误时执行的代码
       console.log(response)
-      Toast.fail('获取第三方登录ID失败！')
+      showFailToast('获取第三方登录ID失败！')
     });
   }
   if (kind === 'PAY') {
-    getOAuthID(kind).then((response) => {
+    account.getOAuthID(kind).then((response) => {
       console.log(response)
       let parameter = 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=' +
           response.clientId + '&scope=auth_user&redirect_uri=' + domain + '/OAuth/' + kind + '&state=' + Math.random().toString(36).slice(-6)
@@ -183,11 +180,11 @@ const otherLogin = (kind) => {
     }).catch(response => {
       //发生错误时执行的代码
       console.log(response)
-      Toast.fail('获取第三方登录ID失败！')
+      showFailToast('获取第三方登录ID失败！')
     });
   }
   if (kind === 'GITHUB') {
-    getOAuthID(kind).then((response) => {
+    account.getOAuthID(kind).then((response) => {
       console.log(response)
       let url = 'https://github.com/login/oauth/authorize?client_id=' + response.clientId +
           '&scope=user&redirect_uri=' + domain + '/OAuth/' + kind + '&state=' + Math.random().toString(36).slice(-6)
@@ -196,11 +193,11 @@ const otherLogin = (kind) => {
     }).catch(response => {
       //发生错误时执行的代码
       console.log(response)
-      Toast.fail('获取第三方登录ID失败！')
+      showFailToast('获取第三方登录ID失败！')
     });
   }
   if (kind === 'BAIDU') {
-    getOAuthID(kind).then((response) => {
+    account.getOAuthID(kind).then((response) => {
       console.log(response)
       let url = 'https://openapi.baidu.com/oauth/2.0/authorize?client_id=' + response.clientId +
           '&redirect_uri=' + domain + '/OAuth/' + kind + '&response_type=code&display=mobile&state=' + Math.random().toString(36).slice(-6)
@@ -209,11 +206,11 @@ const otherLogin = (kind) => {
     }).catch(response => {
       //发生错误时执行的代码
       console.log(response)
-      Toast.fail('获取第三方登录ID失败！')
+      showFailToast('获取第三方登录ID失败！')
     });
   }
   if (kind === 'MICROSOFT') {
-    getOAuthID(kind).then((response) => {
+    account.getOAuthID(kind).then((response) => {
       console.log(response)
       let url = 'https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize?client_id=' + response.clientId +
           '&response_type=code&redirect_uri=' + domain + '/OAuth/' + kind +
@@ -223,22 +220,23 @@ const otherLogin = (kind) => {
     }).catch(response => {
       //发生错误时执行的代码
       console.log(response)
-      Toast.fail('获取第三方登录ID失败！')
+      showFailToast('获取第三方登录ID失败！')
     });
   }
 }
 </script>
 
-<style lang="scss" scoped>
-@import "src/assets/style/index";
+<style lang="less" scoped>
+//@import "src/assets/style/index";
 
 .main {
 
   .form {
     padding: 0.533rem;
-    @include background_color('background_color2');
+    background-color: var(--background_color2);
+    //@include background_color('background_color2');
     border-radius: 0.267rem;
-    height: 9.333rem;
+    height: 380px;
     z-index: 4;
     box-shadow: 0 0.08rem 0.133rem rgb(0 0 0 / 35%);
     margin-top: 1.067rem;
@@ -253,7 +251,8 @@ const otherLogin = (kind) => {
       display: flex;
       align-items: center;
       justify-content: center;
-      @include font_color('font_color1');
+      color:var(--font_color1);
+      //@include font_color('font_color1');
       padding: 0 0.8rem;
 
       .remember {
@@ -289,17 +288,19 @@ const otherLogin = (kind) => {
         }
 
         p {
-          @include font_color('font_color2');
+          color: var(--font_color2);
+          //@include font_color('font_color2');
         }
       }
     }
   }
 
   .van-cell {
-    height: 1.333rem;
-    padding: 0.8rem 0rem;
+    height: 70px;
+    padding: 20px 0;
     display: flex;
     align-items: center;
+    background-color: var(--background_color2);
   }
 }
 

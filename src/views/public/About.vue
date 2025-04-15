@@ -15,12 +15,12 @@ import NavBar from "@/components/common/NavBar.vue";
 import Tabbar from '@/components/common/Tabbar.vue';
 import {Collapse, CollapseItem} from 'vant';
 import {onMounted, ref} from "vue";
-import {getAbout} from "@/api/management";
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
 import '@kangc/v-md-editor/lib/style/preview.css';
 import '@kangc/v-md-editor/lib/theme/style/github.css';
 import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
 import hljs from 'highlight.js';
+import Management from "@/api/management";
 
 VMdPreview.use(githubTheme, {
   Hljs: hljs,
@@ -32,8 +32,12 @@ const activeName = ref(0);
 const about = ref([])
 
 // 获取关于页数据
-async function aboutData() {
-  about.value = await getAbout()
+const aboutData = async ()=> {
+  try{
+    about.value = await Management.getAbout()
+  }catch(error){
+    console.log(error)
+  }
 }
 
 onMounted(() => {
@@ -41,8 +45,8 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss">
-@import "src/assets/style/index.scss";
+<style lang="less">
+//@import "src/assets/style/index.scss";
 
 .v-md-editor-preview {
   padding: 0;

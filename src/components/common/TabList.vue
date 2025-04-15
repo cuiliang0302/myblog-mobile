@@ -47,14 +47,13 @@
 </template>
 
 <script setup>
-import {Toast, Tab, Tabs, PullRefresh, Cell, Tag, Image as VanImage, Loading, List} from 'vant';
+import {Image as VanImage} from 'vant';
 import {onMounted, reactive, ref} from 'vue';
 import {useRouter} from "vue-router";
 import timeFormat from "@/utils/timeFormat";
 import setColor from "@/utils/setColor";
 import icon from '@/utils/icon'
-
-let {MyIcon} = icon()
+const {MyIcon} = icon()
 const props = defineProps({
   // 加载中动画
   load: {
@@ -113,19 +112,21 @@ const toDetail = (id) => {
 }
 </script>
 
-<style lang="scss" scoped>
-@import "src/assets/style/index";
+<style lang="less" scoped>
 
 .list-item {
-  @include background_color("background_color3");
+  background-color: var(--background_color3);
+  //@include background_color("background_color3");
   padding: 0.267rem;
-  @include border_shadow("border_color1");
+  box-shadow: var(--box_shadow);
+  //@include border_shadow("border_color1");
   margin: 0 0.133rem 0.267rem 0.133rem;
   border-radius: 0.267rem;
 
   .title {
     font-size: 0.533rem;
-    @include font_color("font_color1");
+    color: var(--font_color1);
+  //  @include font_color("font_color1");
   }
 
   .list-main {
@@ -145,7 +146,8 @@ const toDetail = (id) => {
       font-size: 0.373rem;
       margin-left: 0.133rem;
       font-weight: normal;
-      @include font_color("font_color2");
+      color: var(--font_color2);
+    //@include font_color("font_color2");
       display: -webkit-box;
       -webkit-line-clamp: 6;
       -webkit-box-orient: vertical;
@@ -156,23 +158,24 @@ const toDetail = (id) => {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    font-size:12px;
 
     span {
       flex: 1;
       text-align: center;
-      color: $color-text-secondary;
+      color: var(--font_color2);
 
       .icon {
         margin-right: 0.08rem;
         width: 0.347rem;
         height: 0.347rem;
         vertical-align: -1px;
-        color: $color-text-secondary !important;
+        color: var(--font_color2);
         font-size: 0.32rem;
       }
     }
 
-    span:last-child {
+    span:last-child span {
       color: white;
     }
   }

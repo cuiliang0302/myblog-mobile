@@ -18,44 +18,53 @@
 <script setup>
 import TimeLine from "@/components/common/TimeLine.vue";
 import PersonalNavBar from "@/components/personal/PersonalNavBar.vue";
-import {Tab, Tabs, Toast, Empty} from 'vant';
 import {onMounted, ref} from "vue";
-import {getArticleHistory, getSectionHistory} from "@/api/record";
-import user from "@/utils/user";
+import {storeToRefs} from 'pinia'
+import {useThemeStore, useUserStore} from '@/store';
+
+const user = useUserStore();
 import {useRouter} from "vue-router";
+import record from "@/api/record";
+import {showFailToast} from "vant";
 
-
-// 引入用户信息模块
-let {userId} = user();
 const router = useRouter()
 const active = ref(0);
 // 文章浏览记录
 const historyList = ref([])
 
 // 获取文章浏览记录
-async function getArticleHistoryData() {
-  let articleHistory_data = await getArticleHistory(NaN, userId.value)
-  console.log(articleHistory_data)
-  historyList.value = articleHistory_data.map((item) => {
-    return {
-      id: item['article_id'],
-      name: item['article'],
-      time: item['time']
-    }
-  })
+const getArticleHistoryData = async () => {
+  try {
+    const articleHistory_data = await record.getArticleHistory(NaN, user.user_id)
+    historyList.value = articleHistory_data.map((item) => {
+      return {
+        id: item['article_id'],
+        name: item['article'],
+        time: item['time']
+      }
+    })
+  } catch (error) {
+    console.log(error)
+    showFailToast("获取文章浏览记录失败!")
+  }
 }
 
 // 获取笔记浏览记录
-async function getSectionHistoryData() {
-  let articleHistory_data = await getSectionHistory(NaN, userId.value)
-  console.log(articleHistory_data)
-  historyList.value = articleHistory_data.map((item) => {
-    return {
-      id: item['section_id'],
-      name: item['section'],
-      time: item['time']
-    }
-  })
+const getSectionHistoryData = async () => {
+  try {
+    const articleHistory_data = await record.getSectionHistory(NaN, user.user_id)
+    console.log(articleHistory_data)
+    historyList.value = articleHistory_data.map((item) => {
+      return {
+        id: item['section_id'],
+        name: item['section'],
+        time: item['time']
+      }
+    })
+  } catch (error) {
+    console.log(error)
+    showFailToast("获取笔记浏览记录失败")
+  }
 }
 
 // tab切换事件
