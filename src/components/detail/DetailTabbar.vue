@@ -87,7 +87,13 @@
   </van-popup>
   <van-popup v-model:show="QRcode_show" round>
     <div class="qr-container">
-      <canvas ref="canvasRef"></canvas>
+      <canvas ref="canvasRef" style="display: none;"></canvas>
+<!--      <canvas ref="canvasRef"></canvas>-->
+      <van-image :src="imgData">
+        <template v-slot:loading>
+          <van-loading type="spinner" size="20" />
+        </template>
+      </van-image>
     </div>
   </van-popup>
   <LoginPopup ref="loginPopupRef"></LoginPopup>
@@ -242,6 +248,8 @@ const isWeChat = () => {
 }
 // 二维码对象
 const canvasRef = ref(null)
+// 用于存储base64图片
+const imgData = ref('')
 // logo文件
 const logoUrl = '/logo.png'
 // 生成二维码
@@ -280,6 +288,7 @@ const generateQr = async () => {
     const x = (canvasSize - logoSize) / 2
     const y = (canvasSize - logoSize) / 2
     ctx.drawImage(logoImg, x, y, logoSize, logoSize)
+    imgData.value = canvas.toDataURL('image/png') //转换成 base64 图片用于 img 显示
   }
 }
 // 点击分享选项事件
