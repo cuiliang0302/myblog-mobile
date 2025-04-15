@@ -85,12 +85,10 @@
       </van-tabs>
     </div>
   </van-popup>
-  <van-popup v-model:show="QRcode_show">
-    <van-image width="9.333rem" height="9.333rem" :src="QRcode_url">
-      <template v-slot:loading>
-        <van-loading type="spinner" size="20"/>
-      </template>
-    </van-image>
+  <van-popup v-model:show="QRcode_show" round>
+    <div class="qr-container">
+      <canvas ref="canvasRef" width="328" height="328"></canvas>
+    </div>
   </van-popup>
   <LoginPopup ref="loginPopupRef"></LoginPopup>
   <van-config-provider :theme-vars="themeVars">
@@ -125,17 +123,17 @@
 </template>
 
 <script setup>
-import {
-  Toast,
-  Image as VanImage,
-} from 'vant';
-import {onMounted, ref} from "vue";
+import {showFailToast, showSuccessToast} from 'vant';
+import {nextTick, ref} from "vue";
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
 import LoginPopup from "@/components/common/LoginPopup.vue";
 import useClipboard from "vue-clipboard3";
 import QzoneImg from '@/assets/images/qq-zone.png'
 import icon from '@/utils/icon'
 import {useCommonStore, useUserStore} from '@/store';
+import QRCode from "qrcode";
+
+const {toClipboard} = useClipboard()
 const user = useUserStore();
 const common = useCommonStore();
 const {MyIcon} = icon()
@@ -172,28 +170,10 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['rollTo', 'dirTab', 'toNoteDetail', 'likeClick', 'collectClick', 'onShare'])
-// 调用大纲模块
-let {directoryClick, showDir, activeDir, rollTo, tabChange, toDetail} = fnDirectory(props, emit)
-// 调用分享模块
-let {
-  options,
-  onSelect,
-  showShare,
-  QRcode_show,
-  QRcode_url,
-  isWeChat,
-  overlay_show,
-  themeVars
-} = fnShare(props, emit)
-// 调用点赞模块
-let {isLike, likeClick} = fnLike(props, emit)
-// 调用评论模块
-let {commentClick} = fnComment()
-// 调用公共模块
-let {active} = fnPublic(isLike)
 const router = useRouter()
-// 调用收藏模块
+// 登录弹窗对象
 const loginPopupRef = ref()
+// 点击收藏事件
 const collectionClick = () => {
   console.log(props.is_collect)
   if (user.isLoggedIn === true) {
@@ -205,173 +185,159 @@ const collectionClick = () => {
     loginPopupRef.value.showPopup()
   }
 };
-// 公共模块
-function fnPublic(isLike) {
-  // 当前选中的tabbar
-  const active = ref('');
-  // 切换页面，可重新点赞
-  onBeforeRouteUpdate(() => {
-    isLike.value = false
-    active.value = ''
-  });
-  return {
-    active
-  }
+// 当前选中的tabbar
+const active = ref('');
+
+// 目录相关
+const activeDir = ref(0)
+// 是否显示目录
+const showDir = ref(false);
+// 大纲菜单打开事件
+const directoryClick = () => {
+  showDir.value = true;
+};
+// 目录title跳转事件
+const rollTo = (height) => {
+  console.log("点击title了")
+  emit('rollTo', height)
+  showDir.value = false
+}
+// 大纲目录Tab切换
+const tabChange = (index) => {
+  emit('dirTab', index)
+}
+// 点击获取其他笔记内容
+const toDetail = (detailID) => {
+  console.log(detailID)
+  emit('toNoteDetail', detailID)
+  showDir.value = false
 }
 
-// 大纲功能模块
-function fnDirectory(props, emit) {
-  const activeDir = ref(0)
-  const showDir = ref(false);
-  // 大纲菜单打开
-  const directoryClick = () => {
-    showDir.value = true;
-  };
-  // title跳转事件
-  const rollTo = (height) => {
-    console.log("点击title了")
-    emit('rollTo', height)
-    showDir.value = false
-  }
-  // 大纲目录Tab切换
-  const tabChange = (index) => {
-    emit('dirTab', index)
-  }
-  // 点击获取其他笔记内容
-  const toDetail = (detailID) => {
-    console.log(detailID)
-    emit('toNoteDetail', detailID)
-    showDir.value = false
-  }
-  return {
-    activeDir,
-    showDir,
-    directoryClick,
-    rollTo,
-    tabChange,
-    toDetail,
-  };
+// 分享相关
+// 显示分享菜单
+const showShare = ref(false);
+// 显示分享二维码链接弹窗
+const QRcode_show = ref(false)
+// 显示其他分享遮罩
+const overlay_show = ref(false);
+// 显示选项
+const options = [
+  [
+    {name: 'QQ空间', icon: QzoneImg},
+    {name: '微博', icon: 'weibo'},
+    {name: 'QQ', icon: 'qq'},
+    {name: '微信', icon: 'wechat'},
+    {name: '朋友圈', icon: 'wechat-moments'},
+  ],
+  [
+    {name: '复制链接', icon: 'link'},
+    {name: '二维码', icon: 'qrcode'}
+  ],
+];
+// 判断是否为手机微信打开
+const isWeChat = () => {
+  let ua = window.navigator.userAgent.toLowerCase();
+  //通过正则表达式匹配ua中是否含有MicroMessenger字符串
+  return ua.match(/MicroMessenger/i) === 'micromessenger';
 }
-
-//分享功能模块
-function fnShare(props, emit) {
-  const {toClipboard} = useClipboard()
-  const showShare = ref(false);
-  const QRcode_show = ref(false)
-  const overlay_show = ref(false);
-  const QRcode_url = ref()
-  const options = [
-    [
-      {name: 'QQ空间', icon: QzoneImg},
-      {name: '微博', icon: 'weibo'},
-      {name: 'QQ', icon: 'qq'},
-      {name: '微信', icon: 'wechat'},
-      {name: '朋友圈', icon: 'wechat-moments'},
-    ],
-    [
-      {name: '复制链接', icon: 'link'},
-      {name: '二维码', icon: 'qrcode'}
-    ],
-  ];
-  const isWeChat = () => {
-    let ua = window.navigator.userAgent.toLowerCase();
-    //通过正则表达式匹配ua中是否含有MicroMessenger字符串
-    if (ua.match(/MicroMessenger/i) == 'micromessenger') {
-      return true;
-    } else {
-      return false;
-    }
+// 二维码对象
+const canvasRef = ref(null)
+// logo文件
+const logoUrl = '/logo.png'
+// 生成二维码
+const generateQr = async () => {
+  await nextTick()
+  const canvas = canvasRef.value
+  console.log(canvas)
+  if (!canvas) {
+    console.error('canvas 没挂载')
+    showFailToast('生成二维码失败!')
+    return
   }
-  const onSelect = async (option) => {
-    const URL = window.location.href
-    showShare.value = false;
-    if (option.name === '复制链接') {
-      try {
-        await toClipboard(URL)
-        showSuccessToast('链接已复制至剪切板')
-      } catch (e) {
-        showFailToast('剪切板调用异常！')
-        console.error(e)
-      }
+  const url = window.location.href
+  await QRCode.toCanvas(canvas, url, {
+    errorCorrectionLevel: 'H',
+    margin: 2,
+    scale: 8,
+    color: {
+      dark: '#000000',
+      light: '#ffffff',
     }
-    if (option.name === '二维码') {
-      QRcode_show.value = true
-      getQRcode(URL).then((response) => {
-        console.log(response)
-        QRcode_url.value = response.url
-      }).catch(response => {
-        //发生错误时执行的代码
-        console.log(response)
-        showFailToast('获取二维码失败');
-      });
-    }
-    if (option.name === '微博') {
-      let title = document.title; // 分享出去得文章得标题
-      window.open('http://service.weibo.com/share/share.php?appkey=&title=' + title +
-          '&url=' + encodeURIComponent(document.location) + '&searchPic=false&style=simple"');
-    }
-    if (option.name === 'QQ' || option.name === '微信' || option.name === '朋友圈') {
-      overlay_show.value = true
-    }
-    if (option.name === 'QQ空间') {
-      let title = document.title; // 分享出去得文章得标题
-      let logo = 'https://oss.cuiliangblog.cn/images/logo.png'; // 分享出去logo
-      window.open('https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' +
-          encodeURIComponent(document.location) + '?sharesource=qzone&title=' + title + '&pics=' + logo + '&summary=' + '');
-    }
-  }
-  const themeVars = {
-    overlayZIndex: '2'
-  }
-  onMounted(() => {
-    const zone = document.createElement('script');
-    zone.type = 'text/javascript';
-    zone.src = 'https://qzonestyle.gtimg.cn/qzone/app/qzlike/qzopensl.js#jsdate=20111201';
-    document.body.appendChild(zone);
   })
-  return {
-    options,
-    onSelect,
-    showShare,
-    QRcode_show,
-    QRcode_url,
-    isWeChat,
-    overlay_show,
-    themeVars
-  };
+  const ctx = canvas.getContext('2d')
+  const logoImg = new Image()
+  logoImg.src = logoUrl
+  logoImg.onload = () => {
+    const canvasSize = canvas.width
+    const logoSize = canvasSize * 0.2
+    const x = (canvasSize - logoSize) / 2
+    const y = (canvasSize - logoSize) / 2
+    ctx.drawImage(logoImg, x, y, logoSize, logoSize)
+  }
+}
+// 点击分享选项事件
+const onSelect = async (option) => {
+  const URL = window.location.href
+  showShare.value = false;
+  if (option.name === '复制链接') {
+    try {
+      await toClipboard(URL)
+      showSuccessToast('链接已复制至剪切板')
+    } catch (e) {
+      showFailToast('剪切板调用异常！')
+      console.error(e)
+    }
+  }
+  if (option.name === '二维码') {
+    QRcode_show.value = true
+    console.log("显示二维码了啊")
+    await generateQr()
+  }
+  if (option.name === '微博') {
+    let title = document.title; // 分享出去得文章得标题
+    window.open('http://service.weibo.com/share/share.php?appkey=&title=' + title +
+        '&url=' + encodeURIComponent(document.location) + '&searchPic=false&style=simple"');
+  }
+  if (option.name === 'QQ' || option.name === '微信' || option.name === '朋友圈') {
+    overlay_show.value = true
+  }
+  if (option.name === 'QQ空间') {
+    let title = document.title; // 分享出去得文章得标题
+    let logo = 'https://oss.cuiliangblog.cn/images/logo.png'; // 分享出去logo
+    window.open('https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' +
+        encodeURIComponent(document.location) + '?sharesource=qzone&title=' + title + '&pics=' + logo + '&summary=' + '');
+  }
+}
+// 增加遮罩层
+const themeVars = {
+  overlayZIndex: '2'
 }
 
 // 点赞功能模块
-function fnLike(props, emit) {
-  // 是否已点赞
-  const isLike = ref(false)
-  const likeClick = () => {
-    if (isLike.value === false) {
-      console.log("要点赞了")
-      console.log(isLike.value)
-      isLike.value = true
-      emit('likeClick')
-    }
-  };
-  return {
-    isLike,
-    likeClick,
-  };
-}
-
+// 是否已点赞
+const isLike = ref(false)
+// 点赞
+const likeClick = () => {
+  if (isLike.value === false) {
+    console.log("要点赞了")
+    console.log(isLike.value)
+    isLike.value = true
+    emit('likeClick')
+  }
+};
 // 评论功能模块
-function fnComment() {
-  const commentClick = () => {
-    const returnEle = document.querySelector("#comment");  //productId是将要跳转区域的id
-    if (!!returnEle) {
-      returnEle.scrollIntoView({behavior: 'smooth'}); // true 是默认的
-    }
-  };
-  return {
-    commentClick,
-  };
-}
+const commentClick = () => {
+  const returnEle = document.querySelector("#comment");  //productId是将要跳转区域的id
+  if (!!returnEle) {
+    returnEle.scrollIntoView({behavior: 'smooth'}); // true 是默认的
+  }
+};
 
+onBeforeRouteUpdate(() => {
+  // 切换页面，可重新点赞
+  isLike.value = false
+  active.value = ''
+});
 
 </script>
 
@@ -379,7 +345,7 @@ function fnComment() {
 
 .active {
   //color: $color-primary
-  color:var(--van-primary-color);
+  color: var(--van-primary-color);
 }
 
 .directory {
@@ -437,5 +403,13 @@ function fnComment() {
       height: 70px;
     }
   }
+}
+
+.qr-container {
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

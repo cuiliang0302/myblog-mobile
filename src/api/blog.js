@@ -65,10 +65,4 @@ export default class Blog {
   static async getContext(id) {
     return get('/blog/context/' + id + '/?kind=section')
   }
-
-// 获取文章笔记二维码
-  static async getQRcode(url) {
-    return get('/blog/QRcode/?url=' + url)
-  }
-
 }

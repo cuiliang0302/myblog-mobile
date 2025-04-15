@@ -1,10 +1,6 @@
 import {get, post, put} from '@/utils/request';
 
 export default class Account {
-  // // 获取文章列表
-  // static async getArticle(params) {
-  //   return get('/blog/article/', params);
-  // }
   // 用户登录
   static async postLogin(params) {
     return post('/account/login/', params)

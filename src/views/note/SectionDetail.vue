@@ -454,22 +454,6 @@ const onShare = async (name) => {
       console.error(e)
     }
   }
-  if (name === '二维码') {
-    blog.getQRcode(URL).then((response) => {
-      console.log(response)
-      let blob = new Blob([response], {type: 'application/octet-stream'})
-      let url = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = 'QRcode.png'
-      link.click()
-      showSuccessToast('二维码已开始下载')
-    }).catch(response => {
-      //发生错误时执行的代码
-      console.log(response)
-      showFailToast('获取二维码失败');
-    });
-  }
 }
 onMounted(() => {
   siteConfigData()
