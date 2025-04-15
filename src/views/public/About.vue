@@ -6,7 +6,7 @@
         <v-md-preview :text="item.body"></v-md-preview>
       </van-collapse-item>
     </van-collapse>
-    <Tabbar></Tabbar>
+    <Tabbar :activeBar=null></Tabbar>
   </div>
 </template>
 

@@ -21,7 +21,7 @@
         <Comments :commentsList="messageList.data"></Comments>
       </div>
     </section>
-    <Tabbar></Tabbar>
+    <Tabbar :activeBar=null></Tabbar>
     <LoginPopup ref="loginPopupRef"></LoginPopup>
   </div>
 </template>

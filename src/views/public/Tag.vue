@@ -9,7 +9,7 @@
              @onRefresh="onRefresh"
              :load="load">
     </TabList>
-    <Tabbar></Tabbar>
+    <Tabbar :activeBar=1></Tabbar>
   </div>
 
 </template>

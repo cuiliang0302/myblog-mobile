@@ -20,7 +20,7 @@
         </van-steps>
       </div>
     </section>
-    <Tabbar></Tabbar>
+    <Tabbar :activeBar=null></Tabbar>
   </div>
 
 </template>
