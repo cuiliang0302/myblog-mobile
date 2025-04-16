@@ -18,7 +18,7 @@
         </template>
       </van-field>
       <div class="comment-list">
-        <Comments :commentsList="messageList.data"></Comments>
+        <Comments :commentsList="messageList.data" :key="refreshKey"></Comments>
       </div>
     </section>
     <Tabbar :activeBar=null></Tabbar>
@@ -55,6 +55,8 @@ const messageList = reactive({
   count: 0,
   data: []
 })
+// 每次刷新时更新时间戳
+const refreshKey = ref(Date.now())
 // 加载留言动画
 const loading = ref(false);
 // 留言框表单
@@ -151,6 +153,7 @@ function leaveMessageData() {
 
 // 刷新留言列表
 function leaveMessageDataRefresh() {
+  refreshKey.value = Date.now()
   Record.getLeaveMessage({'page': 1, 'size': 1000}).then(response => {
     messageList.data = []
     messageList.data.push(...response.results)
