@@ -1,7 +1,7 @@
 <template>
   <van-nav-bar fixed placeholder>
     <template #left>
-      <img :src="logo" alt="">
+     <img :src="logo" alt="">
     </template>
     <template #title>
       <SearchInput></SearchInput>
