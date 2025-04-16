@@ -151,12 +151,12 @@ export default [
     component: () => import('@/views/404.vue'),
     meta: {
       title: '404-页面找不到',
-      transitionClass: 'back',//前进后退
+      transitionClass: 'gradually',
       transitionIndex: 2,
     }
   },
-  // {
-  //   path: '/:pathMatch(.*)',
-  //   redirect: '/404'
-  // },
+  {
+    path: '/:pathMatch(.*)',
+    redirect: '/404'
+  },
 ];
