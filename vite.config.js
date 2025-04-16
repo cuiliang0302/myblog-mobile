@@ -6,7 +6,8 @@ import {VantResolver} from "@vant/auto-import-resolver";
 import { resolve } from 'path';
 export default ({mode}) => {
   const {VITE_PORT} = loadEnv(mode, process.cwd());
-
+  const env = loadEnv(mode, process.cwd())
+  const dropConsole = env.VITE_DROP_CONSOLE === 'true'
   return defineConfig({
     plugins: [
       vue(),
@@ -53,8 +54,8 @@ export default ({mode}) => {
       terserOptions: {
         compress: {
           //生产环境时移除console
-          drop_console: process.env.VITE_DROP_CONSOLE,
-          drop_debugger: process.env.VITE_DROP_DEBUGGER
+          drop_console:dropConsole,
+          drop_debugger: dropConsole
         },
       },
     },
