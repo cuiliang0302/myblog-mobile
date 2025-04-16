@@ -3,11 +3,10 @@ import vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import {VantResolver} from "@vant/auto-import-resolver";
-import { resolve } from 'path';
+import {resolve} from 'path';
+
 export default ({mode}) => {
-  const {VITE_PORT} = loadEnv(mode, process.cwd());
-  const env = loadEnv(mode, process.cwd())
-  const dropConsole = env.VITE_DROP_CONSOLE === 'true'
+  process.env = {...process.env, ...loadEnv(mode, process.cwd())};
   return defineConfig({
     plugins: [
       vue(),
@@ -35,7 +34,7 @@ export default ({mode}) => {
     },
     server: {
       // 端口号
-      port: VITE_PORT,
+      port: process.env.VITE_PORT,
       // 监听所有地址
       host: '0.0.0.0',
       // 服务启动时是否自动打开浏览器
@@ -54,8 +53,8 @@ export default ({mode}) => {
       terserOptions: {
         compress: {
           //生产环境时移除console
-          drop_console:dropConsole,
-          drop_debugger: dropConsole
+          drop_console: process.env.VITE_DROP_CONSOLE,
+          drop_debugger: process.env.VITE_DROP_DEBUGGER
         },
       },
     },
