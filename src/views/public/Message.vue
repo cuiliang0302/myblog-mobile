@@ -91,11 +91,10 @@ const clickSend = () => {
 // 留言点赞事件
 if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", value => {
   const params = {'like': value.like}
+  console.log(messageList.data, value.id, value.like)
   Record.patchLeaveMessage(value.id, params).then((response) => {
     console.log(response)
     showSuccessToast('点赞成功！');
-    leaveMessageDataRefresh()
-    // reload()
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)

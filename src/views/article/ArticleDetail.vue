@@ -272,7 +272,7 @@ if (!$bus.all.get("likeMessage")) $bus.on("likeMessage", value => {
   Record.patchArticleComment(value.id, params).then((response) => {
     console.log(response)
     showSuccessToast('评论点赞成功！');
-    articleCommentData(DetailID.value)
+    // articleCommentData(DetailID.value)
     // reload()
   }).catch(response => {
     //发生错误时执行的代码
@@ -406,10 +406,10 @@ const collectClick = () => {
 // 点赞文章
 const likeClick = () => {
   const params = {id: DetailID.value, 'kind': 'article'}
+  detail.like = detail.like + 1
   Blog.postLike(params).then((response) => {
     console.log(response)
     showSuccessToast('文章点赞成功！');
-    detail.like = detail.like + 1
   }).catch(response => {
     //发生错误时执行的代码
     console.log(response)

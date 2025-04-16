@@ -131,6 +131,14 @@ const likeMessage = (messageId, likeMessage) => {
     'id': messageId,
     'like': likeMessage + 1
   }
+  console.log(props.commentsList)
+  const comment = props.commentsList.find(item => item.id === messageId);
+  if (comment) {
+    comment.like = likeMessage + 1;
+    console.log("更新成功:", comment);
+  } else {
+    console.log("未找到对应 ID 的评论");
+  }
   $bus.emit("likeMessage", value);
 }
 // 判断评论留言能否删除
