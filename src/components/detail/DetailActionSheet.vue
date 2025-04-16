@@ -73,7 +73,7 @@ const theme_list = ref([
   {name: '火山橘', value: '#e67e22'},
   {name: '日暮黄', value: '#f1c40f'},
   {name: '极光绿', value: '#16a085'},
-  {name: '酱样紫', value: '#9b59b6'},
+  {name: '绝绝紫', value: '#9b59b6'},
 ])
 // 切换主题色
 const clickTheme = (name) => {

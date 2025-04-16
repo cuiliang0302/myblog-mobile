@@ -197,7 +197,7 @@ const columns = [
   {text: '火山橘', value: '#e67e22'},
   {text: '日暮黄', value: '#f1c40f'},
   {text: '极光绿', value: '#16a085'},
-  {text: '酱样紫', value: '#9b59b6'},
+  {text: '绝绝紫', value: '#9b59b6'},
 ];
 // 点击切换主题色事件
 const clickTheme = () => {
