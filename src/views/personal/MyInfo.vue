@@ -242,13 +242,11 @@ const onSubmit = (values) => {
 };
 
 // 获取用户信息
-const getUserinfo = async (userid) => {
+const getUserinfo = async () => {
   try {
-    const userinfo_data = await account.getUserinfoId(userid)
+    const userinfo_data = await account.getUserinfo()
     console.log(userinfo_data)
-    for (let i in userinfo_data) {
-      userInfoForm[i] = userinfo_data[i]
-    }
+    Object.assign(userInfoForm, userinfo_data[0])
     oldUsername.value = userInfoForm.username
   } catch (e) {
     console.log(e)
@@ -257,7 +255,7 @@ const getUserinfo = async (userid) => {
 }
 
 onMounted(() => {
-  getUserinfo(user.user_id)
+  getUserinfo()
 })
 </script>
 

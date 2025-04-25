@@ -90,7 +90,7 @@ const checkContact = (val) =>
     })
 // 表单提交事件
 const onSubmit = () => {
-  account.putChangeEmail(user.user_id, emailForm).then((response) => {
+  account.putChangeEmail(emailForm).then((response) => {
     console.log(response)
     showSuccessToast('邮箱修改成功！');
   }).catch(response => {

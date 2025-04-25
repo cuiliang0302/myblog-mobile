@@ -109,13 +109,11 @@ const loginPopupRef = ref(null)
 // 用户信息
 const userInfo = reactive({})
 // 获取用户信息
-const getUserinfo = async (userid) => {
+const getUserinfo = async () => {
   try {
-    const userinfo_data = await account.getUserinfoId(userid)
+    const userinfo_data = await account.getUserinfo()
     console.log(userinfo_data)
-    for (let i in userinfo_data) {
-      userInfo[i] = userinfo_data[i]
-    }
+    Object.assign(userInfo, userinfo_data[0])
   } catch (error) {
     console.log(error)
     showFailToast('获取个人信息失败!')
@@ -230,8 +228,7 @@ const logout = () => {
 }
 onMounted(() => {
   if (user.isLoggedIn) {
-    console.log(user.user_id)
-    getUserinfo(user.user_id)
+    getUserinfo()
   } else {
     siteConfigData()
   }

@@ -96,22 +96,17 @@ export default class Record {
     return patch(url, data)
   }
 
-// static async putSectionComment(messageId) {
-// 	const url = '/record/sectionComment/' + messageId + '/'
-// 	return put(url, NaN)
-// }
-
   // 回复笔记评论
   static async postReplySectionComment(params) {
     return post('/record/sectionComment/', params)
   }
 
   // 获取文章浏览记录
-  static async getArticleHistory(article, user) {
+  static async getArticleHistory(article) {
     if (article) {
-      return get('/record/articleHistory/?article=' + article + '&user=' + user)
+      return get('/record/articleHistory/?article=' + article)
     } else {
-      return get('/record/articleHistory/?user=' + user)
+      return get('/record/articleHistory/')
     }
   }
 
@@ -129,9 +124,9 @@ export default class Record {
   // 获取笔记浏览记录
   static async getSectionHistory(section, user) {
     if (section) {
-      return get('/record/sectionHistory/?section=' + section + '&user=' + user)
+      return get('/record/sectionHistory/?section=' + section)
     } else {
-      return get('/record/sectionHistory/?user=' + user)
+      return get('/record/sectionHistory/')
     }
 
   }
@@ -148,18 +143,18 @@ export default class Record {
   }
 
   // 获取用户文章评论数据
-  static async getUserArticleComment(userId) {
-    return get('/record/articleComment/?user=' + userId)
+  static async getUserArticleComment() {
+    return get('/record/articleComment/')
   }
 
   // 获取用户笔记评论数据
-  static async getUserSectionComment(userId) {
-    return get('/record/sectionComment/?user=' + userId)
+  static async getUserSectionComment() {
+    return get('/record/sectionComment/')
   }
 
   // 获取用户统计数据
-  static async getStatistics(userId) {
-    return get('/record/statistics/?user=' + userId)
+  static async getStatistics() {
+    return get('/record/statistics/')
   }
 
   // 查询指定用户echarts数据统计

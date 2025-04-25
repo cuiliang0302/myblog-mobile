@@ -352,7 +352,7 @@ const is_collect = ref(false)
 const getArticleHistoryData = async (article_id) => {
   if (user.isLoggedIn === true) {
     try {
-      const response = await Record.getArticleHistory(article_id, user.user_id)
+      const response = await Record.getArticleHistory(article_id)
       console.log(response)
       is_collect.value = response.is_collect
     } catch (error) {

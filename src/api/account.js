@@ -45,14 +45,14 @@ export default class Account {
   }
 
 // 修改密码
-  static async putChangePassword(userId, params) {
-    const url = '/account/changePassword/' + userId + '/'
+  static async putChangePassword(params) {
+    const url = '/account/changePassword/'
     return put(url, params)
   }
 
 // 查询指定用户信息
-  static async getUserinfoId(userId) {
-    return get('/account/userinfo/' + userId + '/')
+  static async getUserinfo() {
+    return get('/account/userinfo/')
   }
 
 // 修改用户信息
@@ -62,8 +62,8 @@ export default class Account {
   }
 
 // 修改用户邮箱
-  static async putChangeEmail(userId, params) {
-    const url = '/account/changeEmail/' + userId + '/'
+  static async putChangeEmail(params) {
+    const url = '/account/changeEmail/'
     return put(url, params)
   }
 

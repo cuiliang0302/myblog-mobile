@@ -32,7 +32,7 @@ const collectList = ref([])
 // 获取文章收藏记录
 const getArticleHistoryData = async () => {
   try{
-    const collectHistory_data = await record.getArticleHistory(NaN, user.user_id)
+    const collectHistory_data = await record.getArticleHistory(NaN)
     console.log(collectHistory_data)
     let collect_data = []
     for (let index in collectHistory_data) {
@@ -57,7 +57,7 @@ const getArticleHistoryData = async () => {
 // 获取笔记收藏记录
 const getSectionHistoryData = async () => {
   try{
-    const collectHistory_data = await record.getSectionHistory(NaN, user.user_id)
+    const collectHistory_data = await record.getSectionHistory(NaN)
     console.log(collectHistory_data)
     let collect_data = []
     for (let index in collectHistory_data) {

@@ -369,7 +369,7 @@ const is_collect = ref(false)
 const getSectionHistoryData = async () => {
   if (user.isLoggedIn) {
     try {
-      let res = await Record.getSectionHistory(DetailID.value, user.user_id)
+      let res = await Record.getSectionHistory(DetailID.value)
       console.log(res)
       is_collect.value = res.is_collect
       console.log(is_collect.value)

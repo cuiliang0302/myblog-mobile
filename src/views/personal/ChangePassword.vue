@@ -75,7 +75,7 @@ const checkPassword = (val) =>
 // 表单提交
 const onSubmit = () => {
   passwordForm.newPassword = checkPasswordForm.password1
-  account.putChangePassword(userId.value, passwordForm).then((response) => {
+  account.putChangePassword(passwordForm).then((response) => {
     console.log(response)
     showSuccessToast('修改成功，即将跳转登录页');
     setTimeout(function () {
@@ -89,11 +89,11 @@ const onSubmit = () => {
 }
 
 // 获取用户信息
-const getUserinfo = async (userid) => {
+const getUserinfoData = async () => {
   try {
-    const userinfo_data = await account.getUserinfoId(userid)
-    console.log(userinfo_data.source)
-    if (userinfo_data.source !== '直接注册') {
+    const userinfo_data = await account.getUserinfo()
+    console.log(userinfo_data[0].source)
+    if (userinfo_data[0].source !== '直接注册') {
       showDialog({
         title: '修改密码提示',
         message: '您的账号直接使用' + userinfo_data.source + '登录即可，无需修改密码！',
@@ -109,7 +109,7 @@ const getUserinfo = async (userid) => {
 }
 
 onMounted(() => {
-  getUserinfo(user.user_id)
+  getUserinfoData()
 })
 </script>
 

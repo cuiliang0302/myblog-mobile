@@ -66,7 +66,7 @@ const toDetail = (detailId) => {
 const sectionCollectData = async () => {
   if (user.isLoggedIn === true) {
     try {
-      const response = await record.getSectionHistory(NaN, user.user_id)
+      const response = await record.getSectionHistory(NaN)
       console.log(response)
       let collect_data = []
       for (let index in response) {

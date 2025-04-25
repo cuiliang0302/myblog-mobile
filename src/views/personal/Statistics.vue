@@ -148,7 +148,7 @@ const setColor = () => {
 
 // 浏览趋势折线图
 const trend = async () => {
-  const query = {chart: 'trend', user: user.user_id}
+  const query = {chart: 'trend'}
   const date = []
   const article_view = []
   const article_collect = []
@@ -282,7 +282,7 @@ const trend = async () => {
 
 // 浏览时间柱形图
 const time = async () => {
-  const query = {chart: 'time', user: user.user_id}
+  const query = {chart: 'time'}
   const time = []
   const article = []
   const section = []
@@ -370,7 +370,7 @@ const time = async () => {
 
 // 浏览文章饼图
 const article = async () => {
-  const query = {chart: 'article', user: user.user_id}
+  const query = {chart: 'article'}
   try {
     const chartData = await record.getUserEcharts(query)
     console.log("article", chartData)
@@ -417,7 +417,7 @@ const article = async () => {
 
 // 浏览笔记雷达图
 const note = async () => {
-  const query = {chart: 'note', user: user.user_id}
+  const query = {chart: 'note'}
   const indicator = []
   const data = []
   try {
@@ -474,7 +474,7 @@ const note = async () => {
 // 获取数据概览数据
 const statisticsData = async () => {
   try {
-    const statistics_data = await record.getStatistics(user.user_id)
+    const statistics_data = await record.getStatistics()
     for (let i in statistics_data) {
       dataCount[i] = statistics_data[i]
     }
