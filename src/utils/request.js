@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {useUserStore} from '@/store';
+import {showFailToast, showLoadingToast} from "vant";
 
 const user = useUserStore();
 // 创建请求实例
@@ -38,10 +39,54 @@ instance.interceptors.response.use(
      */
     return response.data;
   },
-  (error) => {
+  async (error) => {
     const {response} = error;
     console.log(response);
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     if (response && response.data) {
+      switch (error.response.status) {
+        case 400:
+          return Promise.reject(error.response.data)
+        case 401:
+          // showFailToast('对不起，您暂无权限访问此接口，即将跳转至登录页！')
+          showLoadingToast({
+            message: '对不起，您暂无权限访问此接口，即将跳转至登录页！',
+            forbidClick: true,
+            loadingType: 'spinner',
+          });
+          await sleep(1500);
+          localStorage.clear()
+          sessionStorage.clear()
+          window.location.href = "/loginRegister?component=Login";
+          break
+        case 403:
+          showLoadingToast({
+            message: '对不起，您的身份信息已过期，即将跳转至登录页！',
+            forbidClick: true,
+            loadingType: 'spinner',
+          });
+          await sleep(1500);
+          localStorage.clear()
+          sessionStorage.clear()
+          window.location.href = "/loginRegister?component=Login";
+          break
+        case 404:
+          showFailToast("404啦")
+          showFailToast('请求地址不存在，请刷新页面重试！')
+          await sleep(1500);
+          break
+        case 500:
+          console.log("500啦")
+          showFailToast('后端接口异常，请稍候重试！')
+          await sleep(1500);
+          break
+        default:
+          return Promise.reject(error)
+      }
       return Promise.reject(error);
     }
     const {message} = error;
