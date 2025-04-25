@@ -97,9 +97,9 @@ const searchKeyHotData = async () => {
 // 获取搜索记录
 const searchKeyHistoryData = async () => {
   try{
-    const response = await record.getSearchHistory(user.user_id)
+    const response = await record.getSearchHistory()
     console.log(response)
-    historyList.value = response.keys
+    historyList.value = response
   }catch (error) {
     showFailToast("")
   }

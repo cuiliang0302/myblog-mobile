@@ -7,8 +7,8 @@ export default class Record {
   }
 
   // 获取搜索词记录
-  static async getSearchHistory(user_id) {
-    return get('/record/searchHistory/' + user_id + '/')
+  static async getSearchHistory() {
+    return get('/record/searchHistory/')
   }
 
   // 搜索文章
