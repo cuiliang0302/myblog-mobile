@@ -99,7 +99,7 @@ import router from "@/router";
 import account from "@/api/account";
 import management from "@/api/management";
 import {storeToRefs} from 'pinia'
-
+import { useDark, useToggle } from '@vueuse/core'
 const user = useUserStore();
 const common = useCommonStore();
 const theme = useThemeStore();
@@ -175,14 +175,60 @@ const changeFlow = (value) => {
     return false
   }
 }
+const isDark = useDark()
+const toggleDark = useToggle(isDark)
+const isAnimating = ref(false) // 防止动画期间重复点击
 // 切换夜间模式
-const changeDark = (value) => {
-  console.log(value)
-  if (value) {
-    showToast('已开启深色模式')
-  } else {
-    showToast('已关闭深色模式')
+const changeDark = (e) => {
+  if (isAnimating.value) return
+
+  // 获取点击位置（同时支持鼠标和触摸事件）
+  const x = e.clientX || e.touches?.[0]?.clientX || window.innerWidth / 2
+  const y = e.clientY || e.touches?.[0]?.clientY || window.innerHeight / 2
+
+  // 计算扩散半径（覆盖最远角落）
+  const radius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+  )
+
+  // 动画定义
+  const clipPath = [
+    `circle(0px at ${x}px ${y}px)`,
+    `circle(${radius}px at ${x}px ${y}px)`
+  ]
+
+  // 不支持 View Transitions API 的浏览器
+  if (!document.startViewTransition) {
+    toggleDark()
+    return
   }
+
+  isAnimating.value = true
+  const isDarkBefore = isDark.value
+
+  const transition = document.startViewTransition(() => {
+    toggleDark()
+  })
+
+  transition.ready.then(() => {
+    // 统一在新视图上执行动画
+    document.documentElement.animate(
+        {
+          clipPath: isDarkBefore ? [...clipPath].reverse() : clipPath
+        },
+        {
+          duration: 600,
+          easing: 'ease-in-out',
+          pseudoElement: '::view-transition-new(root)'
+        }
+    )
+  })
+
+  // 动画结束后重置状态
+  transition.finished.finally(() => {
+    isAnimating.value = false
+  })
 }
 // 切换主题色弹窗是否显示
 const show_theme_picker = ref(false);
