@@ -136,6 +136,14 @@ async function articleData(page = 1, order = '-created_time') {
 onMounted(() => {
   carouselData()
   articleData()
+  // 加载umami统计
+  let script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://umami.cuiliangblog.cn/script.js';
+  script.setAttribute('data-website-id', "148a1e4d-f683-4819-a172-7605346b75e7")
+  script.setAttribute('data-auto-track', "false")
+  document.body.appendChild(script)
+  console.log("umami", window.umami.track)
 })
 </script>
 <style scoped>

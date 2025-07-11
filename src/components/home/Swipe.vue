@@ -2,7 +2,7 @@
 <template>
   <van-swipe :autoplay="3000" lazy-render>
     <van-swipe-item v-for="(item,index) in carouselList" :key="index">
-      <van-image :src="item.img" alt="" width="100%" @click="toView(item.url)">
+      <van-image :src="item.img" alt="" width="100%" @click="toView(item.url,item.title)">
         <template v-slot:loading>
           <van-loading type="spinner" size="20"/>
         </template>
@@ -22,7 +22,12 @@ const props = defineProps({
     default: []
   },
 })
-const toView = (url) => {
+const toView = (url,title) => {
+  console.log(url)
+  console.log(title)
+  console.log("umami", window.umami.track)
+  console.log("点击轮播图：" + title)
+  window.umami.track("点击轮播图：" + title)
   window.location.href = url
   showLoadingToast({
     message: '第三方站点跳转中...',
