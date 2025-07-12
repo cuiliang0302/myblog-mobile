@@ -3,9 +3,9 @@ name: Build and Deploy to Aliyun for Docker
 env:
   ALIYUN_ACR_REGISTRY: registry.cn-hangzhou.aliyuncs.com
   ALIYUN_ACR_NAMESPACE: cuiliang_myblog
-  ALIYUN_IMAGE_NAME: myblog_m
+  ALIYUN_IMAGE_NAME: myblog_mobile
   ALIYUN_ACR_USERNAME: 1554382111@qq.com
-  APP_NAME: myblog_m
+  APP_NAME: myblog_mobile
   APP_PORT: 8012
   ECS_HOST: 47.116.173.70
   ECS_USER: root
