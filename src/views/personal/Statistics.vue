@@ -190,12 +190,15 @@ const trend = async () => {
       }
     },
     legend: {
-      data: ['浏览文章数', '收藏文章数', '评论文章数', '浏览笔记数', '收藏笔记数', '评论笔记数']
+      data: ['浏览文章数', '收藏文章数', '评论文章数', '浏览笔记数', '收藏笔记数', '评论笔记数'],
+      bottom: '2%',
+      type: 'scroll'
     },
     grid: {
       left: '3%',
       right: '5%',
-      bottom: '3%',
+      bottom: '18%',
+      top: '12%',
       containLabel: true
     },
     xAxis: [
@@ -325,12 +328,14 @@ const time = async () => {
       }
     },
     legend: {
-      data: ['文章', '笔记']
+      data: ['文章', '笔记'],
+      bottom: '2%'
     },
     grid: {
       left: '3%',
       right: '4%',
-      bottom: '3%',
+      bottom: '18%',
+      top: '8%',
       containLabel: true
     },
     xAxis: {
@@ -387,12 +392,15 @@ const article = async () => {
       tooltip: {
         trigger: 'item'
       },
-      legend: {},
+      legend: {
+        bottom: '2%',
+        type: 'scroll'
+      },
       series: [
         {
           type: 'pie',
-          top: '10%',
-          radius: '50%',
+          top: '5%',
+          radius: '45%',
           data: chartData,
           emphasis: {
             itemStyle: {

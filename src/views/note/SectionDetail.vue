@@ -88,6 +88,7 @@
     </div>
     <div class="bottom-margin"></div>
     <DetailTabbar :componentName="'note'" :titleList="titleList" :catalogList="catalogList" :is_collect="is_collect"
+                  :activeOutlineLineIndex="activeOutlineLineIndex"
                   :sectionID="detail.id"
                   @collectClick="collectClick" @rollTo="rollTo"
                   @dirTab="getCatalogueData" @toNoteDetail="toDetail" @likeClick="likeClick"
@@ -307,6 +308,8 @@ const sectionCommentData = async (detail_id) => {
 }
 // 笔记标题列表
 let titleList = ref([])
+// 当前滚动位置对应的大纲 lineIndex，用于高亮
+const activeOutlineLineIndex = ref(null)
 // 切换新的笔记
 const toDetail = (detailId) => {
   DetailID.value = detailId
@@ -332,7 +335,47 @@ const getTitle = () => {
       lineIndex: el.getAttribute('data-v-md-line'),
       indent: hTags.indexOf(el.tagName),
     }));
+    setupScrollSpy()
   }, 1000)
+}
+
+// 滚动时高亮当前大纲
+const SCROLL_SPY_OFFSET = 80
+let scrollSpyTicking = false
+const updateActiveOutline = () => {
+  if (!editor.value || !titleList.value.length) return
+  let currentLineIndex = null
+  for (let i = titleList.value.length - 1; i >= 0; i--) {
+    const lineIndex = titleList.value[i].lineIndex
+    const heading = editor.value.querySelector(
+        `.v-md-editor-preview [data-v-md-line="${lineIndex}"]`
+    )
+    if (heading) {
+      const rect = heading.getBoundingClientRect()
+      if (rect.top <= SCROLL_SPY_OFFSET) {
+        currentLineIndex = lineIndex
+        break
+      }
+    }
+  }
+  if (currentLineIndex !== null) {
+    activeOutlineLineIndex.value = currentLineIndex
+  } else if (titleList.value.length) {
+    activeOutlineLineIndex.value = titleList.value[0].lineIndex
+  }
+}
+const onScrollSpy = () => {
+  if (scrollSpyTicking) return
+  scrollSpyTicking = true
+  requestAnimationFrame(() => {
+    updateActiveOutline()
+    scrollSpyTicking = false
+  })
+}
+const setupScrollSpy = () => {
+  window.removeEventListener('scroll', onScrollSpy, { passive: true })
+  window.addEventListener('scroll', onScrollSpy, { passive: true })
+  updateActiveOutline()
 }
 // markdown标题跳转
 const rollTo = (anchor) => {
@@ -478,6 +521,7 @@ onBeforeRouteUpdate(async (to) => {
   loading.value = false
 });
 onUnmounted(() => {
+  window.removeEventListener('scroll', onScrollSpy, { passive: true })
   console.log("更新theme了啊")
   theme.initialize()
 })

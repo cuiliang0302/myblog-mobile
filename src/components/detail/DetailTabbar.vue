@@ -54,6 +54,7 @@
           <div class="content">
             <div v-if="titleList.length !== 0">
               <p v-for="(anchor,index) in titleList" :key="anchor.lineIndex"
+                 :class="{ 'outline-item-active': String(anchor.lineIndex) === String(activeOutlineLineIndex) }"
                  :style="{ padding: `0px 0 0px ${anchor.indent * 15}px` }"
                  @click="rollTo(anchor)"
               >
@@ -161,6 +162,12 @@ const props = defineProps({
     type: Array,
     required: false,
     default: []
+  },
+  // 当前滚动位置对应的大纲 lineIndex（用于高亮）
+  activeOutlineLineIndex: {
+    type: [String, Number],
+    required: false,
+    default: null
   },
   // 是否已收藏
   is_collect: {
@@ -374,6 +381,12 @@ onBeforeRouteUpdate(() => {
     p {
       font-size: 0.373rem;
       line-height: 0.533rem;
+      transition: color 0.2s;
+    }
+
+    .outline-item-active {
+      color: var(--van-primary-color);
+      font-weight: 600;
     }
   }
 
